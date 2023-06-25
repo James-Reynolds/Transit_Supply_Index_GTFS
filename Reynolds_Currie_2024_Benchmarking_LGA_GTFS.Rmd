@@ -15,7 +15,7 @@ abstract: |
   TBC.
   
 keywords: ["Transit", "Public transport", "GTFS", "Benchmarking", "Local government"]
-bibliography: [packages.bib, benchmarkingLGAGTFS.bib]
+bibliography: [packages.bib,      benchmarkingLGAGTFS.bib]
 biblio-style: unsrtnat
 classoption:
   - numbered #  When numbered option is activated, lines are numbered.
