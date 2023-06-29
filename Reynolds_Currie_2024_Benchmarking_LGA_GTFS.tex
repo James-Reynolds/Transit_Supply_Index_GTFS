@@ -73,77 +73,95 @@ transport, GTFS, Benchmarking, Local government,
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-There are many metrics used to assess and compare transit service
-levels. These include those in the Transit Capacity and Quality of
-Service Manual (TCQSM) \citep{TCQSM:2013}, which specifies Levels of
-Service (LOS) on a scale of A to F across a wide range of measures such
-as service span, frequency, speed, proportion of population serviced and
-many more. Transit Score instead provides a single rating out of 100,
-ranging from ``Rider's Paradise'' for those places scoring above 90, all
-the way down to places with a score below 25 where it (may) ``be
-possible to get on a bus''\citep{WalkScore:2023tg}.
+Transit service level indicators include those in the Transit Capacity
+and Quality of Service Manual (TCQSM) \citep{TCQSM:2013}, the Transit
+Score metric and many more. Practitioners, researchers and advocates
+seeking to use such metrics may face two inter-related challenges:
+firstly, there is the problem of calculating the metrics themselves for
+a specific location; secondly, is the challenge of explaining the
+metrics, their meaning and importance those who are not specialists in
+transit, such as politicians, other decision-makers or the general
+public.
 
-Practitioners and researchers seeking to use such metrics may face two
-inter-related challenges. Firstly, there is the problem of calculating
-the metrics themselves for a specific transit system or location.
-Secondly, there may be the challenge of explaining the metrics and their
-meaning to others, who may not be transit-specialists and might include
-politicians, other decision-makers and the general public. The TCQSM and
-Transit Score metrics may provide contrasting examples of these
-challenges. The TCQSM metrics may be time consuming and challenging to
-calculate, given the amount of population, network and other data that
-needs to be assembled and included in calculation. Yet,
-\citet{TCQSM:2013} provides detailed explanations of how each score is
-calculated and what might need to be done to improve service levels.
-This set of metrics would appear to be suitable for use amongst
-practitioners and researchers, and perhaps in some instances for
-interactions with politicians and the general public. However, it may be
-challenging to use TCQSM metrics in a press release or for public
-advocacy given the level of detail each addresses.
+The TCQSM specifies Levels of Service (LOS) between A and F across a
+range of factors including service span, frequency, speed, and the
+proportion of population serviced. Previous research by
+\citet{Wong:2013aa} overcame some challenges of using the TCQSM, by
+using Python, PostgreSQL and R software and GTFS feeds as input to
+automate the calculation of daily average headways, route length and
+stop numbers. This indicators, however, are route based and so do not
+include any consideration of geographic or population coverage. Further
+metrics addressing these topics and much detail about their calculation
+and meaning are included in the TCQSM, such as the Service Coverage Area
+(pp.~5-8 to 5-21). However, these appear highly detailed, may required
+bespoke GIS or other analysis, and it might be challenging to explain
+these measures (beyond the fact at A is good and F is bad) to
+non-technical decision-makers, stakeholders or others who might be
+involved. Transit Score provides a similarly easily understood rating
+scale, scoring locations out of 100 \citep{WalkScore:2023tg}. However,
+the algorithm is patented and effectively a black box, meaning that it
+is not possible to calculate scores independently to understand how the
+metric might change with cahnges to the transit system or surrounding
+environment.
 
-In contract, the Transit Score metric, provides a single and simple
-score out of 100, which might be relatively easy to use in public
-communications or advocacy. It is also already provided on the
-\citet{WalkScore:2023tg} website for locations with a published GTFS
-feed, eliminating the need for any calculations. However, the Transit
-Score is calculated by a patented algorithm, and so it may not be easy
-to understand or explain the connection between real-world conditions
-and the score, or what might need to be done to improve the score and
-service levels. Nor does it appear to be possible for Transit Scores to
-be generated for proposed changes to networks.
+The Supply Index developed by \citet{currie2007identifying} may provide
+a metric that is relatively easy to calculate, open (rather than a black
+box), and relatively simple for a non-technical audience to understand,
+engage with and use. This Index is based on calculating the number of
+transit arrivals at stops within an area of interest, with an adjustment
+made for the amount of the area of interest that is within a typical
+walk access distance of each stop. However, it does not appear to have
+been widely used, perhaps in part because it still required an analyst
+to obtain sources of timetable and geographic data. Since the
+publication of \citet{currie2007identifying} such data has become much
+easier to obtain with more than 10,000 agencies now providing timetable
+and network data using the General Transit Feed Specification (GTFS)
+format \citep{GTFS}. A gap, however, is that there is not yet a method
+for calculating the \citet{currie2007identifying} Supply Index directly
+from GTFS data.
 
-Previous research by \citet{Wong:2013aa} overcame some of the
-limitations of the TCQSM using Python, PostgreSQL and R software and
-GTFS feeds as input. Outputs included daily average headways, route
-length and stop numbers, and as the code is opensource this might be
-adaptable to further GTFS feeds and purposes. These three metrics may be
-particularly useful in communication about the amount of transit service
-to a broader audience, as they appear relatively simple to understand.
-However, they are route based, and so do not include any consideration
-of geographic or population coverage.
-
-\citet{currie2007identifying} developed a Supply Index, representing the
-amount of transit supplied for a Census Collection District (CCD) of
-interest. This takes into account service coverage through the inclusion
-of a buffer zone around each stop to account for typical walk access
-distances to stops. This index appears to have the advantage of being
-relatively easy to calculate, and easy to explain and understand.
-However, as yet this measure has not been calculated directly from GTFS
-data.
-
-This paper reports research undertaken to fill this gap by developing R
-code to calculate the Supply Index of \citet{currie2007identifying}
-directly from GTFS data. The code is developed using data from a single
-case: the GTFS for Victoria in Australia, which includes Greater
-Melbourne. Cross-case comparison to Toronto, Canada, and Washington DC,
-USA, is also undertaken to test the results and gain understanding of
-how the Supply Index might be useful for practitioners, researchers and
-advocates. The motivation for this research is to better understand how
-transit service levels and changes might benchmarked for non-technical
-audiences.
+This paper reports the development of R code to calculate the Supply
+Index of \citet{currie2007identifying} directly from GTFS data. The code
+is developed using data from a single case: the GTFS for Victoria in
+Australia, which includes Greater Melbourne. Cross-case comparison to
+Toronto, Canada, and Washington DC, USA, is also undertaken to test the
+results and gain understanding of how the Supply Index might be useful
+for practitioners, researchers and advocates. The motivation for this
+research is to better understand how GTFS data might be used to produce
+benchmarking metrics that can be calculated using open-source code, that
+can be used to access proposed network changes and which may be
+relatively easy for non-technical specialists to understand.
 
 \hypertarget{research-context}{%
 \section{Research context}\label{research-context}}
+
+Even a brief search shows that there is a very large number of metrics
+available for benchmarking transit services, for example: the Transit
+Cooperative Research Program (TCRP) Report 88 provides an extensive
+guidebook on developing a performance-measurement system
+\citep{Ryus:2003aa}; online databases are provided by the Florida
+Transit Information System (FTIS)
+\citep{Florida-Transit-Information-System:2018aa} and the International
+Association of Public Transport (UITP) \citep{UITP:2015aa} have online
+databases, while the Transport Strategy Centre of Imperial College
+London runs extensive annual benchmarking programmes across over 100
+transit provides around the world
+\citep{Imperial-College-London:2023aa}.
+
+The TCQSM and Transit Score may provide contrasting examples: with
+respect to the first challenge, TCQSM metrics may require large amounts
+of network, service, population and other data to be assembled before
+the indicators can be calculated; whereas Transit Scores are readily
+available on the \citet{WalkScore:2023tg} website for locations with a
+published GTFS feed (eliminating the need for any calculations). With
+respect to the second challenge, the meaning of the Transit Score
+appears easy to explain (the closer to 100, the better), but as the
+score is calculated by a patented algorithm (effectively a black-box) it
+may not be easy to understand or explain the connection between
+real-world conditions and the score, or what might need to be done to
+improve the score and service levels. Nor does it appear to be possible
+for Transit Scores to be generated for proposed changes to networks. The
+TCQSM, in
 
 \hypertarget{general-transit-feed-specification-gtfs}{%
 \subsection{General Transit Feed Specification
@@ -182,6 +200,30 @@ calculated for current services in Melbourne or other places.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
+
+\hypertarget{r-code}{%
+\subsection{R code}\label{r-code}}
+
+\hypertarget{case-studies}{%
+\subsection{Case studies}\label{case-studies}}
+
+\hypertarget{melbourne}{%
+\subsubsection{Melbourne}\label{melbourne}}
+
+Overall
+
+Wheelchair accessibility?
+
+The metro tunnel - adding services
+
+\hypertarget{toronto}{%
+\subsubsection{Toronto}\label{toronto}}
+
+\hypertarget{washington-dc}{%
+\subsubsection{Washington DC}\label{washington-dc}}
+
+\hypertarget{cross-case-comparison}{%
+\subsubsection{Cross-case comparison}\label{cross-case-comparison}}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
