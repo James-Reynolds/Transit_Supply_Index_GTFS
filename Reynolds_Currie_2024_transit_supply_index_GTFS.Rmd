@@ -1,5 +1,5 @@
 ---
-title: Benchmarking transit service levels by Local Government Areas using GTFS feeds
+title: Leveraging GTFS data to calculate an open-source Transit Supply Index
 runningheader: "Reynolds and Currie"
 author:
   - name: James Reynolds
@@ -14,8 +14,8 @@ author:
 abstract: |
   TBC.
   
-keywords: ["Transit", "Public transport", "GTFS", "Benchmarking", "Local government"]
-bibliography: [packages.bib,      benchmarkingLGAGTFS.bib]
+keywords: ["Transit", "Public transport", "GTFS", "Benchmarking"]
+bibliography: [packages.bib, References.bib]
 biblio-style: unsrtnat
 classoption:
   - numbered #  When numbered option is activated, lines are numbered.
@@ -44,8 +44,7 @@ library(ggstatsplot)
 library(gtsummary)
 library(moments)
 library(scales)
-library(tinytex)
-library(rticles)
+
 
 
 
@@ -63,10 +62,12 @@ The Supply Index developed by @currie2007identifying may provide a metric that i
 This paper reports the development of R code to calculate the Supply Index of @currie2007identifying directly from GTFS data. The code is developed using data from a single case: the GTFS for Victoria in Australia, which includes Greater Melbourne. Cross-case comparison to Toronto, Canada, and Washington DC, USA, is also undertaken to test the results and gain understanding of how the Supply Index might be useful for practitioners, researchers and advocates. The motivation for this research is to better understand how GTFS data might be used to produce benchmarking metrics that can be calculated using open-source code, that can be used to access proposed network changes and which may be relatively easy for non-technical specialists to understand. 
 
 # Research context
-Even a brief search shows that there is a very large number of metrics available for benchmarking transit services, for example: the Transit Cooperative Research Program (TCRP) Report 88 provides an extensive guidebook on developing a performance-measurement system [@Ryus:2003aa]; online databases are provided by the Florida Transit Information System (FTIS) [@Florida-Transit-Information-System:2018aa] and the International Association of Public Transport (UITP) [@UITP:2015aa] have online databases, while the Transport Strategy Centre of Imperial College London runs extensive annual benchmarking programmes across over 100 transit provides around the world [@Imperial-College-London:2023aa].
+Even a brief search shows that there is a very large number of metrics available for benchmarking transit services, for example: the Transit Cooperative Research Program (TCRP) Report 88 provides an extensive guidebook on developing a performance-measurement system [@Ryus:2003aa]; online databases are provided by the Florida Transit Information System (FTIS) [@Florida-Transit-Information-System:2018aa] and the International Association of Public Transport (UITP) [@UITP:2015aa] have online databases, while the Transport Strategy Centre of Imperial College London runs extensive annual benchmarking programmes across over 100 transit provides around the world [@Imperial-College-London:2023aa]. The Fielding Triangle [@FieldingGordonJ1987Mpts] provides a framework for understanding how such metrics combine service inputs, service outputs and service consumption to describe cost efficiency, cost effectiveness or service effectiveness measures. At a larger scale, @Litman:2003ab and @Litman:2016aa discuss some of the traffic, mobility, accessibility, social equity, strategic planning and other rational decision-making frames that might underlie such transit metrics, while @Reynolds:2017ah extends this into models of how institutionalism, incrementalism and other public policy models might apply to decision-making processes. Further examples are provided by @GuzmanLuisA.2017Aeit, who develop a measure of accessibility in the context of policy development and social equity for Latin American Bus Rapid Transit (BRT) based networks,  and the street space allocation metrics based around 10 ethical principles from @Creutzig2020streetspaceallocation. 
+
+However, many of these metrics are difficult to calculate, complex to explain or understand, and likely not well suited to communication with those who are not transit planners or engineers, or otherwise technical specialists. However, where pre-calculated metrics are immediately available it may not be possible for  generate metrics for proposed system changes or know exactly how scores are calculated. The TCQSM and Transit Score may provide contrasting examples:  with respect to the first challenge, TCQSM metrics may require large amounts of network, service, population and other data to be assembled before the  indicators can be calculated; whereas Transit Scores are readily available on the @WalkScore:2023tg website for locations with a published GTFS feed  (eliminating the need for any calculations). With respect to the second challenge,  the meaning of the Transit Score appears easy to explain (the closer to 100, the better), but as the score is calculated by a patented algorithm (effectively a black-box) it may not be easy to understand or explain the connection between real-world conditions and the score, or what might need to be done to improve the score and service levels. Nor does it appear to be possible for Transit Scores to be generated for proposed changes to networks. The TCQSM, in contrast is open-source, in that @TCQSM:2013 provide a manual describing all the metrics and how to calculate them.  However, the calculations themselves appear to be complex, which may be a barrier to use by practitioners, researchers, advocates or others who are not transit scheduling specialists. While @Wong:2013aa 
 
 
-The TCQSM and Transit Score may provide contrasting examples:   with respect to the first challenge, TCQSM metrics may require large amounts of network, service, population and other data to be assembled before the  indicators can be calculated; whereas Transit Scores are readily available on the @WalkScore:2023tg website for locations with a published GTFS feed  (eliminating the need for any calculations). With respect to the second challenge,  the meaning of the Transit Score appears easy to explain (the closer to 100, the better), but as the score is calculated by a patented algorithm (effectively a black-box) it may not be easy to understand or explain the connection between real-world conditions and the score, or what might need to be done to improve the score and service levels. Nor does it appear to be possible for Transit Scores to be generated for proposed changes to networks. The TCQSM, in 
+https://github.com/transitland/transitland-processing-animation
 
 
 ## General Transit Feed Specification (GTFS)
