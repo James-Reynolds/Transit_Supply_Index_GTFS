@@ -186,6 +186,7 @@ open-source, in that \citet{TCQSM:2013} provide a manual describing all
 the metrics and how to calculate them. However, the calculations
 themselves appear to be complex, which may be a barrier to use by
 practitioners, researchers, advocates or others who are not transit
+<<<<<<< HEAD
 scheduling specialists. While \citet{Wong:2013aa} provides open-source
 code (\url{https://github.com/jcwong86/GTFS_Explore_Tool}) this is 11
 years old and does not appear to be currently maintained. Future
@@ -219,6 +220,35 @@ is that it is a relatively simple number to calculate, understand and
 explain. It is also addative, in that SI\textsubscript{area} scores can
 be aggregated to calculate an overall score for a region encompassing
 multiple areas of interest.
+=======
+scheduling specialists. While \citet{Wong:2013aa}
+
+\url{https://github.com/transitland/transitland-processing-animation}
+
+\hypertarget{general-transit-feed-specification-gtfs}{%
+\subsection{General Transit Feed Specification
+(GTFS)}\label{general-transit-feed-specification-gtfs}}
+
+\hypertarget{social-needs-and-the-suppy-index}{%
+\subsection{Social needs and the Suppy
+Index}\label{social-needs-and-the-suppy-index}}
+
+\footnote{\includegraphics{Supply_index.png}}
+
+he SI\textsubscript{CCD} can then be compared between different CCDs to
+give an indication of the relative supply of transit, adjusted for
+accessibility.
+
+An advantage of the Supply Index is that it is a relatively simple
+number to calculate, understand and explain. It is based on the number
+of bus/tram/train arrivals per week at stops within the CCD, which is
+multiplied by a factor allowing for the amount of the CCD that is within
+walking distance of each stop \footnote{This is the
+  Area\textsubscript{Bn} divided by Area\textsubscript{CCD} part of the
+  calculation. Thresholds for access of 400m for bus and tram stops, and
+  800m for railway stations are used in the calculation of the
+  Area\textsubscript{Bn} variable.}.
+>>>>>>> main
 
 \citet{currie2007identifying} calculated the SI for various CCDs in
 Melbourne using a timetable database provided by the Victorian Public
@@ -304,7 +334,7 @@ Gregory Macfarlane created the \texttt{rticles} template in 2021.
 
 \newpage
 \renewcommand\refname{References}
-\bibliography{packages.bib,References.bib}
+\bibliography{References.bib}
 
 
 \end{document}

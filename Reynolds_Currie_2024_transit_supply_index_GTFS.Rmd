@@ -8,6 +8,7 @@ author:
     email: james.reynolds@monash.edu
     affiliation: Public Transport Research Group, Institute of Transport Studies, Department of Civil Engineering, Monash University, Victoria, Australia
   - name: Graham Currie
+  
     position: Professor
     email: graham.currie@monash.edu
     affiliation: Public Transport Research Group, Institute of Transport Studies, Department of Civil Engineering, Monash University, Victoria, Australia
