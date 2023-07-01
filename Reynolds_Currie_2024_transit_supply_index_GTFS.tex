@@ -146,57 +146,107 @@ Association of Public Transport (UITP) \citep{UITP:2015aa} have online
 databases, while the Transport Strategy Centre of Imperial College
 London runs extensive annual benchmarking programmes across over 100
 transit provides around the world
-\citep{Imperial-College-London:2023aa}.
+\citep{Imperial-College-London:2023aa}. The Fielding Triangle
+\citep{FieldingGordonJ1987Mpts} provides a framework for understanding
+how such metrics combine service inputs, service outputs and service
+consumption to describe cost efficiency, cost effectiveness or service
+effectiveness measures. At a larger scale, \citet{Litman:2003ab} and
+\citet{Litman:2016aa} discuss some of the traffic, mobility,
+accessibility, social equity, strategic planning and other rational
+decision-making frames that might underlie such transit metrics, while
+\citet{Reynolds:2017ah} extends this into models of how
+institutionalism, incrementalism and other public policy models might
+apply to decision-making processes. Further examples are provided by
+\citet{GuzmanLuisA.2017Aeit}, who develop a measure of accessibility in
+the context of policy development and social equity for Latin American
+Bus Rapid Transit (BRT) based networks, and the street space allocation
+metrics based around 10 ethical principles from
+\citet{Creutzig2020streetspaceallocation}.
 
-The TCQSM and Transit Score may provide contrasting examples: with
-respect to the first challenge, TCQSM metrics may require large amounts
-of network, service, population and other data to be assembled before
-the indicators can be calculated; whereas Transit Scores are readily
-available on the \citet{WalkScore:2023tg} website for locations with a
-published GTFS feed (eliminating the need for any calculations). With
-respect to the second challenge, the meaning of the Transit Score
-appears easy to explain (the closer to 100, the better), but as the
-score is calculated by a patented algorithm (effectively a black-box) it
-may not be easy to understand or explain the connection between
-real-world conditions and the score, or what might need to be done to
-improve the score and service levels. Nor does it appear to be possible
-for Transit Scores to be generated for proposed changes to networks. The
-TCQSM, in
+However, many of these metrics are difficult to calculate, complex to
+explain or understand, and likely not well suited to communication with
+those who are not transit planners or engineers, or otherwise technical
+specialists. However, where pre-calculated metrics are immediately
+available it may not be possible for generate metrics for proposed
+system changes or know exactly how scores are calculated. The TCQSM and
+Transit Score may provide contrasting examples: with respect to the
+first challenge, TCQSM metrics may require large amounts of network,
+service, population and other data to be assembled before the indicators
+can be calculated; whereas Transit Scores are readily available on the
+\citet{WalkScore:2023tg} website for locations with a published GTFS
+feed (eliminating the need for any calculations). With respect to the
+second challenge, the meaning of the Transit Score appears easy to
+explain (the closer to 100, the better), but as the score is calculated
+by a patented algorithm (effectively a black-box) it may not be easy to
+understand or explain the connection between real-world conditions and
+the score, or what might need to be done to improve the score and
+service levels. Nor does it appear to be possible for Transit Scores to
+be generated for proposed changes to networks. The TCQSM, in contrast is
+open-source, in that \citet{TCQSM:2013} provide a manual describing all
+the metrics and how to calculate them. However, the calculations
+themselves appear to be complex, which may be a barrier to use by
+practitioners, researchers, advocates or others who are not transit
+scheduling specialists. While \citet{Wong:2013aa} provides open-source
+code (\url{https://github.com/jcwong86/GTFS_Explore_Tool}) this is 11
+years old and does not appear to be currently maintained. Future
+research may involve reviewing this code and using it to analyse modern
+GTFS feeds. However, in this paper the aim is more modest, in that the
+objective is to develop code to calculate the simpler Suppy Index metric
+from \citet{currie2007identifying}.
 
-\hypertarget{general-transit-feed-specification-gtfs}{%
-\subsection{General Transit Feed Specification
-(GTFS)}\label{general-transit-feed-specification-gtfs}}
+\hypertarget{the-suppy-index}{%
+\subsection{The Suppy Index}\label{the-suppy-index}}
 
-\hypertarget{social-needs-and-the-suppy-index}{%
-\subsection{Social needs and the Suppy
-Index}\label{social-needs-and-the-suppy-index}}
+The Supply Index is shown in Equation \ref{eq:supply_index}, where
+\(SI_{Area}\) is the Supply Index for the area of interest,
+\(Area_{Bn}\) is the buffer area for each stop within the area of
+interest (in \citet{currie2007identifying} taken as 400 metres for bus
+and tram stops, and 800 metres for railway stations), \(Area_area\) is
+the area of the area of interest, and \(SL_{Bn}\) is the number of
+transit arrivals for each stop for a given time period (in
+\citet{currie2007identifying} taken as one week).
 
-\footnote{\includegraphics{Supply_index.png}}
+\begin{equation}
+\label{eq:supply_index}
+  SI_{area} = \sum{\frac{Area{_Bn}}{Area_{area}}*SL_{Bn}}
+\end{equation}
 
-he SI\textsubscript{CCD} can then be compared between different CCDs to
-give an indication of the relative supply of transit, adjusted for
-accessibility.
-
-An advantage of the Supply Index is that it is a relatively simple
-number to calculate, understand and explain. It is based on the number
-of bus/tram/train arrivals per week at stops within the CCD, which is
-multiplied by a factor allowing for the amount of the CCD that is within
-walking distance of each stop \footnote{This is the
-  Area\textsubscript{Bn} divided by Area\textsubscript{CCD} part of the
-  calculation. Thresholds for access of 400m for bus and tram stops, and
-  800m for railway stations are used in the calculation of the
-  Area\textsubscript{Bn} variable.}.
+The SI\textsubscript{area} metric describes the number of transit
+arrivals at stops within an area of interest, multiplied by a factor
+accounting for the proportion of the area of interest that is within
+typical walking distance of each stop. An advantage of the Supply Index
+is that it is a relatively simple number to calculate, understand and
+explain. It is also addative, in that SI\textsubscript{area} scores can
+be aggregated to calculate an overall score for a region encompassing
+multiple areas of interest.
 
 \citet{currie2007identifying} calculated the SI for various CCDs in
 Melbourne using a timetable database provided by the Victorian Public
 Transport Authority (PTA). This predated the widespread availability of
 GTFS data, which provides a standardised format for timetable data that
-is produced by many transit systems. A question, therefore, is how to
-calculate the SI using GTFS data so that SI\textsubscript{CCD}s can be
-calculated for current services in Melbourne or other places.
+is produced by many transit systems. GTFS is an open, text-based format
+that was developed originally to allow transit information to be
+included in the Google Maps navigation platform \citep{GTFS}. A
+question, therefore, is how to calculate the SI using GTFS data so that
+SI\textsubscript{areas} can be calculated and compared for any area of
+interest where transit service information is available in the GFTS
+format.
 
 \hypertarget{methodology}{%
 \section{Methodology}\label{methodology}}
+
+Various analysis tools are available that make us of GTFS data,
+including the tidytransit package \citep{tidytransit2023} for the R
+statistical programming language \citep{R-base}.
+\citet{tidytransit_departure_timetable} provides code to calculate a
+departure timetable from a GTFS feed, and this was adapted to calculate
+arrivals at a stop and the SL\textsubscript{Bn} term. The code is
+available at
+\url{https://github.com/James-Reynolds/Transit_Supply_Index_GTFS} (and
+included in the Rmarkdown file used to typeset this paper).
+
+The gtfstools R package GTFS feeds are split by mode to facilitate the
+buffer zone calculation
 
 \hypertarget{results}{%
 \section{Results}\label{results}}

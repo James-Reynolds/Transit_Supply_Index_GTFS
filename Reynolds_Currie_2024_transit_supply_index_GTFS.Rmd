@@ -44,7 +44,7 @@ library(ggstatsplot)
 library(gtsummary)
 library(moments)
 library(scales)
-
+library(gtfstools)
 
 
 
@@ -64,33 +64,185 @@ This paper reports the development of R code to calculate the Supply Index of @c
 # Research context
 Even a brief search shows that there is a very large number of metrics available for benchmarking transit services, for example: the Transit Cooperative Research Program (TCRP) Report 88 provides an extensive guidebook on developing a performance-measurement system [@Ryus:2003aa]; online databases are provided by the Florida Transit Information System (FTIS) [@Florida-Transit-Information-System:2018aa] and the International Association of Public Transport (UITP) [@UITP:2015aa] have online databases, while the Transport Strategy Centre of Imperial College London runs extensive annual benchmarking programmes across over 100 transit provides around the world [@Imperial-College-London:2023aa]. The Fielding Triangle [@FieldingGordonJ1987Mpts] provides a framework for understanding how such metrics combine service inputs, service outputs and service consumption to describe cost efficiency, cost effectiveness or service effectiveness measures. At a larger scale, @Litman:2003ab and @Litman:2016aa discuss some of the traffic, mobility, accessibility, social equity, strategic planning and other rational decision-making frames that might underlie such transit metrics, while @Reynolds:2017ah extends this into models of how institutionalism, incrementalism and other public policy models might apply to decision-making processes. Further examples are provided by @GuzmanLuisA.2017Aeit, who develop a measure of accessibility in the context of policy development and social equity for Latin American Bus Rapid Transit (BRT) based networks,  and the street space allocation metrics based around 10 ethical principles from @Creutzig2020streetspaceallocation. 
 
-However, many of these metrics are difficult to calculate, complex to explain or understand, and likely not well suited to communication with those who are not transit planners or engineers, or otherwise technical specialists. However, where pre-calculated metrics are immediately available it may not be possible for  generate metrics for proposed system changes or know exactly how scores are calculated. The TCQSM and Transit Score may provide contrasting examples:  with respect to the first challenge, TCQSM metrics may require large amounts of network, service, population and other data to be assembled before the  indicators can be calculated; whereas Transit Scores are readily available on the @WalkScore:2023tg website for locations with a published GTFS feed  (eliminating the need for any calculations). With respect to the second challenge,  the meaning of the Transit Score appears easy to explain (the closer to 100, the better), but as the score is calculated by a patented algorithm (effectively a black-box) it may not be easy to understand or explain the connection between real-world conditions and the score, or what might need to be done to improve the score and service levels. Nor does it appear to be possible for Transit Scores to be generated for proposed changes to networks. The TCQSM, in contrast is open-source, in that @TCQSM:2013 provide a manual describing all the metrics and how to calculate them.  However, the calculations themselves appear to be complex, which may be a barrier to use by practitioners, researchers, advocates or others who are not transit scheduling specialists. While @Wong:2013aa 
+However, many of these metrics are difficult to calculate, complex to explain or understand, and likely not well suited to communication with those who are not transit planners or engineers, or otherwise technical specialists. However, where pre-calculated metrics are immediately available it may not be possible for  generate metrics for proposed system changes or know exactly how scores are calculated. The TCQSM and Transit Score may provide contrasting examples:  with respect to the first challenge, TCQSM metrics may require large amounts of network, service, population and other data to be assembled before the  indicators can be calculated; whereas Transit Scores are readily available on the @WalkScore:2023tg website for locations with a published GTFS feed  (eliminating the need for any calculations). With respect to the second challenge,  the meaning of the Transit Score appears easy to explain (the closer to 100, the better), but as the score is calculated by a patented algorithm (effectively a black-box) it may not be easy to understand or explain the connection between real-world conditions and the score, or what might need to be done to improve the score and service levels. Nor does it appear to be possible for Transit Scores to be generated for proposed changes to networks. The TCQSM, in contrast is open-source, in that @TCQSM:2013 provide a manual describing all the metrics and how to calculate them.  However, the calculations themselves appear to be complex, which may be a barrier to use by practitioners, researchers, advocates or others who are not transit scheduling specialists. While @Wong:2013aa provides open-source code (https://github.com/jcwong86/GTFS_Explore_Tool) this is 11 years old and does not appear to be currently maintained. Future research may involve reviewing this code and using it to analyse modern GTFS feeds. However, in this paper the aim is more modest, in that the objective is to develop code to calculate the simpler Suppy Index metric from @currie2007identifying.  
 
 
-https://github.com/transitland/transitland-processing-animation
+## The Suppy Index
+The Supply Index is shown in Equation \ref{eq:supply_index}, where $SI_{Area}$ is the Supply Index for the area of interest, $Area_{Bn}$ is the buffer area for each stop within the area of interest (in  @currie2007identifying taken as 400 metres for bus and tram stops, and 800 metres for railway stations), $Area_area$ is the area of the area of interest, and $SL_{Bn}$ is the number of transit arrivals for each stop for a given time period (in @currie2007identifying taken as one week).  
 
 
-## General Transit Feed Specification (GTFS)
-
-## Social needs and the Suppy Index
-
-^[![Supply Index formula](Supply_index.png)]
-
+\begin{equation}
+\label{eq:supply_index}
+  SI_{area} = \sum{\frac{Area{_Bn}}{Area_{area}}*SL_{Bn}}
+\end{equation}
 
 
+The SI~area~ metric describes the number of transit arrivals at stops within an area of interest, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop.  An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It is also addative, in that SI~area~ scores can be aggregated to calculate an overall score for a region encompassing multiple areas of interest.  
 
-he SI~CCD~ can then be compared between different CCDs to give an indication of the relative supply of transit, adjusted for accessibility. 
-
-An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It is based on the number of bus/tram/train arrivals per week at stops within the CCD, which is multiplied by a factor allowing for the amount of the CCD that is within walking distance of each stop ^[This is the Area~Bn~ divided by Area~CCD~ part of the calculation. Thresholds for access of 400m for bus and tram stops, and 800m for railway stations are used in the calculation of the Area~Bn~ variable.]. 
-
-@currie2007identifying calculated the SI for various CCDs in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data, which provides a standardised format for timetable data that is produced by many transit systems. A question, therefore, is how to calculate the SI using GTFS data so that SI~CCD~s can be calculated for current services in Melbourne or other places. 
-
-
-
-
+@currie2007identifying calculated the SI for various CCDs in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data, which provides a standardised format for timetable data that is produced by many transit systems. GTFS is an open, text-based format that was developed originally to allow transit information to be included in the Google Maps navigation platform [@GTFS]. A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information is available in the GFTS format. 
 
 # Methodology
 
+Various analysis tools are available that make us of GTFS data, including the tidytransit package [@tidytransit2023] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term. The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS (and included in the Rmarkdown file used to typeset this paper). 
+
+
+```{r arrival_timetable_as_a_function, echo=FALSE, cache=TRUE}
+
+#This was code was developed for another project (https://github.com/James-Reynolds/DEAKIN-housing-and-transit-accessibility),  based on the tidytransit vignette on producing a departure timetable (@tidytransit_departure_timetable.  There is back history availlble at at that github repository  for further details, but basically I wrote a departure_timetable_function and fixed up a bit where it wasn't accounting for through-running services.  This was then directly adjusted to create an arrival_timetable function (below) --- However, I did not adjust all the variable names in the function to reflect that it is about arrivals, not departures.  
+
+arrival_timetable_function <- function(gtfs, stop_to_show, date_to_show){
+  # get the id of the first stop in the trip's stop sequence
+  first_stop_id <- gtfs$stop_times %>% 
+    group_by(trip_id) %>% 
+    summarise(stop_id = stop_id[which.min(stop_sequence)])
+
+  # join with the stops table to get the stop_name
+  first_stop_names <- left_join(first_stop_id, gtfs$stops, by="stop_id")
+
+  # rename the first stop_name as trip_origin
+  trip_origins <- first_stop_names %>% dplyr::select(trip_id, trip_origin = stop_name)
+
+  # join the trip origins back onto the trips
+  gtfs$trips <- left_join(gtfs$trips, trip_origins, by = "trip_id")
+
+  
+  #### get the id of the last stop in the trip's stop sequence
+  last_stop_id <- gtfs$stop_times %>% 
+    group_by(trip_id) %>% 
+    summarise(stop_id = stop_id[which.max(stop_sequence)])
+
+  # join with the stops table to get the stop_name
+  last_stop_names <- left_join(last_stop_id, gtfs$stops, by="stop_id")
+
+  # rename the last stop_name as trip_destination
+  trip_destinations <- last_stop_names %>% dplyr::select(trip_id, trip_destination = stop_name)
+
+  # join the trip destinations back onto the trips
+  gtfs$trips <- left_join(gtfs$trips, trip_destinations, by = "trip_id")
+
+  
+  #gtfs$trips %>%
+  #  dplyr::select(route_id, trip_origin) %>%
+  #  head()
+
+  if(!exists("trip_headsign", where = gtfs$trips)) {
+    # get the last id of the trip's stop sequence
+    trip_headsigns <- gtfs$stop_times %>% 
+      group_by(trip_id) %>% 
+      summarise(stop_id = stop_id[which.max(stop_sequence)]) %>% 
+      left_join(gtfs$stops, by="stop_id") %>% dplyr::select(trip_id, trip_headsign.computed = stop_name)
+
+  #create a new field with 
+  trip_destination <- gtfs$stop_times %>% 
+      group_by(trip_id) %>% 
+      summarise(stop_id = stop_id[which.max(stop_sequence)]) %>% 
+      left_join(gtfs$stops, by="stop_id") %>% dplyr::select(trip_id, trip_headsign.computed = stop_name)
+
+    
+    
+    # assign the headsign to the gtfs object 
+    gtfs$trips <- left_join(gtfs$trips, trip_headsigns, by = "trip_id")
+  }
+
+  stop_ids <- gtfs$stops %>% 
+    filter(stop_name == stop_to_show) %>% 
+    dplyr::select(stop_id)
+
+  departures <- stop_ids %>% 
+    inner_join(gtfs$stop_times %>% 
+                 dplyr::select(trip_id, arrival_time, 
+                        departure_time, stop_id), 
+               by = "stop_id")
+  
+  departures <- departures %>% 
+    left_join(gtfs$trips %>% 
+                dplyr::select(trip_id, route_id, 
+                       service_id, trip_headsign, 
+                       trip_origin, 
+                       trip_destination), 
+              by = "trip_id") 
+  
+  departures <- departures %>% 
+    left_join(gtfs$routes %>% 
+                dplyr::select(route_id, 
+                       route_short_name), 
+              by = "route_id")
+
+  #remove trips where first stop is equal to the stop_to_show, as these stops originate at this stop and so do not depart
+  departures <- departures %>% 
+      filter(trip_origin != stop_to_show)
+  
+  
+  #departures %>% 
+  #  dplyr::select(arrival_time,
+  #         departure_time,
+  #         trip_headsign,trip_origin,
+  #         route_id) %>%
+  #  head() %>%
+  #  knitr::kable()
+
+  #head(gtfs$.$dates_services)
+
+
+  services_on_date_to_show <- gtfs$.$dates_services %>% 
+    filter(date == date_to_show) %>% dplyr::select(service_id)
+
+  departures_on_date <- departures %>% 
+    inner_join(services_on_date_to_show, by = "service_id")
+
+#  departures_180823 %>%
+ #   arrange(departure_time, stop_id, route_short_name) %>% 
+  #  dplyr::select(departure_time, stop_id, route_short_name, trip_headsign) %>% 
+   # filter(departure_time >= hms::hms(hours = 7)) %>% 
+   # filter(departure_time < hms::hms(hours = 7, minutes = 10)) %>% 
+  #  knitr::kable()
+
+  route_colors <- gtfs$routes %>% dplyr::select(route_id, route_short_name, route_color)
+  route_colors$route_color[which(route_colors$route_color == "")] <- "454545"
+  route_colors <- setNames(paste0("#", route_colors$route_color), route_colors$route_short_name)
+
+  #No need for list of outputs anymore, as the graphs are no longer needed
+  #output <- list(
+   #   ggplot(departures_180823) + theme_bw() +
+    #  geom_point(aes(y=trip_origin, x=arrival_time, color = route_short_name), size = 0.2) +
+     # scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time)), 3600), 
+      #             labels = scales::time_format("%H:%M")) +
+      #theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      #theme(legend.position = "bottom") +
+      #scale_color_manual(values = route_colors) 
+  #    labs(title = paste("Departures from", stop_to_show, "on", date_to_show))
+  #add a return value to provide the number of services shown in the graph as an output
+       #   , nrow(departures_180823)
+    #  )
+  #return list with graph and the number of services. 
+  return(departures_on_date)
+  
+}
+
+arrival_seven_day_function <- function(gtfs, stop_to_show, first_date){
+  day1 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=first_date)
+  day2 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=(as.Date(first_date) + 1))
+  day3 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=(as.Date(first_date) + 2))
+  day4 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=(as.Date(first_date) + 3))
+  day5 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=(as.Date(first_date) + 4))
+  day6 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=(as.Date(first_date) + 5))
+  day7 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=(as.Date(first_date) + 6))
+  
+  week <- list(day1, day2, day3, day4, day5, day6, day7)
+  
+  return(week)
+
+  }
+  
+```
+
+The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation.  Default buffer zones of 400 metres (bus and Light Rail Transit (LRT)) and 800 metres (rail, monorail, ) and the extended GTFS mode definitions based on @filter_GTFS_by_mode were used (and can be edited in the buffer_zones.csv file)
+
+```{r split_mode_and_buffer_zone, echo=FALSE}
+
+buffer_zone_definitions <- read.csv ("buffer_zones.csv", quote = "")
+
+```
 
 # Results
 

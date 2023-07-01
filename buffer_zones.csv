@@ -1,0 +1,93 @@
+Description,,,,,
+Tram, Streetcar, Light rail. Any light rail or street level system within a metropolitan area.,,,
+Subway, Metro. Any underground rail system within a metropolitan area.,,,,
+Rail. Used for intercity or long-distance travel.,,,,,
+Bus. Used for short- and long-distance bus routes.,,,,,
+Ferry. Used for short- and long-distance boat service.,,,,,
+Cable tram. Used for street-level rail cars where the cable runs beneath the vehicle, e.g., cable car in San Francisco.,,,
+Aerial lift, suspended cable car (e.g., gondola lift, aerial tramway). Cable transport where cabins, cars, gondolas or open chairs are suspended by means of one or more cables.
+Funicular. Any rail system designed for steep inclines.,,,,,
+Trolleybus. Electric buses that draw power from overhead wires using poles.,,,,,
+Monorail. Railway in which the track consists of a single rail or a beam.,,,,,
+Railway Service - Not applicable (N/A),,,,,
+"High Speed Rail Service - TGV (FR), ICE (DE), Eurostar (GB)
+102,800,Long Distance Trains - InterCity/EuroCity
+103,800,Inter Regional Rail Service - InterRegio (DE)", Cross County Rail (GB),,,,
+Car Transport Rail Service,,,,,
+Sleeper Rail Service - GNER Sleeper (GB),,,,,
+"Regional Rail Service - TER (FR), Regionalzug (DE)
+107,800,Tourist Railway Service - Romney", Hythe & Dymchurch (GB),,,,
+"Rail Shuttle (Within Complex) - Gatwick Shuttle (GB), Sky Line (DE)
+109,800,Suburban Railway - S-Bahn (DE)", RER (FR), S,,,
+Replacement Rail Service,,,,,
+Special Rail Service,,,,,
+Lorry Transport Rail Service,,,,,
+All Rail Services,,,,,
+Cross-Country Rail Service,,,,,
+Vehicle Transport Rail Service,,,,,
+" Rack and Pinion Railway - Rochers de Naye (CH), Dolderbahn (CH)
+117,800,Additional Rail Service
+200,400,Coach Service
+201,400, International Coach Service - EuroLine", Touring,,,,
+National Coach Service - National Express (GB),,,,,
+"Shuttle Coach Service - Roissy Bus (FR), Reading-Heathrow (GB)
+204,400,Regional Coach Service
+205,400,Special Coach Service
+206,400,Sightseeing Coach Service
+207,400,Tourist Coach Service
+208,400,Commuter Coach Service
+209,400,All Coach Services
+400,800,Urban Railway Service
+401,800,Metro Service - Métro de Paris
+402,800,Underground Service - London Underground", U-Bahn,,,,
+Urban Railway Service,,,,,
+All Urban Railway Services,,,,,
+Monorail,,,,,
+Bus Service,,,,,
+Regional Bus Service - Eastbourne-Maidstone (GB),,,,,
+Express Bus Service - X19 Wokingham-Heathrow (GB),,,,,
+Stopping Bus Service - 38 London: Clapton Pond-Victoria (GB),,,,,
+Local Bus Service,,,,,
+Night Bus Service - N prefixed buses in London (GB),,,,,
+Post Bus Service - Maidstone P4 (GB),,,,,
+Special Needs Bus,,,,,
+Mobility Bus Service,,,,,
+Mobility Bus for Registered Disabled,,,,,
+Sightseeing Bus,,,,,
+Shuttle Bus - 747 Heathrow-Gatwick Airport Service (GB),,,,,
+School Bus,,,,,
+School and Public Service Bus,,,,,
+Rail Replacement Bus Service,,,,,
+Demand and Response Bus Service,,,,,
+All Bus Services,,,,,
+Trolleybus Service,,,,,
+Tram Service,,,,,
+City Tram Service,,,,,
+"Local Tram Service - Munich (DE), Brussels (BE), Croydon (GB)
+903,400,Regional Tram Service
+904,400,Sightseeing Tram Service - Blackpool Seafront (GB)
+905,400,Shuttle Tram Service
+906,400,All Tram Services
+1000,400,Water Transport Service",,,,,
+Air Service,,,,,
+Ferry Service,,,,,
+"Aerial Lift Service - Telefèric de Montjuïc (ES), Saleve (CH), Roosevelt Island Tramway (US)
+1301,400,Telecabin Service
+1302,400,Cable Car Service
+1303,400,Elevator Service
+1304,400,Chair Lift Service
+1305,400,Drag Lift Service
+1306,400,Small Telecabin Service
+1307,400,All Telecabin Services
+1400,400,Funicular Service - Rigiblick (Zürich", CH),,,,
+Taxi Service,,,,,
+"Communal Taxi Service - Marshrutka (RU), dolmuş (TR)
+1502,400,Water Taxi Service
+1503,800,Rail Taxi Service
+1504,400,Bike Taxi Service
+1505,400,Licensed Taxi Service
+1506,400,Private Hire Service Vehicle
+1507,400,All Taxi Services
+1700,400,Miscellaneous Service
+1702,400,Horse-drawn Carriage
+",,,,,
