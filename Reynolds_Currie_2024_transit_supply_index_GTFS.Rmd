@@ -237,11 +237,12 @@ arrival_seven_day_function <- function(gtfs, stop_to_show, first_date){
   
 ```
 
-The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation.  Default buffer zones of 400 metres (bus and Light Rail Transit (LRT)) and 800 metres (rail, monorail, ) and the extended GTFS mode definitions based on @filter_GTFS_by_mode were used (and can be edited in the buffer_zones.csv file)
+
+The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation.  The extended GTFS mode definitions based on @filter_GTFS_by_mode were used with default buffer zones of 400 metres (bus and Light Rail Transit (LRT)) and 800 metres (rail, monorail, air etc.)
 
 ```{r split_mode_and_buffer_zone, echo=FALSE}
 
-buffer_zone_definitions <- read.csv ("buffer_zones.csv", quote = "")
+#buffer_zone_definitions <- read.csv ("buffer_zones.csv", quote = "")
 
 ```
 
