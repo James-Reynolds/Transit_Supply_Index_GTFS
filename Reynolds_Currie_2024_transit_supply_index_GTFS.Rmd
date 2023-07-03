@@ -46,6 +46,7 @@ library(gtsummary)
 library(moments)
 library(scales)
 library(gtfstools)
+library(lubridate)
 
 
 
@@ -69,18 +70,22 @@ However, many of these metrics are difficult to calculate, complex to explain or
 
 
 ## The Suppy Index
-The Supply Index is shown in Equation \ref{eq:supply_index}, where $SI_{Area}$ is the Supply Index for the area of interest, $Area_{Bn}$ is the buffer area for each stop within the area of interest (in  @currie2007identifying taken as 400 metres for bus and tram stops, and 800 metres for railway stations), $Area_area$ is the area of the area of interest, and $SL_{Bn}$ is the number of transit arrivals for each stop for a given time period (in @currie2007identifying taken as one week).  
-
-
+The Supply Index is shown in Equation \ref{eq:supply_index}. Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service. 
 \begin{equation}
 \label{eq:supply_index}
-  SI_{area} = \sum{\frac{Area{_Bn}}{Area_{area}}*SL_{Bn}}
+  SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
 \end{equation}
 
+ 
 
-The SI~area~ metric describes the number of transit arrivals at stops within an area of interest, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop.  An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It is also addative, in that SI~area~ scores can be aggregated to calculate an overall score for a region encompassing multiple areas of interest.  
 
-@currie2007identifying calculated the SI for various CCDs in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data, which provides a standardised format for timetable data that is produced by many transit systems. GTFS is an open, text-based format that was developed originally to allow transit information to be included in the Google Maps navigation platform [@GTFS]. A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information is available in the GFTS format. 
+$SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In  @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.  
+
+
+
+An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. The Supply Index, however, does not incorporate further aspects, such as service span,  off-peak share of service or service speed. However, including such metrics may increase the complexity of calculating and describing the index to non-transit specialists. Such simplicity is helped by the way that the Index is additive, in that SI~area, time~ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest. 
+
+@currie2007identifying calculated the SI~area, time~  for various CCDs in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data, which provides a standardised format for timetable data that is produced by many transit systems. GTFS is an open, text-based format that was developed originally to allow transit information to be included in the Google Maps navigation platform [@GTFS]. A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information is available in the GFTS format. 
 
 # Methodology
 
@@ -238,11 +243,180 @@ arrival_seven_day_function <- function(gtfs, stop_to_show, first_date){
 ```
 
 
-The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation.  The extended GTFS mode definitions based on @filter_GTFS_by_mode were used with default buffer zones of 400 metres (bus and Light Rail Transit (LRT)) and 800 metres (rail, monorail, air etc.)
+The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation.  Buffer zones of 400 metres for bus and Light Rail Transit (LRT) services and 800 metres for heavy rail, as per @currie2007identifying. There is an extended mode definition that includes modes beyond the 10 in the GTFS standard [@filter_GTFS_by_mode], but these are not dealt with by the gtfstools package. Further research may seek to extend this such that other modes can be included, but for the purposes of this study the buffer zone was set at 400 metres for cable trams, aerial lifts such a gondalas and trolleybuses, and at 800 metres for ferries, funiculars and monorails.  
 
 ```{r split_mode_and_buffer_zone, echo=FALSE}
 
-#buffer_zone_definitions <- read.csv ("buffer_zones.csv", quote = "")
+buffer_zone_definitions <- as_tibble(read.csv ("buffer_zones.csv"))
+
+class(buffer_zone_definitions$code) <- "character"
+buffer_zone_definitions$mode <- noquote(buffer_zone_definitions$mode)
+buffer_zone_definitions$description_examples <- noquote(buffer_zone_definitions$description_examples)
+class(buffer_zone_definitions$mode) <- "character"
+class(buffer_zone_definitions$description_examples) <- "character"
+#set buffer zone units to metres
+buffer_zone_definitions$buffer <- as_units(buffer_zone_definitions$buffer, "m")
+
+split_gtfs_into_modes_and_put_in_list <- function(gtfs){ 
+  gtfs_LTR <- filter_by_route_type(gtfs, route_type = 0)
+  gtfs_subway <- filter_by_route_type(gtfs, route_type = 1)
+  gtfs_rail <- filter_by_route_type(gtfs, route_type = 2)
+  gtfs_bus <- filter_by_route_type(gtfs, route_type = 3)
+  gtfs_ferry <- filter_by_route_type(gtfs, route_type = 4)
+  gtfs_cable_tram <- filter_by_route_type(gtfs, route_type = 5)
+  gtfs_aerial_lift <- filter_by_route_type(gtfs, route_type = 6)
+  gtfs_funicular <- filter_by_route_type(gtfs, route_type = 7)
+  gtfs_trolleybus <- filter_by_route_type(gtfs, route_type = 11)
+  gtfs_monorail <- filter_by_route_type(gtfs, route_type = 12)
+ 
+
+  gtfs_into_modes_and_put_in_list <- list(
+    LTR = gtfs_LTR, 
+    subway = gtfs_subway,
+    rail = gtfs_rail,
+    bus = gtfs_bus,
+    ferry = gtfs_ferry, 
+    cable_tram = gtfs_cable_tram, 
+    aerial_lift = gtfs_aerial_lift, 
+    funicular = gtfs_funicular, 
+    trolleybus = gtfs_trolleybus,
+    monorail = gtfs_monorail 
+  )
+
+  return(gtfs_into_modes_and_put_in_list)
+}
+
+```
+
+Where transit stops are located close to bounaries their catchment areas may fall into multiple areas of interest. The sp package from [@spatial_data_in_R, @applied_spatial_data_analysis_with_R] provides tools for manipulating geographic data and shape files in R. This is used to calculate the proportion of each stop's catchment area that falls into each geographical area of interest. GTFS files define stop locations based on latitude and longitude [@GTFS_schedule_reference], whereas the Area~Bn~ calculation needs to be provided in the same units as the Area~area~ variable. This therefore necessitates the use of a geographic transform so that calculations can be undertaken in metres.   
+
+
+```{r load_abs_data, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
+#Load SA1 data
+sa1_map_data <- sa12021
+
+##Map Greater Melbourne SA1 areas
+#map <- sa1_map_data %>%
+#  filter(gcc_name_2021 == "Greater Melbourne") %>%   # let's just look Melbourne
+#  ggplot() +
+#  geom_sf(aes(geometry = geometry,  # use the geometry variable
+#              fill = areasqkm_2021),     # fill by area size
+#          lwd = 0,                  # remove borders
+#          show.legend = TRUE) +    # keep legend
+# # geom_point(aes(cent_long,
+#  #               cent_lat),        # use the centroid long (x) and lats (y)
+#   #          colour = "white") +    # make the points white
+#  theme_void() +                    # clears other plot elements
+#  coord_sf()
+
+#map
+
+p <- sa1_map_data
+p <- p %>% 
+  dplyr::mutate(area = st_area(p))
+units(p$area) <- as_units("m^2")
+
+```
+
+The SI~area~ was calculated on a mode-by-mode and stop-by-stop basis, by first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for the stop in question. This is combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals within the (SL~Bn~) to calculate the contribution to the index scores made by just that single stop for every area of interest (the SI~area, time, mode, n~); these are then added to a cumulative total field for each area of interest; and the calculations are repeated until all stops and modes in the GTFS file have been included. 
+
+
+```{r SICCD_calc_as_functions, echo=FALSE, warning=FALSE, message=FALSE}
+
+###Temporary variables to help with writing the function
+
+areas_of_interest <- sa1_map_data %>%
+  filter(gcc_name_2021 == "Greater Melbourne") 
+
+mel3 <- read_gtfs("data/3google_transit.zip")
+mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
+gtfs_list_by_mode <- mel3_list_by_mode
+
+start_date = "2023-04-27"
+period_in_days = "7"
+EPSG_for_transform = "28355"
+
+
+#### The function
+
+SI_calc_function <- function(areas_of_interest = areas_of_interest, gtfs_list_by_mode = gtfs_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform){
+
+  # convert to sf format and project
+  areas_of_interest_sf <- areas_of_interest %>%
+    # convert to simple features
+    sf::st_as_sf() %>%
+      st_transform(EPSG_for_transform) 
+
+#2-level list to put the SI results in, with each element representing one of the days that is being analysed. Each element will itself also be a list, with each element representing the SI results for one of the modes (see gtfs_list_by_mode names)
+SI_list <- list()  
+  
+#for loop that drives the first level of the list, recording the day of analysis
+  for (j in seq(1, period_in_days-1)) {
+    day_of_analysis = as.character(ymd(start_date) - days(1) + days(j))
+    
+    #add new element for the list
+    SI_list <- append(SI_list, list())
+    #update name of new element to match date
+    names(SI_list) <- c(names(SI_list), as.character(day_of_analysis))
+      for (k in seq(1:length(names(gtfs_list_by_mode))){ 
+
+  for (i in seq(1,nrow(gtfs_list_by_mode$stops),1)) {
+      dat_sim <- data.frame(lat = gtfs_list_by_mode$stops$stop_lat[i],
+                        long = gtfs_list_by_mode$stops$stop_lon[i])
+
+    # Convert to sf, set the crs to EPSG:4326 (lat/long), 
+    # and transform to EPSG:28355 - as per https://epsg.io/28355
+    dat_sf <- st_as_sf(dat_sim, coords = c("long", "lat"), crs = 4326) %>% 
+    st_transform(EPSG_for_transform)
+
+   # Buffer circles by the buffer distance
+    dat_circles <- st_buffer(dat_sf, dist = buffer_distance)
+
+    # Intersect the circles with the polygons
+    int_circles <- st_intersection(areas_of_interest_sf, dat_circles)
+
+    # calculate Area Bn 
+    int_circles$area_bn <- set_units(st_area(int_circles), "m^2") #Take care of units
+  
+    #Retrieve number of arrivals for day1-7
+    SL_Bn <- arrival_seven_day_function(gtfs_list_by_mode = gtfs_list_by_mode, stop_to_show = gtfs_list_by_mode$stops$stop_name[i], first_date = start_date)
+    int_circles$SL_Bn <- nrow(SL_Bn[[1]]) + nrow(SL_Bn[[2]]) + nrow(SL_Bn[[3]]) + nrow(SL_Bn[[4]]) + nrow(SL_Bn[[5]]) + 
+      nrow(SL_Bn[[6]]) + nrow(SL_Bn[[7]]) 
+    #Calculate SI for stop i
+    #Note the 1,000,000 factor to convert square km to square m
+    int_circles$SI <- int_circles$area_bn / int_circles$SL_Bn
+  
+    #Create ordinary tibble with SA1 code and SIs from stop i to add to the running totals
+    export_to_ccds <- tibble(sa1_code_2021 = int_circles$sa1_code_2021, add_to_SI = int_circles$SI)
+
+   #drop add_SI column from SA1 map
+    areas_of_interest_sf <- areas_of_interest_sf[, !(colnames(areas_of_interest_sf) %in% "add_to_SI")]
+  
+  
+    #merge based on sa1_code_2021
+    areas_of_interest_sf <- left_join(areas_of_interest_sf, export_to_ccds)
+  
+    #SI and add_to_SI to non-unit numbers
+    areas_of_interest_sf$SI <- as.vector(areas_of_interest_sf$SI)
+    areas_of_interest_sf$add_to_SI <- as.vector(areas_of_interest_sf$add_to_SI)
+  
+    #replace NA with 0 
+    areas_of_interest_sf[is.na(areas_of_interest_sf)] = 0
+  
+    #add the SIs for stop i to the running total of SI
+    areas_of_interest_sf$SI <- areas_of_interest_sf$SI + areas_of_interest_sf$add_to_SI
+ 
+    #show running total of stops examined so far
+    i 
+  }
+  return(areas_of_interest_sf)
+      }
+  }
+}
+
+  
+#mel1_SICCD <- SICCD_calc_function(areas_of_interest = areas_of_interest, gtfs_list_by_mode = mel1, start_date = start_date, EPSG_for_transform = EPSG_for_transform, buffer_distance = 800)
+
 
 ```
 
@@ -254,6 +428,33 @@ The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mod
 ## Case studies
 
 ### Melbourne
+
+The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates,
+
+<!---
+```{r load_abs_data_results, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
+#Load SA1 data
+sa1_map_data <- sa12021
+
+##Map Greater Melbourne SA1 areas
+#map <- sa1_map_data %>%
+#  filter(gcc_name_2021 == "Greater Melbourne") %>%   # let's just look Melbourne
+#  ggplot() +
+#  geom_sf(aes(geometry = geometry,  # use the geometry variable
+#              fill = areasqkm_2021),     # fill by area size
+#          lwd = 0,                  # remove borders
+#          show.legend = TRUE) +    # keep legend
+# # geom_point(aes(cent_long,
+#  #               cent_lat),        # use the centroid long (x) and lats (y)
+#   #          colour = "white") +    # make the points white
+#  theme_void() +                    # clears other plot elements
+#  coord_sf()
+
+#map
+```
+
+--->
+
 Overall
 
 Wheelchair accessibility?
