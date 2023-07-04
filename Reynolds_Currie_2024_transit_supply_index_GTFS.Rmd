@@ -95,7 +95,6 @@ Various analysis tools are available that make us of GTFS data, including the ti
 ```{r arrival_timetable_as_a_function, echo=FALSE, cache=TRUE}
 
 #This was code was developed for another project (https://github.com/James-Reynolds/DEAKIN-housing-and-transit-accessibility),  based on the tidytransit vignette on producing a departure timetable (@tidytransit_departure_timetable.  There is back history availlble at at that github repository  for further details, but basically I wrote a departure_timetable_function and fixed up a bit where it wasn't accounting for through-running services.  This was then directly adjusted to create an arrival_timetable function (below) --- However, I did not adjust all the variable names in the function to reflect that it is about arrivals, not departures.  
-
 arrival_timetable_function <- function(gtfs, stop_to_show, date_to_show){
   # get the id of the first stop in the trip's stop sequence
   first_stop_id <- gtfs$stop_times %>% 
@@ -190,11 +189,11 @@ arrival_timetable_function <- function(gtfs, stop_to_show, date_to_show){
   #head(gtfs$.$dates_services)
 
 
-  services_on_date_to_show <- gtfs$.$dates_services %>% 
+  services_on_180823 <- gtfs$.$dates_services %>% 
     filter(date == date_to_show) %>% dplyr::select(service_id)
 
-  departures_on_date <- departures %>% 
-    inner_join(services_on_date_to_show, by = "service_id")
+  departures_180823 <- departures %>% 
+    inner_join(services_on_180823, by = "service_id")
 
 #  departures_180823 %>%
  #   arrange(departure_time, stop_id, route_short_name) %>% 
@@ -221,9 +220,12 @@ arrival_timetable_function <- function(gtfs, stop_to_show, date_to_show){
        #   , nrow(departures_180823)
     #  )
   #return list with graph and the number of services. 
-  return(departures_on_date)
+  return(departures_180823)
   
 }
+arrivals_southern_cross_230427 <- arrival_timetable_function(gtfs=mel1, stop_to_show="Southern Cross Railway Station (Melbourne City)", date_to_show="2023-04-27")
+head(arrivals_southern_cross_230427)
+```
 
 arrival_seven_day_function <- function(gtfs, stop_to_show, first_date){
   day1 <- arrival_timetable_function(gtfs=gtfs, stop_to_show=stop_to_show, date_to_show=first_date)
@@ -258,7 +260,7 @@ class(buffer_zone_definitions$description_examples) <- "character"
 buffer_zone_definitions$buffer <- as_units(buffer_zone_definitions$buffer, "m")
 
 split_gtfs_into_modes_and_put_in_list <- function(gtfs){ 
-  gtfs_LTR <- filter_by_route_type(gtfs, route_type = 0)
+  gtfs_LRT <- filter_by_route_type(gtfs, route_type = 0)
   gtfs_subway <- filter_by_route_type(gtfs, route_type = 1)
   gtfs_rail <- filter_by_route_type(gtfs, route_type = 2)
   gtfs_bus <- filter_by_route_type(gtfs, route_type = 3)
@@ -271,7 +273,7 @@ split_gtfs_into_modes_and_put_in_list <- function(gtfs){
  
 
   gtfs_into_modes_and_put_in_list <- list(
-    LTR = gtfs_LTR, 
+    LRT = gtfs_LRT, 
     subway = gtfs_subway,
     rail = gtfs_rail,
     bus = gtfs_bus,
@@ -288,7 +290,7 @@ split_gtfs_into_modes_and_put_in_list <- function(gtfs){
 
 ```
 
-Where transit stops are located close to bounaries their catchment areas may fall into multiple areas of interest. The sp package from [@spatial_data_in_R, @applied_spatial_data_analysis_with_R] provides tools for manipulating geographic data and shape files in R. This is used to calculate the proportion of each stop's catchment area that falls into each geographical area of interest. GTFS files define stop locations based on latitude and longitude [@GTFS_schedule_reference], whereas the Area~Bn~ calculation needs to be provided in the same units as the Area~area~ variable. This therefore necessitates the use of a geographic transform so that calculations can be undertaken in metres.   
+Where transit stops are located close to boundaries their catchment areas may fall into multiple areas of interest. The sp package from [@spatial_data_in_R, @applied_spatial_data_analysis_with_R] provides tools for manipulating geographic data and shape files in R. This is used to calculate the proportion of each stop's catchment area that falls into each geographical area of interest. GTFS files define stop locations based on latitude and longitude [@GTFS_schedule_reference], whereas the Area~Bn~ calculation needs to be provided in the same units as the Area~area~ variable. This therefore necessitates the use of a geographic transform so that calculations can be undertaken in metres.   
 
 
 ```{r load_abs_data, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
@@ -316,6 +318,9 @@ p <- p %>%
   dplyr::mutate(area = st_area(p))
 units(p$area) <- as_units("m^2")
 
+
+
+
 ```
 
 The SI~area~ was calculated on a mode-by-mode and stop-by-stop basis, by first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for the stop in question. This is combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals within the (SL~Bn~) to calculate the contribution to the index scores made by just that single stop for every area of interest (the SI~area, time, mode, n~); these are then added to a cumulative total field for each area of interest; and the calculations are repeated until all stops and modes in the GTFS file have been included. 
@@ -334,7 +339,7 @@ gtfs_list_by_mode <- mel3_list_by_mode
 
 start_date = "2023-04-27"
 period_in_days = "7"
-EPSG_for_transform = "28355"
+EPSG_for_transform = 28355
 
 
 #### The function
@@ -345,43 +350,78 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, gtfs_list_by
   areas_of_interest_sf <- areas_of_interest %>%
     # convert to simple features
     sf::st_as_sf() %>%
-      st_transform(EPSG_for_transform) 
+      st_transform(crs = EPSG_for_transform) 
 
 #2-level list to put the SI results in, with each element representing one of the days that is being analysed. Each element will itself also be a list, with each element representing the SI results for one of the modes (see gtfs_list_by_mode names)
 SI_list <- list()  
   
 #for loop that drives the first level of the list, recording the day of analysis
-  for (j in seq(1, period_in_days-1)) {
+  for (j in seq(1, period_in_days-1, 1)) {
     day_of_analysis = as.character(ymd(start_date) - days(1) + days(j))
     
-    #add new element for the list
-    SI_list <- append(SI_list, list())
-    #update name of new element to match date
-    names(SI_list) <- c(names(SI_list), as.character(day_of_analysis))
-      for (k in seq(1:length(names(gtfs_list_by_mode))){ 
+    #for loop that drives the second level of the list, recording SI by mode
+      for (k in seq(1, length(names(gtfs_list_by_mode)), 1)){ 
+        #look up the buffer distance for that mode 
+        buffer_distance <- buffer_zone_definitions %>% filter(short_name == as.character(names(gtfs_list_by_mode[k]))) %>% select(buffer) %>% as.numeric()
+        
+        
+        #check if that mode is empty
+        ifelse(is.na(nrow(
+         gtfs_list_by_mode[[
+           as.character(names(gtfs_list_by_mode[k]))]]
+         ["stops"]
+         ), 
+         #if there are no stops in the GTFS for that mode, then return vector of zeros (one for each area of interest) to the 2nd level list, which will be appended and named lower down. 
+         SI_return_value_for_that_mode <- rep(0,nrow(areas_of_interest)),
+         #otherwise return the SI for the mode and day in question
+         #which is calculated in the following for loop, which passes over all of the stops in the gtfs file for the mode in question
+          for (i in seq(1, nrow(
+            gtfs_list_by_mode[[
+           as.character(names(gtfs_list_by_mode[k]))]]
+         [["stops"]]), 1) {
+      
+            #create dataframe with stop i lat and lon value
+            dat_sim <- data.frame(lat = gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[k]))]][["stops"]]$stop_lat[i],
+                        long = gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[k]))]][["stops"]]$stop_lon[i])
 
-  for (i in seq(1,nrow(gtfs_list_by_mode$stops),1)) {
-      dat_sim <- data.frame(lat = gtfs_list_by_mode$stops$stop_lat[i],
-                        long = gtfs_list_by_mode$stops$stop_lon[i])
-
-    # Convert to sf, set the crs to EPSG:4326 (lat/long), 
-    # and transform to EPSG:28355 - as per https://epsg.io/28355
+    # Convert the dataframe (with the stop latitude and longitude) into a sf object, with the crs set to EPSG:4326 (which is the CRS for lat/long values), 
+    # and then transform to be expressed as per the EPSG that is being used for the analysis (ie. shift to metres)
     dat_sf <- st_as_sf(dat_sim, coords = c("long", "lat"), crs = 4326) %>% 
-    st_transform(EPSG_for_transform)
+    st_transform(crs = EPSG_for_transform)
 
+   # lookup buffer distance for mode k  
+    buffer_distance <- pull(buffer_zone_definitions[buffer_zone_definitions$short_name == as.character(names(gtfs_list_by_mode[k])),"buffer"])
    # Buffer circles by the buffer distance
     dat_circles <- st_buffer(dat_sf, dist = buffer_distance)
 
     # Intersect the circles with the polygons
     int_circles <- st_intersection(areas_of_interest_sf, dat_circles)
 
+    
+              ##Map to check that it is working the way it is expect to.
+             # map <- int_circles %>%
+            #  ggplot() +
+             # geom_sf(aes(geometry = geometry,  # use the geometry variable
+              #  fill = sa1_code_2021),     # fill by SA1_code
+               # lwd = 0,                  # remove borders
+              #  show.legend = TRUE) +    # keep legend
+              #theme_void() +                    # clears other plot elements
+              #coord_sf()
+              
+              #map
+
     # calculate Area Bn 
-    int_circles$area_bn <- set_units(st_area(int_circles), "m^2") #Take care of units
+    int_circles$area_bn <- st_area(int_circles)
   
-    #Retrieve number of arrivals for day1-7
-    SL_Bn <- arrival_seven_day_function(gtfs_list_by_mode = gtfs_list_by_mode, stop_to_show = gtfs_list_by_mode$stops$stop_name[i], first_date = start_date)
-    int_circles$SL_Bn <- nrow(SL_Bn[[1]]) + nrow(SL_Bn[[2]]) + nrow(SL_Bn[[3]]) + nrow(SL_Bn[[4]]) + nrow(SL_Bn[[5]]) + 
-      nrow(SL_Bn[[6]]) + nrow(SL_Bn[[7]]) 
+    ##Retrieve number of arrivals for that mode and day by...
+    #first moving the gtfs for that mode out of gtfs_list_by_mode
+    gtfs_k <- eval(parse(text = paste("gtfs_list_by_mode$",names(gtfs_list_by_mode)[k],sep = "")))
+    # then running the arrivals timetable function for the stop and day. 
+      int_circles$SL_Bn <- arrival_timetable_function(gtfs = gtfs_k, stop_to_show = gtfs_list_by_mode[[
+    as.character(names(gtfs_list_by_mode[k]))]]$stops$stop_name[i], date_to_show = as.Date(day_of_analysis))
+    
+ 
+    
     #Calculate SI for stop i
     #Note the 1,000,000 factor to convert square km to square m
     int_circles$SI <- int_circles$area_bn / int_circles$SL_Bn
@@ -409,9 +449,23 @@ SI_list <- list()
     #show running total of stops examined so far
     i 
   }
-  return(areas_of_interest_sf)
-      }
-  }
+  return(SI_return_value_for_that_mode)
+          )
+     
+    
+    #add new element for the list
+    SI_list <- append(SI_list, )
+    #update name of new element to match date
+    names(SI_list) <- c(names(SI_list), as.character(day_of_analysis))    
+        
+         }
+  
+    #add new element for the list
+    SI_list <- append(SI_list, )
+    #update name of new element to match date
+    names(SI_list) <- c(names(SI_list), as.character(day_of_analysis))
+    
+    }
 }
 
   
