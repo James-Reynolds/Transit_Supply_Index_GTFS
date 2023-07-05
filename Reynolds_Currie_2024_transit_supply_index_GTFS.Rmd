@@ -98,9 +98,9 @@ Various analysis tools are available that make us of GTFS data, including the ti
 #---also, something broke in the first few lines where it adds the trip_origins to the gtfs$trips data.  Not quite sure what broke, but the first 15 lines of the below function fixes it. 
 
 library(tidytransit)
-gtfs <- read_gtfs("data/1google_transit.zip")
-stop_to_show <- "Wallan Railway Station (Wallan)"
-date_to_show <- "2023-04-27"
+#gtfs <- read_gtfs("data/1google_transit.zip")
+#stop_to_show <- "Wallan Railway Station (Wallan)"
+#date_to_show <- "2023-04-27"
 
 arrival_timetable_function <- function(gtfs, stop_to_show, date_to_show){
   # get the id of the first stop in the trip's stop sequence
@@ -328,6 +328,8 @@ The SI~area~ was calculated on a mode-by-mode and stop-by-stop basis, by first d
 
 ###Temporary variables to help with writing the function
 
+
+
 areas_of_interest <- sa1_map_data %>%
   filter(gcc_name_2021 == "Greater Melbourne") 
 
@@ -336,7 +338,7 @@ mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
 gtfs_list_by_mode <- mel3_list_by_mode
 
 start_date = "2023-04-27"
-period_in_days = "7"
+period_in_days = 1
 EPSG_for_transform = 28355
 areas_of_interest_id_field = "sa1_code_2021"
 
@@ -360,53 +362,34 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
   areas_of_interest_sf <- areas_of_interest_sf %>% 
     dplyr::mutate(SI = 0)
     
-#2-level list to put the SI results in, with each element representing one of the days that is being analysed. Each element will itself also be a list, with each element representing the SI results for one of the modes (see gtfs_list_by_mode names)
-  
-  
-  
-  #for loop that drives the first level of the list, recording the day of analysis
-  for (j in seq(1, period_in_days-1, 1)) {
-    
-    ##Initialise variables used in first level of the list
+#2-level list to put the SI results in, with each element representing one of the days that is being analysed. 
     # This becomes a list (of lists), with one element for each mode for the day_of_analysis in question (j)
     SI_for_day_of_analysis_list_by_mode <- list()
+  
+  #for loop that drives the first level of the list, recording the day of analysis
+  for (j in seq(1, period_in_days, 1)) {
     
+    ##Initialise variables used in first level of the list
     day_of_analysis = as.character(ymd(start_date) - days(1) + days(j))
     
-    #for loop that drives the second level of the list, recording SI by mode
-      for (k in seq(1, length(names(gtfs_list_by_mode)), 1)){ 
-        
-        ##Initialise variables used in second level of the list
-        # This becomes a list (of lists), with one element for each mode (k) for the day_of_analysis in question (j)
-        SI_for_day_of_analysis_and_mode_k <- list()
+    #dataframe to store the SIs for each area of interest by mode for day j
+       SI_for_day_of_analysis_by_mode_k <- (tibble(areas_of_interest %>% select(as.character(areas_of_interest_id_field))) %>% select(!"geometry"))
     
-        
+    ##for loop that drives the second level of the list, recording SI by mode
+      for (k in seq(1, length(names(gtfs_list_by_mode)), 1)){   
         #look up the buffer distance for mode k
         buffer_distance <- buffer_zone_definitions %>% filter(short_name == as.character(names(gtfs_list_by_mode[k]))) %>% select(buffer) %>% as.numeric()
+     
+        #add zero-ed column to store SIs for mode k
+        SI_for_day_of_analysis_by_mode_k <- SI_for_day_of_analysis_by_mode_k %>% tibble::add_column(a = 0)
+        #change name of added column to match mode k
+names(SI_for_day_of_analysis_by_mode_k) <- c( names(SI_for_day_of_analysis_by_mode_k[,1:ncol(SI_for_day_of_analysis_by_mode_k)-1]), eval(names(gtfs_list_by_mode[k])))                         
         
-        #check if the gtfs mode in question has any stops - many of the modes (e.g. Monorail) will typically be zero
-        ifelse(is.na(nrow(gtfs_list_by_mode[[
-           as.character(names(gtfs_list_by_mode[k]))]]
-         ["stops"]
-         )), 
-         
-         #if there are no stops in the GTFS for that mode, then append vector of zeros (one for each area of interest) to a new element the 2nd level list.
-          SI_for_day_of_analysis_and_mode_k <- append(
-            SI_for_day_of_analysis_and_mode_k, 
-            rep(0,nrow(areas_of_interest), 
-                x = length(SI_for_day_of_analysis_and_mode_k)
-                )
-            )
-          # and change the name of the new element to mode k
-          names(SI_list_by_date) <- c(names(SI_list_by_date), as.character(day_of_analysis)),
-            
-            #otherwise calculated and return the SI for the mode and day in question
-          
-          SI_return_value_for_that_mode <- rep(0,nrow(areas_of_interest))
+        #check if the gtfs mode in question has any stops - many of the modes (e.g. Monorail) will typically have zero services or stops.  If the mode in question (k) does not have any stops, then there is no further calculation required, and the existing column of zeros can be left as is. 
+        if(nrow(gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[k]))]][["stops"]]) > 0) { 
+         SI_return_value_for_that_mode <- rep(0,nrow(areas_of_interest))
          #which is calculated in the following for loop, which passes over all of the stops in the gtfs file for the mode in question
-          for (i in seq(1, nrow(
-            gtfs_list_by_mode[[
-            as.character(names(gtfs_list_by_mode[k]))]][["stops"]]), 1) {
+          for (i in seq(1, nrow(gtfs_list_by_mode[[ as.character(names(gtfs_list_by_mode[k]))]][["stops"]]), 1)) {
       
             #create dataframe with stop i lat and lon value
             dat_sim <- data.frame(lat = gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[k]))]][["stops"]]$stop_lat[i],
@@ -435,6 +418,9 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
 
             #calculate Area Bn 
             int_circles$area_bn <- st_area(int_circles)
+            
+            #drop_geometry
+            int_circles <- as.tibble(int_circles[, !(colnames(int_circles) %in% "geometry")])
   
             ##Retrieve number of arrivals for that mode and day by...
             #first moving the gtfs for that mode out of gtfs_list_by_mode
@@ -446,47 +432,42 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
               nrow(int_circles))
     
             #Calculate SI for stop i and drop units
-            int_circles$SI <- as.numeric(int_circles$area_bn / int_circles$Area_area * int_circles$SL_Bn)
+            int_circles$add_to_SI <- as.numeric(int_circles$area_bn / int_circles$Area_area * int_circles$SL_Bn)
   
-            #Create ordinary tibble with Area of Intersect identification code and SIs from stop i to add to the running totals
-            export_to_SI_for_day_of_analysis_and_mode_k <- tibble(eval(parse(text=areas_of_interest_id_field)) = int_circles$eval(parse(text=areas_of_interest_id_field)), add_to_SI = int_circles$SI)
-
-            #drop add_SI column from dataframe reporting SI_by_mode scores up to the date loop (SI_for_day_of_analysis_and_mode_k)
-            SI_for_day_of_analysis_and_mode_k <- SI_for_day_of_analysis_and_mode_k[, !(colnames(SI_for_day_of_analysis_and_mode_k) %in% "add_to_SI")]
-  
+            
+            #Create ordinary tibble with Area of Interest identification code and SIs from stop i to add to the running totals
+            export_to_SI_for_day_of_analysis_by_mode_k <- int_circles %>% select(c(as.character(areas_of_interest_id_field), add_to_SI)) 
+            
+            #drop add_SI column from dataframe reporting SI_by_mode scores up to the date loop (SI_for_day_of_analysis_by_mode_k)
+            SI_for_day_of_analysis_by_mode_k <- SI_for_day_of_analysis_by_mode_k[, !(colnames(SI_for_day_of_analysis_by_mode_k) %in% "add_to_SI")]
   
             #merge based on eval(parse(text=areas_of_interest_id_field))
-            SI_for_day_of_analysis_and_mode_k <- left_join(SI_for_day_of_analysis_and_mode_k, export_to_SI_for_day_of_analysis_and_mode_k)
+            SI_for_day_of_analysis_by_mode_k <- left_join(SI_for_day_of_analysis_by_mode_k, export_to_SI_for_day_of_analysis_by_mode_k)
   
             #convert add_to_SI to non-unit numbers
-            SI_for_day_of_analysis_and_mode_k$add_to_SI <- as.vector(SI_for_day_of_analysis_and_mode_k$add_to_SI)
+            SI_for_day_of_analysis_by_mode_k$add_to_SI <- as.vector(SI_for_day_of_analysis_by_mode_k$add_to_SI)
   
             #replace NA with 0 
-            SI_for_day_of_analysis_and_mode_k[is.na(SI_for_day_of_analysis_and_mode_k)] = 0
+            SI_for_day_of_analysis_by_mode_k[is.na(SI_for_day_of_analysis_by_mode_k)] = 0
   
-            #add the SIs for stop i to the running total of SI
-            SI_for_day_of_analysis_and_mode_k$SI <- SI_for_day_of_analysis_and_mode_k$SI + SI_for_day_of_analysis_and_mode_k$add_to_SI
+            #add the SIs for stop i to the running total of SI for the mode in question
+            SI_for_day_of_analysis_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] <- SI_for_day_of_analysis_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] + SI_for_day_of_analysis_by_mode_k$add_to_SI
           
-            #close for loop for calculating SI for a single mode on a single day
+            #close (i) loop for calculating SIs for stop i and adding to the running total of SI
             }
- 
-          #close ifelse test for whether there are any stops for mode k in the gtfs stops file
-          )
         
-        #add new element to the list for that mode
-        SI_for_day_of_analysis_list_by_mode <- append(SI_for_day_of_analysis_list_by_mode, SI_for_day_of_analysis_and_mode_k$SI, after = length(SI_for_day_of_analysis_list_by_mode))
-        #update name of new element to match date
-        names(SI_list_by_date) <- c(names(SI_list_by_date), as.character(day_of_analysis))
-
-      #close for loop for calculating a list of SIs by mode for a single day
-      }
-    
-    #add new element for the list for the date_of_analysis
-    SI_list_by_date <- append(SI_list_by_date, SI_list_for_day_of_analysis, after = length(SI_list_by_date))
+        #close the if(no stops in gtfs for that mode) test 
+        }
+       
+       #close for (k) loop for calculating SI for a single mode on a single day
+      }  
+       
+     #add new element for the list for the date_of_analysis
+    SI_list_by_date <- append(SI_list_by_date, SI_for_day_of_analysis_by_mode_k, after = length(SI_list_by_date))
     #update name of new element to match date
     names(SI_list_by_date) <- c(names(SI_list_by_date), as.character(day_of_analysis))
 
-    #close for loop for calculating a list of days, with each day containing a list of SIs by mode
+    #close for (j) loop for creating the list of days
     }        
 
     areas_of_interest_sf <- areas_of_interest_sf %>% dplyr::mutate(SI = SI_list_by_date)    
