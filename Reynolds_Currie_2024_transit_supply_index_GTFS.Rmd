@@ -88,8 +88,9 @@ An advantage of the Supply Index is that it is a relatively simple number to cal
 @currie2007identifying calculated the SI~area, time~  for various CCDs in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data, which provides a standardised format for timetable data that is produced by many transit systems. GTFS is an open, text-based format that was developed originally to allow transit information to be included in the Google Maps navigation platform [@GTFS]. A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information is available in the GFTS format. 
 
 # Methodology
+This study adopts a case research approach by developing code to calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and Washington D.C. (USA). These three cases were selected as they are familiar to the researchers, and as there is likely to be enough variety in how the GTFS feeds, potential areas of interest and other aspects are set up such that the developed code will be generalis-able to other places.  Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of the transit system where the Transportation Research Board Annual Meeting is located.  
 
-Various analysis tools are available that make us of GTFS data, including the tidytransit package [@tidytransit2023] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term. The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS (and included in the Rmarkdown file used to typeset this paper). 
+Various analysis tools are available that make us of GTFS data, including the tidytransit package [@tidytransit2023] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term. 
 
 
 ```{r arrival_timetable_as_a_function, echo=FALSE, cache=TRUE}
@@ -327,34 +328,29 @@ The SI~area~ was calculated on a mode-by-mode and stop-by-stop basis, by first d
 ```{r SICCD_calc_as_functions, echo=FALSE, warning=FALSE, message=FALSE}
 
 ###Temporary variables to help with writing the function
+#areas_of_interest <- sa1_map_data %>%
+#  filter(gcc_name_2021 == "Greater Melbourne") 
+#mel3 <- read_gtfs("data/3google_transit.zip")
+#mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
+#gtfs_list_by_mode <- mel3_list_by_mode
+#start_date = "2023-04-27"
+#period_in_days = 2
+#EPSG_for_transform = 28355
+#areas_of_interest_id_field = "sa1_code_2021"
 
-
-
-areas_of_interest <- sa1_map_data %>%
-  filter(gcc_name_2021 == "Greater Melbourne") 
-
-mel3 <- read_gtfs("data/3google_transit.zip")
-mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
-gtfs_list_by_mode <- mel3_list_by_mode
-
-start_date = "2023-04-27"
-period_in_days = 1
-EPSG_for_transform = 28355
-areas_of_interest_id_field = "sa1_code_2021"
-
-#### The function
-
+#### The function ________
 SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform){
 
   ##Initialise variables used in function
-  #the top level list (of lists), with one element for each day of analysis 
-  SI_list_by_date <- list()
-  
+  #the top level list. First element is a tibble of areas_of_interest_id_field. The remainder of the list has one element for each day of analysis, with each element containing a tibble with the SI scores for each mode.   
+  SI_list_by_date_and_mode <- list((tibble(areas_of_interest %>% select(as.character(areas_of_interest_id_field))) %>% select(!"geometry")))
+  names(SI_list_by_date_and_mode) <- as.character(areas_of_interest_id_field)
+
   # convert to sf format and project
   areas_of_interest_sf <- areas_of_interest %>%
-    # convert to simple features
-    sf::st_as_sf() %>%
-      st_transform(crs = EPSG_for_transform) 
+  # convert to simple features
+  sf::st_as_sf() %>%
+    st_transform(crs = EPSG_for_transform) 
   # add Area_area value to areas_of_interest_sf 
   areas_of_interest_sf <- areas_of_interest_sf %>% 
     dplyr::mutate(Area_area = st_area(areas_of_interest_sf))
@@ -462,35 +458,59 @@ names(SI_for_day_of_analysis_by_mode_k) <- c( names(SI_for_day_of_analysis_by_mo
        #close for (k) loop for calculating SI for a single mode on a single day
       }  
        
-     #add new element for the list for the date_of_analysis
-    SI_list_by_date <- append(SI_list_by_date, SI_for_day_of_analysis_by_mode_k, after = length(SI_list_by_date))
-    #update name of new element to match date
-    names(SI_list_by_date) <- c(names(SI_list_by_date), as.character(day_of_analysis))
+      #drop area of interest id code from dataframe of SI by mode for the day of analysis
+      SI_for_day_of_analysis_by_mode_k <- SI_for_day_of_analysis_by_mode_k[,2:ncol(SI_for_day_of_analysis_by_mode_k)]
+      
+      #drop add_to_SI column from dataframe of SI by mode for the day of analysis
+      SI_for_day_of_analysis_by_mode_k <- SI_for_day_of_analysis_by_mode_k[,!names(SI_for_day_of_analysis_by_mode_k) %in% "add_to_SI"]
+       
+            #add new element to the list_by_date for the date_of_analysis
+      SI_list_by_date_and_mode <- append(SI_list_by_date_and_mode, list(SI_for_day_of_analysis_by_mode_k), after = length(SI_list_by_date_and_mode))
+    
+      #update name of new element to match date
+      names(SI_list_by_date_and_mode) <- c(names(SI_list_by_date_and_mode)[1:length(names(SI_list_by_date_and_mode))-1], as.character(day_of_analysis))
 
     #close for (j) loop for creating the list of days
     }        
 
-    areas_of_interest_sf <- areas_of_interest_sf %>% dplyr::mutate(SI = SI_list_by_date)    
- return(areas_of_interest_sf)
+ return(SI_list_by_date_and_mode)    
 
 #close function     
 }
-    
-
   
-#mel1_SICCD <- SICCD_calc_function(areas_of_interest = areas_of_interest, gtfs_list_by_mode = mel1, start_date = start_date, EPSG_for_transform = EPSG_for_transform, buffer_distance = 800)
+
+
+#function to combine all days together. Outputs a dataframe with a row for each area_of_interest and a column for each mode
+convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_by_date_and_mode = SI_list_by_date_and_mode) {
+  SI_df_by_mode <- SI_list_by_date_and_mode[2:length(names(SI_list_by_date_and_mode))] %>%
+  map_dfr(~setNames(.x, paste0("A", 1:ncol(.x))), .id = "Group") %>%
+  group_by(Group) %>%
+  mutate(ID = 1:n()) %>%
+  group_by(ID) %>%
+  summarize(across(-Group, .fns = sum, na.rm = TRUE)) %>%
+  select(-ID)
+
+  #update column names to match modes
+  names(SI_df_by_mode) <- colnames(SI_list_by_date_and_mode[[2]])
+  
+  #add back area_of_interest_id_ column
+  SI_df_by_mode <- cbind(SI_list_by_date_and_mode[1], SI_df_by_mode)
+  
+  return(SI_df_by_mode)
+}
+
 
 
 ```
 
 # Results
 
-## R code
+The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as an Rmarkdown file (used to typeset this paper). The following subsections discuss the resutls of cases studies used to develop and test the code. 
 
 
-## Case studies
+## Melbourne
 
-### Melbourne
+Melbourne's GTFS feed is published by Public Transport Victoria (PTV). There are over 400 feeds available on the transitfeeds.com website, with the first dating from March 2015 
 
 The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates,
 
