@@ -88,7 +88,9 @@ An advantage of the Supply Index is that it is a relatively simple number to cal
 @currie2007identifying calculated the SI~area, time~  for various CCDs in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data, which provides a standardised format for timetable data that is produced by many transit systems. GTFS is an open, text-based format that was developed originally to allow transit information to be included in the Google Maps navigation platform [@GTFS]. A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information is available in the GFTS format. 
 
 # Methodology
-This study adopts a case research approach by developing code to calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and Washington D.C. (USA). These three cases were selected as they are familiar to the researchers, and as there is likely to be enough variety in how the GTFS feeds, potential areas of interest and other aspects are set up such that the developed code will be generalis-able to other places.  Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of the transit system where the Transportation Research Board Annual Meeting is located.  
+This study adopts a case research approach by developing code to calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and Washington D.C. (USA). These three cases were selected as they are familiar to the researchers, and as there is likely to be enough variety in how the GTFS feeds, potential areas of interest and other aspects are set up such that the developed code will likely be generalis-able to other places.  Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of the transit system where the Transportation Research Board Annual Meeting is located (which is likely to be familiar to many readers).  
+
+The case research approach serves two purposes: firstly the selected cases where used to develop, test and verify the functionality of the code produced in this study.  Secondly, aspects of the the selected cases were explored;, such as the impact of forthcoming upgrades and issues of level-boarding access (i.e. non-step suitable for wheelchair, pram, mobility-aid etc.) to the Supply Index scores.  
 
 Various analysis tools are available that make us of GTFS data, including the tidytransit package [@tidytransit2023] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term. 
 
@@ -505,50 +507,57 @@ convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_b
 
 # Results
 
-The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as an Rmarkdown file (used to typeset this paper). The following subsections discuss the resutls of cases studies used to develop and test the code. 
+The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as an Rmarkdown file (used to typeset this paper). The following subsections discuss the results of cases studies used to develop and test the code. 
 
 
 ## Melbourne
 
-Melbourne's GTFS feed is published by Public Transport Victoria (PTV). There are over 400 feeds available on the transitfeeds.com website, with the first dating from March 2015 
+Melbourne's GTFS feed is published by Public Transport Victoria (PTV). There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa]. The Australian census is undertaken in early August every 5 years, with the last two being in 2016 and 2021. GTFS feeds were therefore selected for the first week of August of each year for the purposes of this test analysis, so that results are connected to the census dates.
+The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources, and this study made use of the absmapsdata R package [@R-absmapsdata] to access Local Government Area (LGA) boundaries for the Greater Melbourne area.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. The Supply Index was calculated for the 2021 boundaries of each LGA (the area of interest), using the GTFS feed released in the first week of August (the time period) between 2016 and 2022. Results are summarized in the following:  
 
-The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates,
+```{r Melbourne_2022, echo=FALSE, warning=FALSE, message=FALSE}
 
-<!---
-```{r load_abs_data_results, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
-#Load SA1 data
-sa1_map_data <- sa12021
+victoria_2022 <- read_gtfs("data/Melbourne/2022/gtfs.zip")
+victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
+victoria_2022_list_by_mode <- victoria_2022
+start_date = "2022-08-04"
+period_in_days = 7
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "lga_code_2021"
 
-##Map Greater Melbourne SA1 areas
-#map <- sa1_map_data %>%
-#  filter(gcc_name_2021 == "Greater Melbourne") %>%   # let's just look Melbourne
-#  ggplot() +
-#  geom_sf(aes(geometry = geometry,  # use the geometry variable
-#              fill = areasqkm_2021),     # fill by area size
-#          lwd = 0,                  # remove borders
-#          show.legend = TRUE) +    # keep legend
-# # geom_point(aes(cent_long,
-#  #               cent_lat),        # use the centroid long (x) and lats (y)
-#   #          colour = "white") +    # make the points white
-#  theme_void() +                    # clears other plot elements
-#  coord_sf()
+victoria_2022_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2022_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
-#map
+victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
+
+
+
 ```
 
---->
 
-Overall
 
-Wheelchair accessibility?
+### Level-boarding accessibility
 
-The metro tunnel - adding services
+### The metro tunnel - adding services
 
-### Toronto
+### The suburban rail loop
 
-### Washington DC
+## Toronto
 
-### Cross-case comparison
+### Level-boarding accessibility
+
+### Transit City: what might have been
+
+### Viva transit: what was achieved
+
+### Downtown relief lines 
+Many proposals - look at a few of them?
+
+## Washington DC
+
+### Level-boarding accessibility
+
+
+## Cross-case comparison
 
 
 # Discussion
