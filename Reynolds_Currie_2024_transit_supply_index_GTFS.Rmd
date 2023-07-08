@@ -88,10 +88,9 @@ An advantage of the Supply Index is that it is a relatively simple number to cal
 @currie2007identifying calculated the SI~area, time~  for various CCDs in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data, which provides a standardised format for timetable data that is produced by many transit systems. GTFS is an open, text-based format that was developed originally to allow transit information to be included in the Google Maps navigation platform [@GTFS]. A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information is available in the GFTS format. 
 
 # Methodology
-This study adopts a case research approach by developing code to calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and Washington D.C. (USA). These three cases were selected as they are familiar to the researchers, and as there is likely to be enough variety in how the GTFS feeds, potential areas of interest and other aspects are set up such that the developed code will likely be generalis-able to other places.  Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of the transit system where the Transportation Research Board Annual Meeting is located (which is likely to be familiar to many readers).  
+This study adopts a case research approach by developing code to calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and Washington D.C. (USA). The case research approach serves two purposes: firstly the selected cases where used to develop, test and verify the functionality of the code produced in this study.  Secondly, aspects of the the selected cases were explored;, such as the impact of forthcoming upgrades and issues of level-boarding access (i.e. non-step suitable for wheelchair, pram, mobility-aid etc.) to the Supply Index scores.  
 
-The case research approach serves two purposes: firstly the selected cases where used to develop, test and verify the functionality of the code produced in this study.  Secondly, aspects of the the selected cases were explored;, such as the impact of forthcoming upgrades and issues of level-boarding access (i.e. non-step suitable for wheelchair, pram, mobility-aid etc.) to the Supply Index scores.  
-
+## Code development
 Various analysis tools are available that make us of GTFS data, including the tidytransit package [@tidytransit2023] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term. 
 
 
@@ -451,12 +450,15 @@ names(SI_for_day_of_analysis_by_mode_k) <- c( names(SI_for_day_of_analysis_by_mo
             #add the SIs for stop i to the running total of SI for the mode in question
             SI_for_day_of_analysis_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] <- SI_for_day_of_analysis_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] + SI_for_day_of_analysis_by_mode_k$add_to_SI
           
+            print("stop")
+            print(i)
             #close (i) loop for calculating SIs for stop i and adding to the running total of SI
             }
         
         #close the if(no stops in gtfs for that mode) test 
         }
-       
+       print("mode)")
+       print(k)
        #close for (k) loop for calculating SI for a single mode on a single day
       }  
        
@@ -472,6 +474,8 @@ names(SI_for_day_of_analysis_by_mode_k) <- c( names(SI_for_day_of_analysis_by_mo
       #update name of new element to match date
       names(SI_list_by_date_and_mode) <- c(names(SI_list_by_date_and_mode)[1:length(names(SI_list_by_date_and_mode))-1], as.character(day_of_analysis))
 
+    print("day")
+          print(j)
     #close for (j) loop for creating the list of days
     }        
 
@@ -505,33 +509,142 @@ convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_b
 
 ```
 
+
+## Case research approach
+
+These three cases were selected as they are familiar to the researchers, and as there is likely to be enough variety in how the GTFS feeds, potential areas of interest and other aspects are set up such that the developed code will likely be generalis-able to other places.  Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of the transit system where the Transportation Research Board Annual Meeting is located (which is likely to be familiar to many readers).  
+
+### Melbourne, Victoria, Australia
+Melbourne is INSERT DESCRIPTION OF MELBOURNE HERE
+
+Melbourne's GTFS feed is published by Public Transport Victoria (PTV). There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa]. The Australian census is undertaken in early August every 5 years, with the last two being in 2016 and 2021. GTFS feeds were therefore selected for the first week of August of each year for the purposes of this test analysis, so that the date of measurement of the Supply Index matches the census dates.
+
+
+
+<!--- Don't run 2022 for the moment
+
+
+```{r Melbourne_2022, echo=FALSE, warning=FALSE, message=FALSE}
+
+victoria_2022 <- read_gtfs("data/Melbourne/2022/gtfs.zip")
+
+#identify duplicate stops
+victoria_2022_duplicated_stops <- tabyl(victoria_2022$stops$stop_id) %>% filter (n>1)
+names(victoria_2022_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2022_duplicated_stops <- left_join(victoria_2022_duplicated_stops, victoria_2022$stops)
+
+#discard duplicates
+victoria_2022$stops <- victoria_2022$stops[!duplicated(victoria_2022$stops$stop_id),]
+
+#split modes
+victoria_2022_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2022)
+
+#set inputs to SI_calc function
+victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
+start_date = "2022-08-04"
+period_in_days = 7
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "lga_code_2021"
+
+#run SI_calc function
+victoria_2022_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2022_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
+
+
+
+```
+
+--->
+
+```{r Melbourne_2021, echo=FALSE, warning=FALSE, message=FALSE}
+victoria_2021 <- read_gtfs("data/Melbourne/2021/gtfs.zip")
+
+#identify duplicate stops
+victoria_2021_duplicated_stops <- tabyl(victoria_2021$stops$stop_id) %>% filter (n>1)
+names(victoria_2021_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2021_duplicated_stops <- left_join(victoria_2021_duplicated_stops, victoria_2021$stops)
+
+#discard duplicates
+victoria_2021$stops <- victoria_2021$stops[!duplicated(victoria_2021$stops$stop_id),]
+
+#split modes
+victoria_2021_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2021)
+
+
+#set inputs to SI_calc function
+victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
+start_date = "2021-08-10"
+period_in_days = 7
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "lga_code_2021"
+
+#run SI_calc function
+victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2021_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+
+
+
+```
+
+```{r Melbourne_2016, echo=FALSE, warning=FALSE, message=FALSE}
+victoria_2016 <- read_gtfs("data/Melbourne/2016/gtfs.zip")
+
+#identify duplicate stops
+victoria_2016_duplicated_stops <- tabyl(victoria_2016$stops$stop_id) %>% filter (n>1)
+names(victoria_2016_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2016_duplicated_stops <- left_join(victoria_2016_duplicated_stops, victoria_2016$stops)
+
+#discard duplicates
+victoria_2016$stops <- victoria_2016$stops[!duplicated(victoria_2016$stops$stop_id),]
+
+#split modes
+victoria_2016_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2016)
+
+
+#set inputs to SI_calc function
+victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
+start_date = "2016-08-09"
+period_in_days = 7
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "lga_code_2021"
+
+#run SI_calc function
+victoria_2016_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2016_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+
+
+
+```
+
+
+
+Minor corrections were made to the GTFS files to remove duplicate stop_ids. These involved minor discrepancies in either the stop name, latitude or longitude. 
+
+
+The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources, and this study made use of the absmapsdata R package [@R-absmapsdata] to access the 2021 Local Government Area (LGA) boundaries for the Greater Melbourne area.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. 
+
+
+
+### Toronto, Ontario, Canada
+### Washington DC, USA
+
+
+
+
 # Results
 
 The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as an Rmarkdown file (used to typeset this paper). The following subsections discuss the results of cases studies used to develop and test the code. 
 
 
 ## Melbourne
+ Results are summarized in the following:  
 
-Melbourne's GTFS feed is published by Public Transport Victoria (PTV). There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa]. The Australian census is undertaken in early August every 5 years, with the last two being in 2016 and 2021. GTFS feeds were therefore selected for the first week of August of each year for the purposes of this test analysis, so that results are connected to the census dates.
-The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources, and this study made use of the absmapsdata R package [@R-absmapsdata] to access Local Government Area (LGA) boundaries for the Greater Melbourne area.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. The Supply Index was calculated for the 2021 boundaries of each LGA (the area of interest), using the GTFS feed released in the first week of August (the time period) between 2016 and 2022. Results are summarized in the following:  
-
-```{r Melbourne_2022, echo=FALSE, warning=FALSE, message=FALSE}
-
-victoria_2022 <- read_gtfs("data/Melbourne/2022/gtfs.zip")
-victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
-victoria_2022_list_by_mode <- victoria_2022
-start_date = "2022-08-04"
-period_in_days = 7
-EPSG_for_transform = 28355
-areas_of_interest_id_field = "lga_code_2021"
-
-victoria_2022_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2022_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
-
-victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
-
-
-
-```
 
 
 
