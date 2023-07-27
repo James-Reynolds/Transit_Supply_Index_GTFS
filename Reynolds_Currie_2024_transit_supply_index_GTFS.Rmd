@@ -450,15 +450,13 @@ names(SI_for_day_of_analysis_by_mode_k) <- c( names(SI_for_day_of_analysis_by_mo
             #add the SIs for stop i to the running total of SI for the mode in question
             SI_for_day_of_analysis_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] <- SI_for_day_of_analysis_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] + SI_for_day_of_analysis_by_mode_k$add_to_SI
           
-            print("stop")
-            print(i)
+            print(c("stop", i, "mode", k, "day", j))
             #close (i) loop for calculating SIs for stop i and adding to the running total of SI
             }
         
         #close the if(no stops in gtfs for that mode) test 
         }
-       print("mode)")
-       print(k)
+       
        #close for (k) loop for calculating SI for a single mode on a single day
       }  
        
@@ -474,8 +472,6 @@ names(SI_for_day_of_analysis_by_mode_k) <- c( names(SI_for_day_of_analysis_by_mo
       #update name of new element to match date
       names(SI_list_by_date_and_mode) <- c(names(SI_list_by_date_and_mode)[1:length(names(SI_list_by_date_and_mode))-1], as.character(day_of_analysis))
 
-    print("day")
-          print(j)
     #close for (j) loop for creating the list of days
     }        
 
