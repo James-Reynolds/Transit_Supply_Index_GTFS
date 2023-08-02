@@ -352,7 +352,7 @@ black box, meaning that it is not possible to calculate scores
 independently to understand how the metric might change with cahnges to
 the transit system or surrounding environment.</p>
 <p>The Supply Index developed by <span class="citation">Currie and
-Senbergs (<label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span> may provide a metric that is
+Senbergs (<label for="tufte-mn-3" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-3" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span> may provide a metric that is
 relatively easy to calculate, open (rather than a black box), and
 relatively simple for a non-technical audience to understand, engage
 with and use. This Index is based on calculating the number of transit
@@ -361,15 +361,15 @@ for the amount of the area of interest that is within a typical walk
 access distance of each stop. However, it does not appear to have been
 widely used, perhaps in part because it still required an analyst to
 obtain sources of timetable and geographic data. Since the publication
-of <span class="citation">Currie and Senbergs (<label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span>
+of <span class="citation">Currie and Senbergs (<label for="tufte-mn-4" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-4" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span>
 such data has become much easier to obtain with more than 10,000
 agencies now providing timetable and network data using the General
-Transit Feed Specification (GTFS) format <span class="citation">(<label for="tufte-mn-5" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-5" class="margin-toggle">MobilityData undated<span class="marginnote">MobilityData. undated. <em>General Transit Feed Specification</span>)</span>.
+Transit Feed Specification (GTFS) format <span class="citation">(<label for="tufte-mn-5" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-5" class="margin-toggle">MobilityData undated<span class="marginnote">MobilityData. undated. <em><span>General Transit Feed Specification</span>)</span>.
 A gap, however, is that there is not yet a method for calculating the
-<span class="citation">Currie and Senbergs (<label for="tufte-mn-6" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-6" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span>
+<span class="citation">Currie and Senbergs (<label for="tufte-mn-6" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-6" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span>
 Supply Index directly from GTFS data.</p>
 <p>This paper reports the development of R code to calculate the Supply
-Index of <span class="citation">Currie and Senbergs (<label for="tufte-mn-7" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-7" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span>
+Index of <span class="citation">Currie and Senbergs (<label for="tufte-mn-7" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-7" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span>
 directly from GTFS data. The code is developed using data from a single
 case: the GTFS for Victoria in Australia, which includes Greater
 Melbourne. Cross-case comparison to Toronto, Canada, and Washington DC,
@@ -439,11 +439,11 @@ open-source code (<a href="https://github.com/jcwong86/GTFS_Explore_Tool" class=
 research may involve reviewing this code and using it to analyse modern
 GTFS feeds. However, in this paper the aim is more modest, in that the
 objective is to develop code to calculate the simpler Suppy Index metric
-from <span class="citation">Currie and Senbergs (<label for="tufte-mn-18" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span>.</p>
+from <span class="citation">Currie and Senbergs (<label for="tufte-mn-18" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-18" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span>.</p>
 <div id="the-suppy-index" class="section level2">
 <h2>The Suppy Index</h2>
 <p>The Supply Index is shown in Equation <span class="math inline">\(\ref{eq:supply_index}\)</span>. Minor adjustments
-have been made to generalise the equation, as <span class="citation">Currie and Senbergs (<label for="tufte-mn-19" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-19" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span>
+have been made to generalise the equation, as <span class="citation">Currie and Senbergs (<label for="tufte-mn-19" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-19" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span>
 focused on the context of Melbourne’s Census Collection Districts (CCD)
 and calculations based on a week of transit service. <span class="math display">\[\begin{equation}
 \label{eq:supply_index}
@@ -452,7 +452,7 @@ and calculations based on a week of transit service. <span class="math display">
 <p><span class="math inline">\(SI_{area, time}\)</span> is the Supply
 Index for the area of interest and a given period of time. <span class="math inline">\(Area_{Bn}\)</span> is the buffer area for each
 stop (n) within the area of interest. In <span class="citation">Currie
-and Senbergs (<label for="tufte-mn-20" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-20" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span> this was based on a radius of 400
+and Senbergs (<label for="tufte-mn-20" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-20" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span> this was based on a radius of 400
 metres for bus and tram stops, and 800 metres for railway stations.
 <span class="math inline">\(Area_area\)</span> is the area of the area
 of interest, and <span class="math inline">\(SL_{n,time}\)</span> is the
@@ -471,14 +471,14 @@ specialists. Such simplicity is helped by the way that the Index is
 additive, in that SI~area, time~ scores can be aggregated to calculate
 an overall score across multiple time periods or for a region
 encompassing multiple areas of interest.</p>
-<p><span class="citation">Currie and Senbergs (<label for="tufte-mn-21" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-21" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span>
+<p><span class="citation">Currie and Senbergs (<label for="tufte-mn-21" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-21" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span>
 calculated the SI~area, time~ for various CCDs in Melbourne using a
 timetable database provided by the Victorian Public Transport Authority
 (PTA). This predated the widespread availability of GTFS data, which
 provides a standardised format for timetable data that is produced by
 many transit systems. GTFS is an open, text-based format that was
 developed originally to allow transit information to be included in the
-Google Maps navigation platform <span class="citation">(<label for="tufte-mn-22" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-22" class="margin-toggle">MobilityData undated<span class="marginnote">MobilityData. undated. <em>General Transit Feed Specification</span>)</span>.
+Google Maps navigation platform <span class="citation">(<label for="tufte-mn-22" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-22" class="margin-toggle">MobilityData undated<span class="marginnote">MobilityData. undated. <em><span>General Transit Feed Specification</span>)</span>.
 A question, therefore, is how to calculate the SI using GTFS data so
 that SI<sub>areas</sub> can be calculated and compared for any area of
 interest where transit service information is available in the GFTS
@@ -507,7 +507,7 @@ arrivals at a stop and the SL<sub>Bn</sub> term.</p>
 2022</a>)</span> was used to split input GTFS feeds by mode to
 facilitate the buffer zone calculation. Buffer zones of 400 metres for
 bus and Light Rail Transit (LRT) services and 800 metres for heavy rail,
-as per <span class="citation">Currie and Senbergs (<label for="tufte-mn-25" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-25" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“Identifying Spatial Gaps</span>)</span>.
+as per <span class="citation">Currie and Senbergs (<label for="tufte-mn-25" class="margin-toggle">&#8853;</label><input type="checkbox" id="tufte-mn-25" class="margin-toggle">2007<span class="marginnote">Currie, Graham, and Zed Senbergs. 2007. <span>“<span class="nocase">Identifying spatial gaps in public transport provision</span>)</span>.
 There is an extended mode definition that includes modes beyond the 10
 in the GTFS standard <span class="citation">(<a href="#ref-filter_GTFS_by_mode" role="doc-biblioref">Danile Herszenhut
 et al. undated</a>)</span>, but these are not dealt with by the

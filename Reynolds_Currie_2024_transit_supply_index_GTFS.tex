@@ -1,77 +1,85 @@
-% Repository:  https://github.com/chiehrosswang/TRB_LaTeX_tex
-%
-% Transportation Research Board conference paper template
-% version 4.0 Lite (updates made to be compatible in Overleaf and ShareLaTeX)
-%
-%
-% When numbered option is activated, lines are numbered.
-\documentclass[numbered]{trbunofficial}
+\documentclass[]{tufte-book}
+
+% ams
+\usepackage{amssymb,amsmath}
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \makeatletter
+  \@ifpackageloaded{fontspec}{}{\usepackage{fontspec}}
+  \makeatother
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \makeatletter
+  \@ifpackageloaded{soul}{
+     \renewcommand\allcapsspacing[1]{{\addfontfeature{LetterSpace=15}#1}}
+     \renewcommand\smallcapsspacing[1]{{\addfontfeature{LetterSpace=10}#1}}
+   }{}
+  \makeatother
+
+\fi
+
+% graphix
 \usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+
+% booktabs
 \usepackage{booktabs}
 
-\newread\somefile
-\usepackage{xparse}
+% url
+\usepackage{url}
+
+% hyperref
+\usepackage{hyperref}
+
+% units.
+\usepackage{units}
+
+
+\setcounter{secnumdepth}{-1}
+
+% citations
 \usepackage{natbib}
-\bibliographystyle{unsrtnat}
-\setcitestyle{round}
-% \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
-% For TRB version hide links
-\usepackage[hidelinks]{hyperref}
-
-% Put here what will go to headers as author
-\AuthorHeaders{Reynolds and Currie}
-\title{Leveraging GTFS data to calculate an open-source Transit Supply
-Index}
-
-% TODO: add macros for easier formatting of \author.
-\author{%
-    \textbf{James Reynolds}\\\textit{Corresponding Author}\\
-  Research Fellow\\
-  Public Transport Research Group, Institute of Transport Studies,
-Department of Civil Engineering, Monash University, Victoria,
-Australia\\
-  \href{mailto:james.reynolds@monash.edu}{\nolinkurl{james.reynolds@monash.edu}}\\
-  \hfill\break
-    \textbf{Graham Currie}\\
-  Professor\\
-  Public Transport Research Group, Institute of Transport Studies,
-Department of Civil Engineering, Monash University, Victoria,
-Australia\\
-  \href{mailto:graham.currie@monash.edu}{\nolinkurl{graham.currie@monash.edu}}\\
-  \hfill\break
-  }
-
-% If necessary modify the number of words per table or figure default is set to
-% 250 words per table (default defined in cls)
+\bibliographystyle{plainnat}
 
 
-% If words are counted manually, put that number here. This does not include
-% figures and tables. This can also be used to avoid problems with texcount
-% program i.e. if one does not have it installed.
-\TotalWords{684}
+% pandoc syntax highlighting
+
+% table with pandoc
+
+% multiplecol
+\usepackage{multicol}
+
+% strikeout
+\usepackage[normalem]{ulem}
+
+% morefloats
+\usepackage{morefloats}
 
 
-% tightlist command for lists without linebreak
+% tightlist macro required by pandoc >= 1.14
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
-
+% title / author / date
+\title[Reynolds and Currie]{Leveraging GTFS data to calculate an
+open-source Transit Supply Index}
+\author{James Reynolds and Graham Currie}
+\date{2023-08-02}
 
 
 \begin{document}
+
 \maketitle
 
 
-\section{Abstract}
-TBC.
-\hfill\break%
-\hfill\break%
-\noindent\textit{Keywords}:  Transit, Public
-transport, GTFS, Benchmarking,  
-\newpage
+
 
 \hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
+\chapter{Introduction}\label{introduction}}
 
 Transit service level indicators include those in the Transit Capacity
 and Quality of Service Manual (TCQSM) \citep{TCQSM:2013}, the Transit
@@ -133,7 +141,7 @@ can be used to access proposed network changes and which may be
 relatively easy for non-technical specialists to understand.
 
 \hypertarget{research-context}{%
-\section{Research context}\label{research-context}}
+\chapter{Research context}\label{research-context}}
 
 Even a brief search shows that there is a very large number of metrics
 available for benchmarking transit services, for example: the Transit
@@ -195,7 +203,7 @@ objective is to develop code to calculate the simpler Suppy Index metric
 from \citet{currie2007identifying}.
 
 \hypertarget{the-suppy-index}{%
-\subsection{The Suppy Index}\label{the-suppy-index}}
+\section{The Suppy Index}\label{the-suppy-index}}
 
 The Supply Index is shown in Equation \ref{eq:supply_index}. Minor
 adjustments have been made to generalise the equation, as
@@ -242,7 +250,7 @@ calculated and compared for any area of interest where transit service
 information is available in the GFTS format.
 
 \hypertarget{methodology}{%
-\section{Methodology}\label{methodology}}
+\chapter{Methodology}\label{methodology}}
 
 This study adopts a case research approach by developing code to
 calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and
@@ -254,7 +262,7 @@ upgrades and issues of level-boarding access (i.e.~non-step suitable for
 wheelchair, pram, mobility-aid etc.) to the Supply Index scores.
 
 \hypertarget{code-development}{%
-\subsection{Code development}\label{code-development}}
+\section{Code development}\label{code-development}}
 
 Various analysis tools are available that make us of GTFS data,
 including the tidytransit package \citep{tidytransit2023} for the R
@@ -301,7 +309,7 @@ each area of interest; and the calculations are repeated until all stops
 and modes in the GTFS file have been included.
 
 \hypertarget{case-research-approach}{%
-\subsection{Case research approach}\label{case-research-approach}}
+\section{Case research approach}\label{case-research-approach}}
 
 These three cases were selected as they are familiar to the researchers,
 and as there is likely to be enough variety in how the GTFS feeds,
@@ -314,7 +322,7 @@ Research Board Annual Meeting is located (which is likely to be familiar
 to many readers).
 
 \hypertarget{melbourne-victoria-australia}{%
-\subsubsection{Melbourne, Victoria,
+\subsection{Melbourne, Victoria,
 Australia}\label{melbourne-victoria-australia}}
 
 Greater Melbourne is a geographic area that is similar to that of the
@@ -364,13 +372,13 @@ longitude and latitude into metres, as per the Geocentric Datum of
 Australia 1994 (GDA95 / MGA zone 55) coordinates.
 
 \hypertarget{toronto-ontario-canada}{%
-\subsubsection{Toronto, Ontario, Canada}\label{toronto-ontario-canada}}
+\subsection{Toronto, Ontario, Canada}\label{toronto-ontario-canada}}
 
 \hypertarget{washington-dc-usa}{%
-\subsubsection{Washington DC, USA}\label{washington-dc-usa}}
+\subsection{Washington DC, USA}\label{washington-dc-usa}}
 
 \hypertarget{results}{%
-\section{Results}\label{results}}
+\chapter{Results}\label{results}}
 
 The code is available at
 \url{https://github.com/James-Reynolds/Transit_Supply_Index_GTFS} as an
@@ -378,71 +386,75 @@ Rmarkdown file (used to typeset this paper). The following subsections
 discuss the results of cases studies used to develop and test the code.
 
 \hypertarget{victoria-australia}{%
-\subsection{Victoria, Australia}\label{victoria-australia}}
+\section{Victoria, Australia}\label{victoria-australia}}
 
 \hypertarget{transit-supply-index}{%
-\subsubsection{Transit Supply Index}\label{transit-supply-index}}
+\subsection{Transit Supply Index}\label{transit-supply-index}}
 
 \begin{figure}
-\includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-1} \includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2} \caption{SI for 2021 census day (August 10th) by LGA}\label{fig:Victoria_SI_2021}
+\includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-1} \includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2} \caption[SI for 2021 census day (August 10th) by LGA]{SI for 2021 census day (August 10th) by LGA}\label{fig:Victoria_SI_2021}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2016-1} \includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2016-2} \caption{SI for 2016 census day (August 9th) by LGA}\label{fig:Victoria_SI_2016}
+\includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2016-1} \includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2016-2} \caption[SI for 2016 census day (August 9th) by LGA]{SI for 2016 census day (August 9th) by LGA}\label{fig:Victoria_SI_2016}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-1} \includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2} \caption[SI for 2016 census day (August 9th) by LGA]{SI for 2016 census day (August 9th) by LGA}\label{fig:Victoria_SI_changes}
 \end{figure}
 
 \hypertarget{transit-needs}{%
-\subsubsection{Transit needs}\label{transit-needs}}
+\subsection{Transit needs}\label{transit-needs}}
 
 \hypertarget{level-boarding-accessibility}{%
-\subsubsection{Level-boarding
+\subsection{Level-boarding
 accessibility}\label{level-boarding-accessibility}}
 
 \hypertarget{the-metro-tunnel---adding-services}{%
-\subsubsection{The metro tunnel - adding
+\subsection{The metro tunnel - adding
 services}\label{the-metro-tunnel---adding-services}}
 
 \hypertarget{the-suburban-rail-loop}{%
-\subsubsection{The suburban rail loop}\label{the-suburban-rail-loop}}
+\subsection{The suburban rail loop}\label{the-suburban-rail-loop}}
 
 \hypertarget{toronto}{%
-\subsection{Toronto}\label{toronto}}
+\section{Toronto}\label{toronto}}
 
 \hypertarget{level-boarding-accessibility-1}{%
-\subsubsection{Level-boarding
+\subsection{Level-boarding
 accessibility}\label{level-boarding-accessibility-1}}
 
 \hypertarget{transit-city-what-might-have-been}{%
-\subsubsection{Transit City: what might have
+\subsection{Transit City: what might have
 been}\label{transit-city-what-might-have-been}}
 
 \hypertarget{viva-transit-what-was-achieved}{%
-\subsubsection{Viva transit: what was
+\subsection{Viva transit: what was
 achieved}\label{viva-transit-what-was-achieved}}
 
 \hypertarget{downtown-relief-lines}{%
-\subsubsection{Downtown relief lines}\label{downtown-relief-lines}}
+\subsection{Downtown relief lines}\label{downtown-relief-lines}}
 
 Many proposals - look at a few of them?
 
 \hypertarget{washington-dc}{%
-\subsection{Washington DC}\label{washington-dc}}
+\section{Washington DC}\label{washington-dc}}
 
 \hypertarget{level-boarding-accessibility-2}{%
-\subsubsection{Level-boarding
+\subsection{Level-boarding
 accessibility}\label{level-boarding-accessibility-2}}
 
 \hypertarget{cross-case-comparison}{%
-\subsection{Cross-case comparison}\label{cross-case-comparison}}
+\section{Cross-case comparison}\label{cross-case-comparison}}
 
 \hypertarget{discussion}{%
-\section{Discussion}\label{discussion}}
+\chapter{Discussion}\label{discussion}}
 
 \hypertarget{conclusions}{%
-\section{Conclusions}\label{conclusions}}
+\chapter{Conclusions}\label{conclusions}}
 
 \hypertarget{author-contribution-statement}{%
-\section{Author Contribution
+\chapter{Author Contribution
 Statement}\label{author-contribution-statement}}
 
 The authors confirm contribution to the paper as follows: study
@@ -452,7 +464,7 @@ Security; draft manuscript preparation: A. Anonymous. All authors
 reviewed the results and approved the final version of the manuscript.
 
 \hypertarget{acknowledgements}{%
-\section{Acknowledgements}\label{acknowledgements}}
+\chapter{Acknowledgements}\label{acknowledgements}}
 
 This document was prepared using the \texttt{rticles} template, created
 by Gregory Macfarlane, which is based on the \LaTeX originally posted by
@@ -462,9 +474,9 @@ adjustments to the template, and Ross Wang now maintains the
 \LaTeX template at \url{https://github.com/chiehrosswang/TRB_LaTeX_tex}.
 Gregory Macfarlane created the \texttt{rticles} template in 2021.
 
-\newpage
 \renewcommand\refname{References}
 \bibliography{packages.bib,References.bib}
+
 
 
 \end{document}
