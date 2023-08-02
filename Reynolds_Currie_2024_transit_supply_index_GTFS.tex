@@ -244,15 +244,24 @@ information is available in the GFTS format.
 \hypertarget{methodology}{%
 \section{Methodology}\label{methodology}}
 
+This study adopts a case research approach by developing code to
+calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and
+Washington D.C. (USA). The case research approach serves two purposes:
+firstly the selected cases where used to develop, test and verify the
+functionality of the code produced in this study. Secondly, aspects of
+the the selected cases were explored;, such as the impact of forthcoming
+upgrades and issues of level-boarding access (i.e.~non-step suitable for
+wheelchair, pram, mobility-aid etc.) to the Supply Index scores.
+
+\hypertarget{code-development}{%
+\subsection{Code development}\label{code-development}}
+
 Various analysis tools are available that make us of GTFS data,
 including the tidytransit package \citep{tidytransit2023} for the R
 statistical programming language \citep{R-base}.
 \citet{tidytransit_departure_timetable} provides code to calculate a
 departure timetable from a GTFS feed, and this was adapted to calculate
-arrivals at a stop and the SL\textsubscript{Bn} term. The code is
-available at
-\url{https://github.com/James-Reynolds/Transit_Supply_Index_GTFS} (and
-included in the Rmarkdown file used to typeset this paper).
+arrivals at a stop and the SL\textsubscript{Bn} term.
 
 The gtfstools R package \citep{R-gtfstools} was used to split input GTFS
 feeds by mode to facilitate the buffer zone calculation. Buffer zones of
@@ -266,8 +275,8 @@ buffer zone was set at 400 metres for cable trams, aerial lifts such a
 gondalas and trolleybuses, and at 800 metres for ferries, funiculars and
 monorails.
 
-Where transit stops are located close to bounaries their catchment areas
-may fall into multiple areas of interest. The sp package from
+Where transit stops are located close to boundaries their catchment
+areas may fall into multiple areas of interest. The sp package from
 \citep[\citet{applied_spatial_data_analysis_with_R}]{spatial_data_in_R}
 provides tools for manipulating geographic data and shape files in R.
 This is used to calculate the proportion of each stop's catchment area
@@ -291,36 +300,140 @@ n\textasciitilde); these are then added to a cumulative total field for
 each area of interest; and the calculations are repeated until all stops
 and modes in the GTFS file have been included.
 
+\hypertarget{case-research-approach}{%
+\subsection{Case research approach}\label{case-research-approach}}
+
+These three cases were selected as they are familiar to the researchers,
+and as there is likely to be enough variety in how the GTFS feeds,
+potential areas of interest and other aspects are set up such that the
+developed code will likely be generalis-able to other places.
+Additionally, the case selection continues the long-standing practice of
+comparing Melbourne and Toronto, as well as grounding one of the three
+cases in the context of the transit system where the Transportation
+Research Board Annual Meeting is located (which is likely to be familiar
+to many readers).
+
+\hypertarget{melbourne-victoria-australia}{%
+\subsubsection{Melbourne, Victoria,
+Australia}\label{melbourne-victoria-australia}}
+
+Greater Melbourne is a geographic area that is similar to that of the
+metropolitan areas of Paris or London, but with only around 5 million
+people has about one-third of the population. It consists of a inner
+Central Business District (CBD) with appartments, commercial skyscrapers
+and extensive sporting facilities nearby; surrounded by low-density,
+predominately single-family-housing-dominated, inner, middle and outer
+suburbs.There are predominately radial train and tram networks, but for
+most of the suburban areas the reality is that transit is provided by
+circuitious bus routes that are mostly used by those who cannot
+otherwise drive. An extensive freeway (and tollway) network provides
+connections across the Greater Melbourne area, further around Port
+Phillip Bay to Geelong (south-west) and the Mornington Penninsula
+(south-east) as well as to regional centres elsewhere in Victoria. There
+is a state-wide regional train and bus network, which also provides
+connections into South Australia, New South Wales and the Australian
+Capital Territory (Canberra) and local bus services in many regional
+towns and cities. However, accessibility to most of the city and state
+tends to be car-dominated, with transit mode share only accounting for
+XX\% across Greater Melbourne and YY\% across Victoria. The
+journey-to-work transit mode shares, however, are ZZ\% across Greater
+Melbourne and PP\% for travel into the CBD, which is reflective of the
+monocentric nature of the railway network, which focuses on Southern
+Cross Station (Spencer Street) for regional services and on a
+five-station City Loop (Southern Cross, Flinders Street, Parliament,
+Melbourne Central and Flagstaff) the helps to distribute commuters to
+workplaces across the CBD.
+
+Melbourne's GTFS feed is published by Public Transport Victoria (PTV).
+There are over 400 historical releases of the available on the
+transitfeeds.com website, with the first dating from March 2015
+\citep{transitfeeds_victoria:2023aa}. The Australian census is
+undertaken in early August every 5 years, with the last two being in
+2016 and 2021. GTFS feeds were therefore selected for the first week of
+August of each year for the purposes of this test analysis, so that the
+date of measurement of the Supply Index matches the census dates.
+
+Minor corrections were made to the GTFS files to remove duplicate
+stop\_ids. These involved minor discrepancies in either the stop name,
+latitude or longitude. The Australian Bureau of Statistics (ABS)
+provides a range of shape files and other resources, and this study made
+use of the absmapsdata R package \citep{R-absmapsdata} to access the
+2021 Local Government Area (LGA) boundaries for the Greater Melbourne
+area. The EPSG:28355 transform \citep{EPSG_28355} was used to shift
+longitude and latitude into metres, as per the Geocentric Datum of
+Australia 1994 (GDA95 / MGA zone 55) coordinates.
+
+\hypertarget{toronto-ontario-canada}{%
+\subsubsection{Toronto, Ontario, Canada}\label{toronto-ontario-canada}}
+
+\hypertarget{washington-dc-usa}{%
+\subsubsection{Washington DC, USA}\label{washington-dc-usa}}
+
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
-\hypertarget{r-code}{%
-\subsection{R code}\label{r-code}}
+The code is available at
+\url{https://github.com/James-Reynolds/Transit_Supply_Index_GTFS} as an
+Rmarkdown file (used to typeset this paper). The following subsections
+discuss the results of cases studies used to develop and test the code.
 
-\hypertarget{case-studies}{%
-\subsection{Case studies}\label{case-studies}}
+\hypertarget{victoria-australia}{%
+\subsection{Victoria, Australia}\label{victoria-australia}}
 
-\hypertarget{melbourne}{%
-\subsubsection{Melbourne}\label{melbourne}}
+\hypertarget{transit-supply-index}{%
+\subsubsection{Transit Supply Index}\label{transit-supply-index}}
 
-The EPSG:28355 transform \citep{EPSG_28355} was used to shift longitude
-and latitude into metres as per the Geocentric Datum of Australia 1994
-(GDA95 / MGA zone 55) coordinates,
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-1} \includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2} \caption{SI for 2021 census day (August 10th) by LGA}\label{fig:Victoria_SI_2021}
+\end{figure}
 
-Overall
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2016-1} \includegraphics[width=0.5\linewidth]{Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2016-2} \caption{SI for 2016 census day (August 9th) by LGA}\label{fig:Victoria_SI_2016}
+\end{figure}
 
-Wheelchair accessibility?
+\hypertarget{transit-needs}{%
+\subsubsection{Transit needs}\label{transit-needs}}
 
-The metro tunnel - adding services
+\hypertarget{level-boarding-accessibility}{%
+\subsubsection{Level-boarding
+accessibility}\label{level-boarding-accessibility}}
+
+\hypertarget{the-metro-tunnel---adding-services}{%
+\subsubsection{The metro tunnel - adding
+services}\label{the-metro-tunnel---adding-services}}
+
+\hypertarget{the-suburban-rail-loop}{%
+\subsubsection{The suburban rail loop}\label{the-suburban-rail-loop}}
 
 \hypertarget{toronto}{%
-\subsubsection{Toronto}\label{toronto}}
+\subsection{Toronto}\label{toronto}}
+
+\hypertarget{level-boarding-accessibility-1}{%
+\subsubsection{Level-boarding
+accessibility}\label{level-boarding-accessibility-1}}
+
+\hypertarget{transit-city-what-might-have-been}{%
+\subsubsection{Transit City: what might have
+been}\label{transit-city-what-might-have-been}}
+
+\hypertarget{viva-transit-what-was-achieved}{%
+\subsubsection{Viva transit: what was
+achieved}\label{viva-transit-what-was-achieved}}
+
+\hypertarget{downtown-relief-lines}{%
+\subsubsection{Downtown relief lines}\label{downtown-relief-lines}}
+
+Many proposals - look at a few of them?
 
 \hypertarget{washington-dc}{%
-\subsubsection{Washington DC}\label{washington-dc}}
+\subsection{Washington DC}\label{washington-dc}}
+
+\hypertarget{level-boarding-accessibility-2}{%
+\subsubsection{Level-boarding
+accessibility}\label{level-boarding-accessibility-2}}
 
 \hypertarget{cross-case-comparison}{%
-\subsubsection{Cross-case comparison}\label{cross-case-comparison}}
+\subsection{Cross-case comparison}\label{cross-case-comparison}}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}

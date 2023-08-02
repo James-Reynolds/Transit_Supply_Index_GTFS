@@ -1,0 +1,567 @@
+lga_code_2021,lga_name_2021,greater_melbourne
+10050,Albury,FALSE
+10180,Armidale Regional,FALSE
+10250,Ballina,FALSE
+10300,Balranald,FALSE
+10470,Bathurst Regional,FALSE
+10500,Bayside (NSW),FALSE
+10550,Bega Valley,FALSE
+10600,Bellingen,FALSE
+10650,Berrigan,FALSE
+10750,Blacktown,FALSE
+10800,Bland,FALSE
+10850,Blayney,FALSE
+10900,Blue Mountains,FALSE
+10950,Bogan,FALSE
+11150,Bourke,FALSE
+11200,Brewarrina,FALSE
+11250,Broken Hill,FALSE
+11300,Burwood,FALSE
+11350,Byron,FALSE
+11400,Cabonne,FALSE
+11450,Camden,FALSE
+11500,Campbelltown (NSW),FALSE
+11520,Canada Bay,FALSE
+11570,Canterbury-Bankstown,FALSE
+11600,Carrathool,FALSE
+11650,Central Coast (NSW),FALSE
+11700,Central Darling,FALSE
+11720,Cessnock,FALSE
+11730,Clarence Valley,FALSE
+11750,Cobar,FALSE
+11800,Coffs Harbour,FALSE
+12000,Coolamon,FALSE
+12150,Coonamble,FALSE
+12160,Cootamundra-Gundagai Regional,FALSE
+12350,Cowra,FALSE
+12380,Cumberland,FALSE
+12390,Dubbo Regional,FALSE
+12700,Dungog,FALSE
+12730,Edward River,FALSE
+12750,Eurobodalla,FALSE
+12850,Fairfield,FALSE
+12870,Federation,FALSE
+12900,Forbes,FALSE
+12930,Georges River,FALSE
+12950,Gilgandra,FALSE
+13010,Glen Innes Severn,FALSE
+13310,Goulburn Mulwaree,FALSE
+13340,Greater Hume Shire,FALSE
+13450,Griffith,FALSE
+13550,Gunnedah,FALSE
+13660,Gwydir,FALSE
+13800,Hawkesbury,FALSE
+13850,Hay,FALSE
+13910,Hilltops,FALSE
+14000,Hornsby,FALSE
+14100,Hunters Hill,FALSE
+14170,Inner West,FALSE
+14220,Inverell,FALSE
+14300,Junee,FALSE
+14350,Kempsey,FALSE
+14400,Kiama,FALSE
+14500,Ku-ring-gai,FALSE
+14550,Kyogle,FALSE
+14600,Lachlan,FALSE
+14650,Lake Macquarie,FALSE
+14700,Lane Cove,FALSE
+14750,Leeton,FALSE
+14850,Lismore,FALSE
+14870,Lithgow,FALSE
+14900,Liverpool,FALSE
+14920,Liverpool Plains,FALSE
+14950,Lockhart,FALSE
+15050,Maitland,FALSE
+15240,Mid-Coast,FALSE
+15270,Mid-Western Regional,FALSE
+15300,Moree Plains,FALSE
+15350,Mosman,FALSE
+15520,Murray River,FALSE
+15560,Murrumbidgee,FALSE
+15650,Muswellbrook,FALSE
+15700,Nambucca Valley,FALSE
+15750,Narrabri,FALSE
+15800,Narrandera,FALSE
+15850,Narromine,FALSE
+15900,Newcastle,FALSE
+15950,North Sydney,FALSE
+15990,Northern Beaches,FALSE
+16100,Oberon,FALSE
+16150,Orange,FALSE
+16200,Parkes,FALSE
+16260,Parramatta,FALSE
+16350,Penrith,FALSE
+16380,Port Macquarie-Hastings,FALSE
+16400,Port Stephens,FALSE
+16490,Queanbeyan-Palerang Regional,FALSE
+16550,Randwick,FALSE
+16610,Richmond Valley,FALSE
+16700,Ryde,FALSE
+16900,Shellharbour,FALSE
+16950,Shoalhaven,FALSE
+17000,Singleton,FALSE
+17040,Snowy Monaro Regional,FALSE
+17080,Snowy Valleys,FALSE
+17100,Strathfield,FALSE
+17150,Sutherland Shire,FALSE
+17200,Sydney,FALSE
+17310,Tamworth Regional,FALSE
+17350,Temora,FALSE
+17400,Tenterfield,FALSE
+17420,The Hills Shire,FALSE
+17550,Tweed,FALSE
+17620,Upper Hunter Shire,FALSE
+17640,Upper Lachlan Shire,FALSE
+17650,Uralla,FALSE
+17750,Wagga Wagga,FALSE
+17850,Walcha,FALSE
+17900,Walgett,FALSE
+17950,Warren,FALSE
+18020,Warrumbungle Shire,FALSE
+18050,Waverley,FALSE
+18100,Weddin,FALSE
+18200,Wentworth,FALSE
+18250,Willoughby,FALSE
+18350,Wingecarribee,FALSE
+18400,Wollondilly,FALSE
+18450,Wollongong,FALSE
+18500,Woollahra,FALSE
+18710,Yass Valley,FALSE
+19399,Unincorporated NSW,FALSE
+19499,No usual address (NSW),FALSE
+19799,Migratory - Offshore - Shipping (NSW),FALSE
+20110,Alpine,FALSE
+20260,Ararat,FALSE
+20570,Ballarat,FALSE
+20660,Banyule,TRUE
+20740,Bass Coast,FALSE
+20830,Baw Baw,FALSE
+20910,Bayside (Vic.),TRUE
+21010,Benalla,FALSE
+21110,Boroondara,TRUE
+21180,Brimbank,TRUE
+21270,Buloke,FALSE
+21370,Campaspe,FALSE
+21450,Cardinia,TRUE
+21610,Casey,TRUE
+21670,Central Goldfields,FALSE
+21750,Colac Otway,FALSE
+21830,Corangamite,FALSE
+21890,Darebin,TRUE
+22110,East Gippsland,FALSE
+22170,Frankston,TRUE
+22250,Gannawarra,FALSE
+22310,Glen Eira,TRUE
+22410,Glenelg,FALSE
+22490,Golden Plains,FALSE
+22620,Greater Bendigo,FALSE
+22670,Greater Dandenong,TRUE
+22750,Greater Geelong,FALSE
+22830,Greater Shepparton,FALSE
+22910,Hepburn,FALSE
+22980,Hindmarsh,FALSE
+23110,Hobsons Bay,TRUE
+23190,Horsham,FALSE
+23270,Hume,TRUE
+23350,Indigo,FALSE
+23430,Kingston (Vic.),TRUE
+23670,Knox,TRUE
+23810,Latrobe (Vic.),FALSE
+23940,Loddon,FALSE
+24130,Macedon Ranges,FALSE
+24210,Manningham,TRUE
+24250,Mansfield,FALSE
+24330,Maribyrnong,TRUE
+24410,Maroondah,TRUE
+24600,Melbourne,TRUE
+24650,Melton,TRUE
+24780,Mildura,FALSE
+24850,Mitchell,FALSE
+24900,Moira,FALSE
+24970,Monash,TRUE
+25060,Moonee Valley,TRUE
+25150,Moorabool,FALSE
+25250,Moreland,TRUE
+25340,Mornington Peninsula,TRUE
+25430,Mount Alexander,FALSE
+25490,Moyne,FALSE
+25620,Murrindindi,FALSE
+25710,Nillumbik,TRUE
+25810,Northern Grampians,FALSE
+25900,Port Phillip,TRUE
+25990,Pyrenees,FALSE
+26080,Queenscliffe,FALSE
+26170,South Gippsland,FALSE
+26260,Southern Grampians,FALSE
+26350,Stonnington,TRUE
+26430,Strathbogie,FALSE
+26490,Surf Coast,FALSE
+26610,Swan Hill,FALSE
+26670,Towong,FALSE
+26700,Wangaratta,FALSE
+26730,Warrnambool,FALSE
+26810,Wellington,FALSE
+26890,West Wimmera,FALSE
+26980,Whitehorse,TRUE
+27070,Whittlesea,TRUE
+27170,Wodonga,FALSE
+27260,Wyndham,TRUE
+27350,Yarra,TRUE
+27450,Yarra Ranges,TRUE
+27630,Yarriambiack,FALSE
+29399,Unincorporated Vic,FALSE
+29499,No usual address (Vic.),FALSE
+29799,Migratory - Offshore - Shipping (Vic.),FALSE
+30250,Aurukun,FALSE
+30300,Balonne,FALSE
+30370,Banana,FALSE
+30410,Barcaldine,FALSE
+30450,Barcoo,FALSE
+30760,Blackall Tambo,FALSE
+30900,Boulia,FALSE
+31000,Brisbane,FALSE
+31750,Bulloo,FALSE
+31820,Bundaberg,FALSE
+31900,Burdekin,FALSE
+31950,Burke,FALSE
+32080,Cairns,FALSE
+32250,Carpentaria,FALSE
+32260,Cassowary Coast,FALSE
+32270,Central Highlands (Qld),FALSE
+32310,Charters Towers,FALSE
+32330,Cherbourg,FALSE
+32450,Cloncurry,FALSE
+32500,Cook,FALSE
+32600,Croydon,FALSE
+32750,Diamantina,FALSE
+32770,Doomadgee,FALSE
+32810,Douglas,FALSE
+33100,Etheridge,FALSE
+33200,Flinders (Qld),FALSE
+33220,Fraser Coast,FALSE
+33360,Gladstone,FALSE
+33430,Gold Coast,FALSE
+33610,Goondiwindi,FALSE
+33620,Gympie,FALSE
+33800,Hinchinbrook,FALSE
+33830,Hope Vale,FALSE
+33960,Ipswich,FALSE
+33980,Isaac,FALSE
+34420,Kowanyama,FALSE
+34530,Livingstone,FALSE
+34570,Lockhart River,FALSE
+34580,Lockyer Valley,FALSE
+34590,Logan,FALSE
+34710,Longreach,FALSE
+34770,Mackay,FALSE
+34800,McKinlay,FALSE
+34830,Mapoon,FALSE
+34860,Maranoa,FALSE
+34880,Mareeba,FALSE
+35010,Moreton Bay,FALSE
+35250,Mornington,FALSE
+35300,Mount Isa,FALSE
+35600,Murweh,FALSE
+35670,Napranum,FALSE
+35740,Noosa,FALSE
+35760,North Burnett,FALSE
+35780,Northern Peninsula Area,FALSE
+35790,Palm Island,FALSE
+35800,Paroo,FALSE
+36070,Pormpuraaw,FALSE
+36150,Quilpie,FALSE
+36250,Redland,FALSE
+36300,Richmond,FALSE
+36370,Rockhampton,FALSE
+36510,Scenic Rim,FALSE
+36580,Somerset,FALSE
+36630,South Burnett,FALSE
+36660,Southern Downs,FALSE
+36720,Sunshine Coast,FALSE
+36820,Tablelands,FALSE
+36910,Toowoomba,FALSE
+36950,Torres,FALSE
+36960,Torres Strait Island,FALSE
+37010,Townsville,FALSE
+37300,Weipa,FALSE
+37310,Western Downs,FALSE
+37340,Whitsunday,FALSE
+37400,Winton,FALSE
+37550,Woorabinda,FALSE
+37570,Wujal Wujal,FALSE
+37600,Yarrabah,FALSE
+39499,No usual address (Qld),FALSE
+39799,Migratory - Offshore - Shipping (Qld),FALSE
+40070,Adelaide,FALSE
+40120,Adelaide Hills,FALSE
+40150,Adelaide Plains,FALSE
+40220,Alexandrina,FALSE
+40250,Anangu Pitjantjatjara Yunkunytjatjara,FALSE
+40310,Barossa,FALSE
+40430,Barunga West,FALSE
+40520,Berri Barmera,FALSE
+40700,Burnside,FALSE
+40910,Campbelltown (SA),FALSE
+41010,Ceduna,FALSE
+41060,Charles Sturt,FALSE
+41140,Clare and Gilbert Valleys,FALSE
+41190,Cleve,FALSE
+41330,Coober Pedy,FALSE
+41560,Copper Coast,FALSE
+41750,Elliston,FALSE
+41830,Flinders Ranges,FALSE
+41960,Franklin Harbour,FALSE
+42030,Gawler,FALSE
+42110,Goyder,FALSE
+42250,Grant,FALSE
+42600,Holdfast Bay,FALSE
+42750,Kangaroo Island,FALSE
+43080,Karoonda East Murray,FALSE
+43220,Kimba,FALSE
+43360,Kingston (SA),FALSE
+43650,Light,FALSE
+43710,Lower Eyre Peninsula,FALSE
+43790,Loxton Waikerie,FALSE
+44000,Maralinga Tjarutja,FALSE
+44060,Marion,FALSE
+44210,Mid Murray,FALSE
+44340,Mitcham,FALSE
+44550,Mount Barker,FALSE
+44620,Mount Gambier,FALSE
+44830,Mount Remarkable,FALSE
+45040,Murray Bridge,FALSE
+45090,Naracoorte Lucindale,FALSE
+45120,Northern Areas,FALSE
+45290,Norwood Payneham and St Peters,FALSE
+45340,Onkaparinga,FALSE
+45400,Orroroo Carrieton,FALSE
+45540,Peterborough,FALSE
+45680,Playford,FALSE
+45890,Port Adelaide Enfield,FALSE
+46090,Port Augusta,FALSE
+46300,Port Lincoln,FALSE
+46450,Port Pirie,FALSE
+46510,Prospect,FALSE
+46670,Renmark Paringa,FALSE
+46860,Robe,FALSE
+46970,Roxby Downs,FALSE
+47140,Salisbury,FALSE
+47290,Southern Mallee,FALSE
+47490,Streaky Bay,FALSE
+47630,Tatiara,FALSE
+47700,Tea Tree Gully,FALSE
+47800,Coorong,FALSE
+47910,Tumby Bay,FALSE
+47980,Unley,FALSE
+48050,Victor Harbor,FALSE
+48130,Wakefield,FALSE
+48260,Walkerville,FALSE
+48340,Wattle Range,FALSE
+48410,West Torrens,FALSE
+48540,Whyalla,FALSE
+48640,Wudinna,FALSE
+48750,Yankalilla,FALSE
+48830,Yorke Peninsula,FALSE
+49399,Unincorporated SA,FALSE
+49499,No usual address (SA),FALSE
+49799,Migratory - Offshore - Shipping (SA),FALSE
+50080,Albany,FALSE
+50210,Armadale,FALSE
+50250,Ashburton,FALSE
+50280,Augusta Margaret River,FALSE
+50350,Bassendean,FALSE
+50420,Bayswater,FALSE
+50490,Belmont,FALSE
+50560,Beverley,FALSE
+50630,Boddington,FALSE
+50770,Boyup Brook,FALSE
+50840,Bridgetown-Greenbushes,FALSE
+50910,Brookton,FALSE
+50980,Broome,FALSE
+51080,Broomehill-Tambellup,FALSE
+51120,Bruce Rock,FALSE
+51190,Bunbury,FALSE
+51260,Busselton,FALSE
+51310,Cambridge,FALSE
+51330,Canning,FALSE
+51400,Capel,FALSE
+51470,Carnamah,FALSE
+51540,Carnarvon,FALSE
+51610,Chapman Valley,FALSE
+51680,Chittering,FALSE
+51710,Christmas Island,FALSE
+51750,Claremont,FALSE
+51820,Cockburn,FALSE
+51860,Cocos Islands,FALSE
+51890,Collie,FALSE
+51960,Coolgardie,FALSE
+52030,Coorow,FALSE
+52100,Corrigin,FALSE
+52170,Cottesloe,FALSE
+52240,Cranbrook,FALSE
+52310,Cuballing,FALSE
+52380,Cue,FALSE
+52450,Cunderdin,FALSE
+52520,Dalwallinu,FALSE
+52590,Dandaragan,FALSE
+52660,Dardanup,FALSE
+52730,Denmark,FALSE
+52800,Derby-West Kimberley,FALSE
+52870,Donnybrook-Balingup,FALSE
+52940,Dowerin,FALSE
+53010,Dumbleyung,FALSE
+53080,Dundas,FALSE
+53150,East Fremantle,FALSE
+53220,East Pilbara,FALSE
+53290,Esperance,FALSE
+53360,Exmouth,FALSE
+53430,Fremantle,FALSE
+53570,Gingin,FALSE
+53640,Gnowangerup,FALSE
+53710,Goomalling,FALSE
+53780,Gosnells,FALSE
+53800,Greater Geraldton,FALSE
+53920,Halls Creek,FALSE
+53990,Harvey,FALSE
+54060,Irwin,FALSE
+54130,Jerramungup,FALSE
+54170,Joondalup,FALSE
+54200,Kalamunda,FALSE
+54280,Kalgoorlie-Boulder,FALSE
+54310,Karratha,FALSE
+54340,Katanning,FALSE
+54410,Kellerberrin,FALSE
+54480,Kent,FALSE
+54550,Kojonup,FALSE
+54620,Kondinin,FALSE
+54690,Koorda,FALSE
+54760,Kulin,FALSE
+54830,Kwinana,FALSE
+54900,Lake Grace,FALSE
+54970,Laverton,FALSE
+55040,Leonora,FALSE
+55110,Mandurah,FALSE
+55180,Manjimup,FALSE
+55250,Meekatharra,FALSE
+55320,Melville,FALSE
+55390,Menzies,FALSE
+55460,Merredin,FALSE
+55530,Mingenew,FALSE
+55600,Moora,FALSE
+55670,Morawa,FALSE
+55740,Mosman Park,FALSE
+55810,Mount Magnet,FALSE
+55880,Mount Marshall,FALSE
+55950,Mukinbudin,FALSE
+56090,Mundaring,FALSE
+56160,Murchison,FALSE
+56230,Murray,FALSE
+56300,Nannup,FALSE
+56370,Narembeen,FALSE
+56460,Narrogin,FALSE
+56580,Nedlands,FALSE
+56620,Ngaanyatjarraku,FALSE
+56730,Northam,FALSE
+56790,Northampton,FALSE
+56860,Nungarin,FALSE
+56930,Peppermint Grove,FALSE
+57000,Perenjori,FALSE
+57080,Perth,FALSE
+57140,Pingelly,FALSE
+57210,Plantagenet,FALSE
+57280,Port Hedland,FALSE
+57350,Quairading,FALSE
+57420,Ravensthorpe,FALSE
+57490,Rockingham,FALSE
+57630,Sandstone,FALSE
+57700,Serpentine-Jarrahdale,FALSE
+57770,Shark Bay,FALSE
+57840,South Perth,FALSE
+57910,Stirling,FALSE
+57980,Subiaco,FALSE
+58050,Swan,FALSE
+58190,Tammin,FALSE
+58260,Three Springs,FALSE
+58330,Toodyay,FALSE
+58400,Trayning,FALSE
+58470,Upper Gascoyne,FALSE
+58510,Victoria Park,FALSE
+58540,Victoria Plains,FALSE
+58570,Vincent,FALSE
+58610,Wagin,FALSE
+58680,Wandering,FALSE
+58760,Wanneroo,FALSE
+58820,Waroona,FALSE
+58890,West Arthur,FALSE
+59030,Westonia,FALSE
+59100,Wickepin,FALSE
+59170,Williams,FALSE
+59250,Wiluna,FALSE
+59310,Wongan-Ballidu,FALSE
+59320,Woodanilling,FALSE
+59330,Wyalkatchem,FALSE
+59340,Wyndham-East Kimberley,FALSE
+59350,Yalgoo,FALSE
+59360,Yilgarn,FALSE
+59370,York,FALSE
+59499,No usual address (WA),FALSE
+59799,Migratory - Offshore - Shipping (WA),FALSE
+60210,Break O'Day,FALSE
+60410,Brighton,FALSE
+60610,Burnie,FALSE
+60810,Central Coast (Tas.),FALSE
+61010,Central Highlands (Tas.),FALSE
+61210,Circular Head,FALSE
+61410,Clarence,FALSE
+61510,Derwent Valley,FALSE
+61610,Devonport,FALSE
+61810,Dorset,FALSE
+62010,Flinders (Tas.),FALSE
+62210,George Town,FALSE
+62410,Glamorgan-Spring Bay,FALSE
+62610,Glenorchy,FALSE
+62810,Hobart,FALSE
+63010,Huon Valley,FALSE
+63210,Kentish,FALSE
+63410,King Island,FALSE
+63610,Kingborough,FALSE
+63810,Latrobe (Tas.),FALSE
+64010,Launceston,FALSE
+64210,Meander Valley,FALSE
+64610,Northern Midlands,FALSE
+64810,Sorell,FALSE
+65010,Southern Midlands,FALSE
+65210,Tasman,FALSE
+65410,Waratah-Wynyard,FALSE
+65610,West Coast,FALSE
+65810,West Tamar,FALSE
+69499,No usual address (Tas.),FALSE
+69799,Migratory - Offshore - Shipping (Tas.),FALSE
+70200,Alice Springs,FALSE
+70420,Barkly,FALSE
+70540,Belyuen,FALSE
+70620,Central Desert,FALSE
+70700,Coomalie,FALSE
+71000,Darwin,FALSE
+71150,Darwin Waterfront Precinct,FALSE
+71300,East Arnhem,FALSE
+72200,Katherine,FALSE
+72300,Litchfield,FALSE
+72330,MacDonnell,FALSE
+72800,Palmerston,FALSE
+73600,Roper Gulf,FALSE
+74050,Tiwi Islands,FALSE
+74550,Victoria Daly,FALSE
+74560,Wagait,FALSE
+74660,West Arnhem,FALSE
+74680,West Daly,FALSE
+79399,Unincorporated NT,FALSE
+79499,No usual address (NT),FALSE
+79799,Migratory - Offshore - Shipping (NT),FALSE
+89399,Unincorporated ACT,FALSE
+89499,No usual address (ACT),FALSE
+89799,Migratory - Offshore - Shipping (ACT),FALSE
+99399,Unincorp. Other Territories,FALSE
+99499,No usual address (OT),FALSE
+99799,Migratory - Offshore - Shipping (OT),FALSE
+ZZZZZ,Outside Australia,FALSE
