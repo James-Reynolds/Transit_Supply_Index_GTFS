@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.2)  3 AUG 2023 14:13
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.2)  3 AUG 2023 17:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -906,6 +906,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 456--457
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-1.pdf>
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf>
+
+Overfull \hbox (3.32881pt too wide) in paragraph at lines 460--461
+[][] []
+ []
+
 
 Underfull \hbox (badness 10000) in paragraph at lines 460--461
 
@@ -929,9 +936,11 @@ Class tufte-book Warning: Proper spacing of small-caps letters has not been set 
 This message occurred on input line 476.
 
 [15]
+Underfull \vbox (badness 2486) has occurred while \output is active []
+
 
 Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 476.
+This message occurred on input line 543.
 
 [16]
 
@@ -970,10 +979,10 @@ Package rerunfilecheck Info: File `Reynolds_Currie_2024_transit_supply_index_GTF
 (rerunfilecheck)             Checksum: 63E0B376497E9FC18DF3F28F2FE5AA84;2013.
  ) 
 Here is how much of TeX's memory you used:
- 16048 strings out of 477888
- 313221 string characters out of 5821661
+ 16059 strings out of 477888
+ 314224 string characters out of 5821661
  1941869 words of memory out of 5000000
- 36647 multiletter control sequences out of 15000+600000
+ 36657 multiletter control sequences out of 15000+600000
  563494 words of font info for 78 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  114i,11n,124p,622b,487s stack positions out of 10000i,1000n,20000p,200000b,200000s

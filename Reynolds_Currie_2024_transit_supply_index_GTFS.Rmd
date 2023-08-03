@@ -634,7 +634,7 @@ map <- victoria_2021_SI_total %>%
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
-  theme_void() +                    # clears other plot elements
+  # theme_void() +                    # clears other plot elements
  coord_sf()
 
 map
@@ -652,7 +652,7 @@ map <- victoria_2021_SI_total %>%
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
-  theme_void() +                    # clears other plot elements
+ # theme_void() +                    # clears other plot elements
  coord_sf()
 
 map
@@ -680,7 +680,7 @@ map <- victoria_2016_SI_total %>%
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
-  theme_void() +                    # clears other plot elements
+  #theme_void() +                    # clears other plot elements
  coord_sf()
 
 #map
@@ -698,7 +698,7 @@ map <- victoria_2016_SI_total %>%
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
-  theme_void() +                    # clears other plot elements
+#  theme_void() +                    # clears other plot elements
  coord_sf()
 
 #map
@@ -711,7 +711,7 @@ map <- victoria_2016_SI_total %>%
 ```
  
 
-```{r Victoria_SI_2021_versus_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = FALSE, fig.cap= "SI on census day, by year and LGA for all of Victoria, Greater Melburne and non-Greater Melbourne parts of Victoria"}
+```{r Victoria_SI_2021_versus_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = FALSE, fig.cap= "SI on census day, by year and LGA for all of Victoria, Greater Melbourne and non-Greater Melbourne parts of Victoria"}
 
 victoria_2021_2016_SI_total <- tibble(lga_name_2021 = victoria_2016_SI_total[,13], "2016" = victoria_2016_SI_total[,12], "2021" = victoria_2021_SI_total[,12], greater_melbourne = victoria_2016_SI_total[,19], state_name_2021 = victoria_2016_SI_total[,15])
 
@@ -762,7 +762,7 @@ ggwithinstats(
 Figure \ref{fig:Victoria_SI_2021_versus_2016} compares the SI for 2021 and 2016 for each LGA. It indicates that there are significant differences in the SI scores in 2016 and 2021.  However, it appears that the change has been relatively small, with the average SI increasing from `r (victoria_2016_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)` to `r (victoria_2021_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)`.  
 
 
-```{r Victoria_SI_2021_versus_2016_greater_melbourne, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = FALSE, fig.cap= "SI on census day, by year and LGA for all of Victoria, Greater Melburne and non-Greater Melbourne parts of Victoria"}
+```{r Victoria_SI_2021_versus_2016_greater_melbourne, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = FALSE, fig.cap= "SI on census day, by year and LGA for all of Victoria, Greater Melbourne and non-Greater Melbourne parts of Victoria"}
 
 
 ggwithinstats(
@@ -811,17 +811,25 @@ ggwithinstats(
 
 
 
-```{r Victoria_SI_changes, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
-victoria_difference_2021_2016_SI <- victoria_2021_SI_df_by_mode 
-victoria_difference_2021_2016_SI[,2:ncol(victoria_difference_2021_2016_SI)] <- victoria_difference_2021_2016_SI[,2:ncol(victoria_difference_2021_2016_SI)] -  victoria_2016_SI_df_by_mode[,2:ncol(victoria_difference_2021_2016_SI)]
+```{r Victoria_SI_changes, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "Change in SI on census day 2021 compared to 2016, by LGA"}
 
-victoria_difference_2021_2016_SI <- victoria_difference_2021_2016_SI %>% adorn_totals(where = "col")
+#calculate as percent
+victoria_2021_SI_df_by_mode <- victoria_2021_SI_df_by_mode %>% adorn_totals(where = "col")
+victoria_2016_SI_df_by_mode <- victoria_2016_SI_df_by_mode %>% adorn_totals(where = "col")
+victoria_difference_2021_2016_SI <- victoria_2021_SI_df_by_mode[,2:12] / victoria_2016_SI_df_by_mode[,2:12]
+victoria_difference_2021_2016_SI <- victoria_difference_2021_2016_SI - 1  
+  
+#get rid of Not a Numbers from the divide by 0 problem
+is.nan.data.frame <- function(x)
+do.call(cbind, lapply(x, is.nan))
+
+victoria_difference_2021_2016_SI[is.nan(victoria_difference_2021_2016_SI)] <- 0
+
+
+victoria_difference_2021_2016_SI <- add_column(victoria_difference_2021_2016_SI, .before = "LRT", lga_code_2021 = victoria_2016_SI_df_by_mode$lga_code_2021)
 
 
 victoria_difference_2021_2016_SI <- left_join(victoria_difference_2021_2016_SI, LGA_map_data)
-
-
-
 
 map <- victoria_difference_2021_2016_SI %>%
   filter(state_name_2021 == "Victoria") %>%   
@@ -830,14 +838,14 @@ map <- victoria_difference_2021_2016_SI %>%
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # keep legend
-  scale_fill_gradient2() +    # fill colours on log scale
+  scale_fill_gradient2(labels = scales::label_percent()) +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
-  theme_void() +                    # clears other plot elements
- coord_sf()
+#  theme_void() +                    # clears other plot elements
+ coord_sf() 
 
-#map
+map
 
 
 
@@ -848,11 +856,11 @@ map <- victoria_difference_2021_2016_SI %>%
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +
-  scale_fill_gradient2() +    # fill colours on log scale
+  scale_fill_gradient2(labels = scales::label_percent()) +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
-  theme_void() +                    # clears other plot elements
+#  theme_void() +                    # clears other plot elements
  coord_sf()
 
 map
@@ -875,14 +883,43 @@ ggbetweenstats(
   ylab = "SI on census day", ## label for the y-axis
   caption = "Analysis using ggstatsplot package"
 ) 
-
+  + scale_y_continuous(labels=percent)
 
 
 ```
 
 
 
-Figure \ref{fig:Victoria_SI_changes} maps numerical changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. There was a significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria. The SI increased by an average of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)` for Greater Melbourne LGAs, whereas there was little to no change for LGAs elsewhere.  However, there was one LGA in Greater Melbourne where the SI in 2021 was lower than for 2016: being the City of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne") %>% filter(Total < 0))$lga_name_2021` itself, where the SI score fell by `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne") %>% filter(Total < 0))$Total %>% format(digits=2)`.  
+Figure \ref{fig:Victoria_SI_changes} maps numerical changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. There was a significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria. The SI increased by an average of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)` for Greater Melbourne LGAs, whereas there was little to no change for LGAs elsewhere.  However, there was one LGA in Greater Melbourne where the SI in 2021 was lower than for 2016: being the City of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne") %>% filter(Total < 0))$lga_name_2021` itself, where the SI score fell by `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne") %>% filter(Total < 0))$Total %>%  abs() %>% format(digits=3)`.  
+
+Looking specifically at the SI for the City of Melbourne, however, the 
+
+```{r City_of_Melbourne_SI_2016_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = TRUE, fig.cap= "SI on census day 2016 to 2021, City of Melbourne, by mode"}
+
+victoria_2021_2016_SI_by_mode <- pivot_longer(victoria_2016_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI change") 
+victoria_2021_2016_SI_by_mode <- add_column(victoria_2021_2016_SI_by_mode, .after = "lga_code_2021", Census = "2016")
+  
+victoria_2021_2016_SI_by_mode <- add_row(victoria_2021_2016_SI_by_mode, 
+                                         pivot_longer(victoria_2021_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI change") %>% add_column(.after = "lga_code_2021", Census = "2021"))  
+
+victoria_2021_2016_SI_by_mode <- left_join(victoria_2021_2016_SI_by_mode, LGA_map_data)
+
+
+ggwithinstats(
+  data = victoria_2021_2016_SI_by_mode %>%
+  filter(lga_name_2021 == "Melbourne") %>% 
+    filter(`SI change` != 0), ## data frame from which variables are taken
+  x = "Census", ## predictor/independent variable
+  y =   "SI change", ## dependent variable
+  pairwise.comparisons = TRUE,
+  xlab = "Census", ## label for the x-axis
+  ylab = "SI on census day, by mode", ## label for the y-axis
+  caption = "Analysis using ggstatsplot package"
+) + 
+  scale_y_continuous(labels=percent)
+
+  
+```
 
 
 ### Transit needs
