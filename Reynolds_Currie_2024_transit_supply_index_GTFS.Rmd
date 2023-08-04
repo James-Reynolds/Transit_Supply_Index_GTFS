@@ -8,8 +8,15 @@ output:
   tufte::tufte_book:
     citation_package: natbib
     latex_engine: xelatex
+    includes:
+      in_header: "preamble.tex"
 bibliography: [packages.bib, References.bib]
 link-citations: yes
+header-includes:
+  - \usepackage{titling}
+  - \pretitle{\begin{center}
+    \includegraphics[width=2in,height=2in]{ptrg-logo-s.png}\LARGE\\}
+  - \posttitle{\end{center}}
 ---
 
 ```{r setup, include=FALSE}
@@ -36,13 +43,15 @@ library(moments)
 library(scales)
 library(gtfstools)
 library(lubridate)
+library(kableExtra)
+library(knitr)
 
 # invalidate cache when the tufte version changes
 knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
 ```
 
 
-# Introduction
+  # Introduction
 Transit service level indicators include those in the Transit Capacity and Quality of Service Manual (TCQSM) [@TCQSM:2013], the Transit Score metric [@WalkScore:2023tg] and many more. Practitioners, researchers and advocates seeking to use such metrics may face two inter-related challenges: firstly, there is the problem of calculating the metrics themselves for a specific location and service pattern; secondly, is the challenge of explaining the metrics, their meaning and importance those who are not specialists in transit, such as politicians, other decision-makers or the general public. 
 
 The TCQSM specifies Levels of Service (LOS) between A and F across a range of factors^[Including service span, frequency, speed, the proportion of the population serviced, competitiveness of travel times to car-based travel, and many more.]. This scoring scheme appears likely to help towards the second aforementioned challenge; it is relatively simple to explain that A is good and F is bad^[It also matches to the A to F LOS scoring used in many traffic capacity analysis calculation systems and software.], and the detail within @TCQSM:2013 provides a resource for anyone wanting to better understand what the scores mean. However, calculation of many of TCQSM metrics may need specialised software and datasets^[For example, the Service Coverage Area metric in the TCQSM (pp. 5-8 to 5-21) may require GIS or other analysis, on-top of accurate data about population densities, stop locations and service schedules.] and it might be challenging to explain these measures^[Beyond a simplistic A is good and F is bad] or how to improve them to non-technical decision-makers, stakeholders or others involved in transit management or advocacy. The introduction of the General Transit Feed Specification (GTFS) [@GTFS] ^[ GTFS is an open, text-based format that was developed originally to allow transit information to be included in the Google Maps navigation platform [@GTFS].] and widespread release of schedule data in this format, however, has helped towards making transit metrics more broadly availabile. An example is provided in previous research by @Wong:2013aa that developed code to calculate of some of the TCQSM metrics^[@Wong:2013aa calculated daily average headways, route length and stop numbers for 50 transit operators.] directly from GTFS feed data. GTFS data also underlies many online journey planning systems^[Notably Google Maps, from back when it was called the Google Transit Feed Specification.], and Transit Score, which scores locations out of 100 for transit service levels [@WalkScore:2023tg]^[100 representing the highest levels of transit service provision, and being roughly equivalent to what might be experienced in the centre of New York; but which was actually calibrated using scores for the centre of San Francisco, Chicago, Boston, Portland, and Washington, D.C. [@WalkScore:2023tg]]. However, the TransitScore algorithm is patented and effectively a black box, meaning that it is not possible to calculate scores independently or understand how the metric might change with alteration to the transit system or services, or the surrounding environment. TransitScore, therefore fails the first of the aforementioned challenges; in that practitioners, researchers and advocates can only use those scores provided by @WalkScore:2023tg, which reflect only current service patterns. 
@@ -68,9 +77,7 @@ However, many of these metrics are difficult to calculate, complex to explain or
 \end{equation}
 ```
 
-Equation \ref{eq:supply_index} shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]^[In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In  @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.]. 
-
-An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. The Supply Index does not incorporate further aspects, such as service span,  off-peak share of service or service speed. However, including such metrics may increase the complexity of calculating and describing the index to non-transit specialists. Such simplicity is also helped by the way that the Index is additive, in that SI~[area, time]~ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest. 
+Equation \ref{eq:supply_index}^[In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In  @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. The Supply Index does not incorporate further aspects, such as service span,  off-peak share of service or service speed. However, including such metrics may increase the complexity of calculating and describing the index to non-transit specialists. Such simplicity is also helped by the way that the Index is additive, in that SI~[area, time]~ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest. 
 
 @currie2007identifying calculated the SI~[area, time]~  for various Census Collection Districts (CCDs)^[CCDs predate the introduction of Statistical Areas 1, 2, 3, and 4 (SA1, SA2, SA3, SA4), and other geographical divisions currently used by the Australian Bureau of Statistics (ABS), which may be more familiar to readers] in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data.  A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information in that format. 
 
@@ -811,7 +818,7 @@ ggwithinstats(
 
 
 
-```{r Victoria_SI_changes, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "Change in SI on census day 2021 compared to 2016, by LGA"}
+```{r Victoria_SI_changes, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "Change in SI, by LGA"}
 
 #calculate as percent
 victoria_2021_SI_df_by_mode <- victoria_2021_SI_df_by_mode %>% adorn_totals(where = "col")
@@ -880,43 +887,148 @@ ggbetweenstats(
   y =   "Total", ## dependent variable
   pairwise.comparisons = FALSE,
   xlab = "Census", ## label for the x-axis
-  ylab = "SI on census day", ## label for the y-axis
+  ylab = "Change in SI on census day, 2016 to 2021", ## label for the y-axis
   caption = "Analysis using ggstatsplot package"
-) 
-  + scale_y_continuous(labels=percent)
+) + scale_y_continuous(labels=percent)
 
 
 ```
 
+Figure \ref{fig:Victoria_SI_changes} maps percentage changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. There was no significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria. The SI increased by an average of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls}).   
+
+```{r Victoria_SI_changes_falls, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
+
+kbl(victoria_difference_2021_2016_SI %>% filter(Total < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "Change in SI on census day, 2016 to 2021, by LGA, for those LGAs where SI has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+    add_header_above(c(" "," ", "Change in SI" = 4))
+
+```
 
 
-Figure \ref{fig:Victoria_SI_changes} maps numerical changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. There was a significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria. The SI increased by an average of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)` for Greater Melbourne LGAs, whereas there was little to no change for LGAs elsewhere.  However, there was one LGA in Greater Melbourne where the SI in 2021 was lower than for 2016: being the City of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne") %>% filter(Total < 0))$lga_name_2021` itself, where the SI score fell by `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne") %>% filter(Total < 0))$Total %>%  abs() %>% format(digits=3)`.  
+The largest relative changes in SI were in Hindmarsh (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Hindmarsh"))$Total %>% percent_format(digits = 2)()`), East Gippsland (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "East Gippsland"))$Total %>% percent_format(digits = 2)()`) and West Wimmera (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "West Wimmera"))$Total %>% percent_format(digits = 2)()`). For Hindmarsh this appears to have involved the entire removal of the rail service, but offset by a small increase in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Hindmarsh"))$bus %>% percent_format(digits = 2)()`). Central Goldfields, in contrast had a doubling of train services, but an overall change of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Central Goldfileds"))$Total) %>% percent_format(digits = 2)()`. However, some LGAs had relatively large increases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_increases}).   
 
-Looking specifically at the SI for the City of Melbourne, however, the 
+```{r Victoria_SI_changes_increases, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
 
-```{r City_of_Melbourne_SI_2016_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = TRUE, fig.cap= "SI on census day 2016 to 2021, City of Melbourne, by mode"}
+kbl(victoria_difference_2021_2016_SI %>% filter(Total >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "Change in SI on census day, 2016 to 2021, by LGA, for those LGAs where SI has risen by at least 25%", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+    add_header_above(c(" "," ", "Change in SI" = 4))
 
-victoria_2021_2016_SI_by_mode <- pivot_longer(victoria_2016_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI change") 
+```
+
+
+The largest relative increases in SI were in Baw Baw (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$Total %>% percent_format(digits = 2)()`), Northern Grampians (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$Total %>% percent_format(digits = 2)()`) and Macedon Ranges (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$Total %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`, `r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw bus SI increase by `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services, but an increase of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in bus SI. 
+
+  
+
+
+
+
+```{r SI_by_mode, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = TRUE, fig.cap= "SI by mode"}
+
+victoria_2021_2016_SI_by_mode <- pivot_longer(victoria_2016_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI") 
 victoria_2021_2016_SI_by_mode <- add_column(victoria_2021_2016_SI_by_mode, .after = "lga_code_2021", Census = "2016")
   
 victoria_2021_2016_SI_by_mode <- add_row(victoria_2021_2016_SI_by_mode, 
-                                         pivot_longer(victoria_2021_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI change") %>% add_column(.after = "lga_code_2021", Census = "2021"))  
+                                         pivot_longer(victoria_2021_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI") %>% add_column(.after = "lga_code_2021", Census = "2021"))  
 
 victoria_2021_2016_SI_by_mode <- left_join(victoria_2021_2016_SI_by_mode, LGA_map_data)
+victoria_2021_2016_SI_by_mode$round_SI <- round(victoria_2021_2016_SI_by_mode$SI)
+
+ggbarstats(victoria_2021_2016_SI_by_mode, 
+           y = "Census",
+           x = "mode",
+           counts = "round_SI"
+)
 
 
-ggwithinstats(
-  data = victoria_2021_2016_SI_by_mode %>%
-  filter(lga_name_2021 == "Melbourne") %>% 
-    filter(`SI change` != 0), ## data frame from which variables are taken
-  x = "Census", ## predictor/independent variable
-  y =   "SI change", ## dependent variable
-  pairwise.comparisons = TRUE,
-  xlab = "Census", ## label for the x-axis
-  ylab = "SI on census day, by mode", ## label for the y-axis
-  caption = "Analysis using ggstatsplot package"
-) + 
-  scale_y_continuous(labels=percent)
+  
+```
+
+Figure \ref{fig:SI_by_mode} shows that there has not been a significant change in the proportion of the SI score delivered by train, tram and bus across Victoria^[Note, SI scores have been rounded to the nearest integer.]. There has no significant change across LGAs in Greater Melbourne or elsewhere in Victoria (Figure \ref{fig:SI_by_mode})
+
+
+```{r SI_by_mode_greater_melbourne_versus_rest, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI by mode, Greater Melbourne and elsewhere in Victoria"}
+
+grouped_ggbarstats(victoria_2021_2016_SI_by_mode, 
+           y = "Census",
+           x = "mode",
+           counts = "round_SI",
+           grouping.var = greater_melbourne
+           
+)
+
+
+  
+```
+
+
+
+```{r SI_by_mode_individual_LGAs, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI by mode, Greater Melbourne and elsewhere in Victoria"}
+
+
+victoria_2021_2016_SI_by_mode_wider <- pivot_wider(victoria_2021_2016_SI_by_mode, values_from = SI, names_from = mode)
+
+
+more_than_one_mode <- unique((victoria_2021_2016_SI_by_mode_wider %>% filter(rail > 0 | LRT >0))$lga_name_2021)
+
+
+grouped_ggbarstats(victoria_2021_2016_SI_by_mode %>% 
+                 filter(lga_name_2021 %in%  more_than_one_mode) %>%
+               filter(SI > 0), 
+           y = Census,
+           x = mode,
+           counts = round_SI,
+           grouping.var = lga_name_2021)
+
+
+  
+```
+
+
+```{r SI_summary_table, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI by mode, Greater Melbourne and elsewhere in Victoria"}
+                   
+#victoria_2021_2016_SI_by_mode_wider %>%
+# select(
+#    Census,
+#    lga_name_2021,
+#    areasqkm_2021,
+#    greater_melbourne,
+#    LRT,
+#    rail,
+#    bus) %>%
+#  tbl_summary(by = Census) %>%
+#  add_p() %>% 
+#  add_overall() %>%
+#  add_n() %>%
+#  bold_labels()
+
+
+#victoria_2021_2016_SI_by_mode %>% filter(mode == "rail" | mode == "bus" | mode == "LRT") %>%
+#  select(Census,
+ #   mode,
+#    SI,
+#    lga_name_2021,
+#    areasqkm_2021,
+#    greater_melbourne) %>%
+#  tbl_strata(
+#    strata = Census,
+#    .tbl_fun =
+#      ~ .x %>%
+#        tbl_summary(by = SI, missing = "no") %>%
+#        add_n(),
+#    .header = "**{strata}**, N = {n}"
+#  )
+
+
+
+
+
+#grouped_ggbarstats(victoria_2021_2016_SI_by_mode %>% filter(lga_name_2021 ==), 
+#           y = "Census",
+#           x = "mode",
+#           counts = "round_SI",
+#           grouping.var = greater_melbourne
+#           
+#)
+
 
   
 ```

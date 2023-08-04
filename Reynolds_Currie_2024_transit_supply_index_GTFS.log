@@ -1,11 +1,11 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.2)  3 AUG 2023 17:01
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.4)  4 AUG 2023 22:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Reynolds_Currie_2024_transit_supply_index_GTFS.tex
 (./Reynolds_Currie_2024_transit_supply_index_GTFS.tex
 LaTeX2e <2023-06-01> patch level 1
-L3 programming layer <2023-06-30>
+L3 programming layer <2023-08-03>
 (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tufte-latex/tufte-book.cls
 Document Class: tufte-book 2015/06/21 v3.5.2 Tufte-book class
 (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tufte-latex/tufte-common.def
@@ -82,7 +82,7 @@ Package: xltxtra 2018/12/31 v0.7 Improvements for the "XeLaTeX" format
 (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/ifluatex.sty
 Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
 ) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/fontspec/fontspec.sty (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2023-06-30 L3 programming layer (loader) 
+Package: expl3 2023-08-03 L3 programming layer (loader) 
 (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
 File: l3backend-xetex.def 2023-04-19 L3 backend support: XeTeX
 \g__graphics_track_int=\count197
@@ -563,90 +563,202 @@ Package morefloats Info: Maximum number of possible floats asked for: 36
 (morefloats)             (i.e. 18 more floats).
 (morefloats)             LaTeX might run out of memory before this
 (morefloats)             (in which case it will notify you).
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/titling/titling.sty
+Package: titling 2009/09/04 v2.1d maketitle typesetting
+\thanksmarkwidth=\skip101
+\thanksmargin=\skip102
+\droptitle=\skip103
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
+\LTleft=\skip104
+\LTright=\skip105
+\LTpre=\skip106
+\LTpost=\skip107
+\LTchunksize=\count325
+\LTcapwidth=\dimen257
+\LT@head=\box112
+\LT@firsthead=\box113
+\LT@foot=\box114
+\LT@lastfoot=\box115
+\LT@gbox=\box116
+\LT@cols=\count326
+\LT@rows=\count327
+\c@LT@tables=\count328
+\c@LT@chunks=\count329
+\LT@p@ftn=\toks31
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/array.sty
+Package: array 2022/09/04 v2.5g Tabular extension package (FMi)
+\col@sep=\dimen258
+\ar@mcellbox=\box117
+\extrarowheight=\dimen259
+\NC@list=\toks32
+\extratabsurround=\skip108
+\backup@length=\skip109
+\ar@cellbox=\box118
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip110
+\multirow@cntb=\count330
+\multirow@dima=\skip111
+\bigstrutjot=\dimen260
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen261
+\WF@size=\dimen262
+\c@WF@wrappedlines=\count331
+\WF@box=\box119
+\WF@everypar=\toks33
+Package: wrapfig 2003/01/31  v 3.6
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count332
+\float@exts=\toks34
+\float@box=\box120
+\@float@everytoks=\toks35
+\@floatcapt=\box121
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2022/06/20 v1.0f Color table columns (DPC)
+\everycr=\toks36
+\minrowclearance=\skip112
+\rownum=\count333
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+Package: pdflscape 2022-10-27 v0.13 Display of landscape pages in PDF
+(c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+Package: pdflscape-nometadata 2022-10-28 v0.13 Display of landscape pages in PDF (HO)
+(c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: dvipdfm (xetex) on input line 98.
+)) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tabu/tabu.sty
+Package: tabu 2019/01/11 v2.9 - flexible LaTeX tabulars (FC+tabu-fixed)
+(c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/varwidth/varwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box122
+\sift@deathcycles=\count334
+\@vwid@loff=\dimen263
+\@vwid@roff=\dimen264
+)
+\c@taburow=\count335
+\tabu@nbcols=\count336
+\tabu@cnt=\count337
+\tabu@Xcol=\count338
+\tabu@alloc=\count339
+\tabu@nested=\count340
+\tabu@target=\dimen265
+\tabu@spreadtarget=\dimen266
+\tabu@naturalX=\dimen267
+\tabucolX=\dimen268
+\tabu@Xsum=\dimen269
+\extrarowdepth=\dimen270
+\abovetabulinesep=\dimen271
+\belowtabulinesep=\dimen272
+\tabustrutrule=\dimen273
+\tabu@thebody=\toks37
+\tabu@footnotes=\toks38
+\tabu@box=\box123
+\tabu@arstrutbox=\box124
+\tabu@hleads=\box125
+\tabu@vleads=\box126
+\tabu@cellskip=\skip113
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/threeparttable/threeparttable.sty
+Package: threeparttable 2003/06/13  v 3.0
+\@tempboxb=\box127
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/threeparttablex/threeparttablex.sty
+Package: threeparttablex 2013/07/23 v0.3 by daleif
+(c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/environ/environ.sty
+Package: environ 2014/05/04 v0.3 A new way to define environments
+(c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/trimspaces/trimspaces.sty
+Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
+))
+\TPTL@width=\skip114
+) (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/makecell/makecell.sty
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+\rotheadsize=\dimen274
+\c@nlinenum=\count341
+\TeXr@lab=\toks39
 ) (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
 \openout1 = `Reynolds_Currie_2024_transit_supply_index_GTFS.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 74.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 74.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 97.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 97.
 (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 97.
+LaTeX Font Info:    ... okay on input line 97.
 
 Package fontspec Info: Adjusting the maths setup (use [no-math] to avoid
 (fontspec)             this).
 
 \symlegacymaths=\mathgroup6
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 74.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 74.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 74.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 74.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 74.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 74.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 74.
-LaTeX Font Info:    Redeclaring math accent \check on input line 74.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 74.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 74.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 74.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 74.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 97.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 97.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 97.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 97.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 97.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 97.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 97.
+LaTeX Font Info:    Redeclaring math accent \check on input line 97.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 97.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 97.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 97.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 97.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 97.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 74.
+(Font)              `operators' in the math version `normal' on input line 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 74.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 97.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 74.
+(Font)              `operators' in the math version `bold' on input line 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 74.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 74.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 74.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 74.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 74.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 74.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 97.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 74.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 74.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 74.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 97.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 74.
-Package hyperref Info: Link coloring OFF on input line 74.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 97.
+Package hyperref Info: Link coloring OFF on input line 97.
 (./Reynolds_Currie_2024_transit_supply_index_GTFS.out) (./Reynolds_Currie_2024_transit_supply_index_GTFS.out)
 \@outlinefile=\write3
 \openout3 = `Reynolds_Currie_2024_transit_supply_index_GTFS.out'.
@@ -686,97 +798,71 @@ Package hyperref Info: Link coloring OFF on input line 74.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \langwohyphens=\language3
-
-Class tufte-book Warning: Proper spacing of ALL-CAPS letters has not been set up.
-This message occurred on input line 76.
-
-
-Class tufte-book Warning: Proper spacing of ALL-CAPS letters has not been set up.
-This message occurred on input line 76.
-
-
-Overfull \hbox (17.48401pt too wide) in paragraph at lines 76--76
-\TU/lmss/m/n/36 ASSESS TRANSIT SUPPLY, AND 
- []
-
-
-Overfull \hbox (24.21603pt too wide) in paragraph at lines 76--76
-\TU/lmss/m/n/36 GAPS BETWEEN SOCIAL NEEDS 
- []
-
-
-Class tufte-book Warning: Proper spacing of ALL-CAPS letters has not been set up.
-This message occurred on input line 76.
-
-[1
-
-
-] [2
-
-
-]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 97.
+File: ptrg-logo-s.png Graphic file (type bmp)
+<ptrg-logo-s.png>
+LaTeX Font Info:    Trying to load font information for U+msa on input line 99.
 (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 97.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 99.
 (c:/Users/rjulian/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
+) [1
 
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-
-LaTeX Warning: Marginpar on page 3 moved.
-
-[3]
-
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 169.
-
-[4] [5
 
 ]
 
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+LaTeX Warning: Marginpar on page 2 moved.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[2] [3] [4
+
+] [5]
+
 LaTeX Warning: Marginpar on page 6 moved.
 
 
@@ -795,112 +881,101 @@ LaTeX Warning: Marginpar on page 6 moved.
 LaTeX Warning: Marginpar on page 6 moved.
 
 
-Overfull \hbox (3.60051pt too wide) detected at line 236
+Overfull \hbox (3.60051pt too wide) detected at line 257
 [][][]\OML/cmm/m/it/8 SI[] \OT1/cmr/m/n/8 = [] []
  []
 
 
-Overfull \hbox (631.5583pt too wide) in paragraph at lines 239--251
-\TU/lmr/m/n/10 Equation []1[] shows the Supply Index$[]$[In 
- []
+LaTeX Warning: Marginpar on page 6 moved.
 
 
 LaTeX Warning: Marginpar on page 6 moved.
 
 
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 278.
+LaTeX Warning: Marginpar on page 6 moved.
+
+
+LaTeX Warning: Marginpar on page 6 moved.
+
+
+LaTeX Warning: Marginpar on page 6 moved.
 
 [6]
 
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 280.
-
-[7] [8
-
-]
-
-LaTeX Warning: Marginpar on page 9 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
 
-LaTeX Warning: Marginpar on page 9 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
 
-LaTeX Warning: Marginpar on page 9 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
 
-LaTeX Warning: Marginpar on page 9 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
 
-LaTeX Warning: Marginpar on page 9 moved.
+LaTeX Warning: Marginpar on page 7 moved.
 
-[9]
-
-LaTeX Warning: Marginpar on page 10 moved.
-
-
-LaTeX Warning: Marginpar on page 10 moved.
-
-
-LaTeX Warning: Marginpar on page 10 moved.
-
-
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 400.
-
-[10]
-
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 408.
-
-[11] [12
+[7
 
 ]
 
-LaTeX Warning: Marginpar on page 13 moved.
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+[8] [9] [10
+
+]
+
+LaTeX Warning: Marginpar on page 11 moved.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-1.pdf>
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 425--426
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 445--446
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 425--426
+Underfull \hbox (badness 10000) in paragraph at lines 445--446
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 433--434
+Underfull \hbox (badness 10000) in paragraph at lines 453--454
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 443--444
+Underfull \hbox (badness 10000) in paragraph at lines 463--464
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-2.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 446--447
+Underfull \hbox (badness 10000) in paragraph at lines 466--467
 
  []
 
 
-LaTeX Warning: Reference `fig:Victoria_SI_2021_versus_2016_greater_melbourne' on page 13 undefined on input line 449.
+LaTeX Warning: Reference `fig:Victoria_SI_2021_versus_2016_greater_melbourne' on page 11 undefined on input line 469.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 456--457
+Underfull \hbox (badness 10000) in paragraph at lines 476--477
 
  []
 
@@ -909,43 +984,142 @@ File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf>
 
-Overfull \hbox (3.32881pt too wide) in paragraph at lines 460--461
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 480--481
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 460--461
+Underfull \hbox (badness 10000) in paragraph at lines 480--481
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 464--465
+Underfull \hbox (badness 10000) in paragraph at lines 484--485
 
  []
 
-[13]
+[11] [12] [13]
+Overfull \hbox (16.20999pt too wide) in paragraph at lines 499--530
+ [][] 
+ []
 
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 476.
+
+Package hyperref Warning: Suppressing empty link on input line 538.
 
 [14]
+Overfull \hbox (29.88pt too wide) in paragraph at lines 546--581
+ [][] 
+ []
 
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 476.
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode-1.pdf>
 
-[15]
-Underfull \vbox (badness 2486) has occurred while \output is active []
+LaTeX Warning: Marginpar on page 15 moved.
 
 
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 543.
+LaTeX Warning: Marginpar on page 15 moved.
 
-[16]
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_greater_melbourne_versus_rest-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_greater_melbourne_versus_rest-1.pdf>
 
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 543.
+Underfull \hbox (badness 10000) in paragraph at lines 602--603
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 606--606
+|\TU/lmr/m/it/10.95 Transit needs|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 610--610
+|\TU/lmr/m/it/10.95 Level-boarding accessibility|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 614--614
+|\TU/lmr/m/it/10.95 The metro tunnel - adding services|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--617
+|\TU/lmr/m/it/10.95 The suburban rail loop|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 621--621
+|\TU/lmr/m/it/10.95 A transit-centric city (<15 min services)|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 624--624
+|\TU/lmr/m/it/10.95 Squaresville|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 627--627
+|\TU/lmr/m/it/12 Toronto|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 631--631
+|\TU/lmr/m/it/10.95 Level-boarding accessibility|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 635--635
+|\TU/lmr/m/it/10.95 Transit City: what might have been|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 639--639
+|\TU/lmr/m/it/10.95 Viva transit: what was achieved|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--642
+|\TU/lmr/m/it/10.95 Downtown relief lines|
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[15] [16]
+Underfull \hbox (badness 10000) in paragraph at lines 648--648
+|\TU/lmr/m/it/10.95 A transit-centric city (<15 min services)|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 651--651
+|\TU/lmr/m/it/10.95 Squaresville|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 654--654
+|\TU/lmr/m/it/12 Washington DC|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 658--658
+|\TU/lmr/m/it/10.95 Level-boarding accessibility|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 662--662
+|\TU/lmr/m/it/10.95 A transit-centric city (<15 min services)|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 665--665
+|\TU/lmr/m/it/10.95 Squaresville|
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 668--668
+|\TU/lmr/m/it/12 Cross-case comparison|
+ []
 
 [17] [18
 
@@ -957,34 +1131,24 @@ This message occurred on input line 543.
 
 ] (./Reynolds_Currie_2024_transit_supply_index_GTFS.bbl [25] [26
 
-] [27]
-
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 119.
-
-[28])
-
-Class tufte-book Warning: Proper spacing of small-caps letters has not been set up.
-This message occurred on input line 574.
-
-[29] (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
+] [27] [28]) [29] (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
-L3 programming layer <2023-06-30>
+L3 programming layer <2023-08-03>
  ***********
 
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `Reynolds_Currie_2024_transit_supply_index_GTFS.out' has not changed.
-(rerunfilecheck)             Checksum: 63E0B376497E9FC18DF3F28F2FE5AA84;2013.
+(rerunfilecheck)             Checksum: C9C628ACC3D6AF12E8F8216916C064AE;1903.
  ) 
 Here is how much of TeX's memory you used:
- 16059 strings out of 477888
- 314224 string characters out of 5821661
- 1941869 words of memory out of 5000000
- 36657 multiletter control sequences out of 15000+600000
- 563494 words of font info for 78 fonts, out of 8000000 for 9000
+ 17705 strings out of 477843
+ 343791 string characters out of 5820994
+ 1942879 words of memory out of 5000000
+ 38288 multiletter control sequences out of 15000+600000
+ 565018 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 114i,11n,124p,622b,487s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 114i,11n,124p,624b,493s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on Reynolds_Currie_2024_transit_supply_index_GTFS.pdf (29 pages).
