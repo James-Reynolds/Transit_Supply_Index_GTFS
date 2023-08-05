@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.4)  4 AUG 2023 22:42
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.4)  5 AUG 2023 17:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -810,58 +810,57 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 
+] [2
+
 ]
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
 
+[3] [4] [5
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-[2] [3] [4
-
-] [5]
+]
 
 LaTeX Warning: Marginpar on page 6 moved.
 
@@ -881,7 +880,7 @@ LaTeX Warning: Marginpar on page 6 moved.
 LaTeX Warning: Marginpar on page 6 moved.
 
 
-Overfull \hbox (3.60051pt too wide) detected at line 257
+Overfull \hbox (3.60051pt too wide) detected at line 259
 [][][]\OML/cmm/m/it/8 SI[] \OT1/cmr/m/n/8 = [] []
  []
 
@@ -939,43 +938,43 @@ File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 445--446
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 441--442
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 445--446
+Underfull \hbox (badness 10000) in paragraph at lines 441--442
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 453--454
+Underfull \hbox (badness 10000) in paragraph at lines 449--450
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 463--464
+Underfull \hbox (badness 10000) in paragraph at lines 459--460
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-2.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 466--467
+Underfull \hbox (badness 10000) in paragraph at lines 462--463
 
  []
 
 
-LaTeX Warning: Reference `fig:Victoria_SI_2021_versus_2016_greater_melbourne' on page 11 undefined on input line 469.
+LaTeX Warning: Reference `fig:Victoria_SI_2021_versus_2016_greater_melbourne' on page 11 undefined on input line 465.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 476--477
+Underfull \hbox (badness 10000) in paragraph at lines 472--473
 
  []
 
@@ -984,39 +983,42 @@ File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 480--481
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 476--477
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 480--481
+Underfull \hbox (badness 10000) in paragraph at lines 476--477
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 484--485
+Underfull \hbox (badness 10000) in paragraph at lines 480--481
 
  []
 
 [11] [12] [13]
-Overfull \hbox (16.20999pt too wide) in paragraph at lines 499--530
+Overfull \hbox (16.20999pt too wide) in paragraph at lines 495--526
  [][] 
  []
 
 
-Package hyperref Warning: Suppressing empty link on input line 538.
+Overfull \hbox (9.77pt too wide) in paragraph at lines 541--576
+ [][] 
+ []
 
 [14]
-Overfull \hbox (29.88pt too wide) in paragraph at lines 546--581
- [][] 
- []
-
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode-1.pdf>
 
-LaTeX Warning: Marginpar on page 15 moved.
+Underfull \hbox (badness 10000) in paragraph at lines 589--590
+
+ []
+
+
+LaTeX Warning: Reference `fig:SI_by_mode_greater_melbourne_versus_rest' on page 15 undefined on input line 597.
 
 
 LaTeX Warning: Marginpar on page 15 moved.
@@ -1024,114 +1026,126 @@ LaTeX Warning: Marginpar on page 15 moved.
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_greater_melbourne_versus_rest-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_greater_melbourne_versus_rest-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 602--603
+Underfull \hbox (badness 10000) in paragraph at lines 600--601
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_greater_melbourne_versus_rest-2.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_greater_melbourne_versus_rest-2.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 603--604
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 606--606
-|\TU/lmr/m/it/10.95 Transit needs|
+LaTeX Warning: Marginpar on page 15 moved.
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_rail-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_rail-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 616--617
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_bus-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_bus-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 620--621
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_LRT-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_LRT-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 624--625
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-1.pdf>
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-2.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-2.pdf>
+
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 634--635
+[][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 610--610
-|\TU/lmr/m/it/10.95 Level-boarding accessibility|
+Underfull \hbox (badness 10000) in paragraph at lines 634--635
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_rail-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_rail-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 638--639
+
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 614--614
-|\TU/lmr/m/it/10.95 The metro tunnel - adding services|
+Overfull \hbox (30.47pt too wide) in paragraph at lines 654--679
+ [][] 
+ []
+
+[15] [16] [17] [18] [19] [20]
+Overfull \hbox (0.995pt too wide) in paragraph at lines 694--731
+ [][] 
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-1.pdf>
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-2.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-2.pdf>
+
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 744--745
+[][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 617--617
-|\TU/lmr/m/it/10.95 The suburban rail loop|
+Underfull \hbox (badness 10000) in paragraph at lines 744--745
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_bus-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_bus-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 748--749
+
+ []
+
+[21]
+Overfull \hbox (12.87999pt too wide) in paragraph at lines 764--801
+ [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 621--621
-|\TU/lmr/m/it/10.95 A transit-centric city (<15 min services)|
+Overfull \hbox (9.77pt too wide) in paragraph at lines 816--851
+ [][] 
  []
 
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_LRT-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_LRT-1.pdf>
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_LRT-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_LRT-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 624--624
-|\TU/lmr/m/it/10.95 Squaresville|
+Underfull \hbox (badness 10000) in paragraph at lines 868--869
+
  []
 
+[22] [23]
+Underfull \vbox (badness 1308) has occurred while \output is active []
 
-Underfull \hbox (badness 10000) in paragraph at lines 627--627
-|\TU/lmr/m/it/12 Toronto|
- []
+[24] [25] [26
 
+] [27] [28
 
-Underfull \hbox (badness 10000) in paragraph at lines 631--631
-|\TU/lmr/m/it/10.95 Level-boarding accessibility|
- []
+] [29] [30
 
+] [31] [32
 
-Underfull \hbox (badness 10000) in paragraph at lines 635--635
-|\TU/lmr/m/it/10.95 Transit City: what might have been|
- []
+] (./Reynolds_Currie_2024_transit_supply_index_GTFS.bbl [33] [34
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 639--639
-|\TU/lmr/m/it/10.95 Viva transit: what was achieved|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 642--642
-|\TU/lmr/m/it/10.95 Downtown relief lines|
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-[15] [16]
-Underfull \hbox (badness 10000) in paragraph at lines 648--648
-|\TU/lmr/m/it/10.95 A transit-centric city (<15 min services)|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 651--651
-|\TU/lmr/m/it/10.95 Squaresville|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 654--654
-|\TU/lmr/m/it/12 Washington DC|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 658--658
-|\TU/lmr/m/it/10.95 Level-boarding accessibility|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 662--662
-|\TU/lmr/m/it/10.95 A transit-centric city (<15 min services)|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 665--665
-|\TU/lmr/m/it/10.95 Squaresville|
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 668--668
-|\TU/lmr/m/it/12 Cross-case comparison|
- []
-
-[17] [18
-
-] [19] [20
-
-] [21] [22
-
-] [23] [24
-
-] (./Reynolds_Currie_2024_transit_supply_index_GTFS.bbl [25] [26
-
-] [27] [28]) [29] (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
+] [35] [36]) [37] (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-03>
@@ -1140,15 +1154,15 @@ L3 programming layer <2023-08-03>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `Reynolds_Currie_2024_transit_supply_index_GTFS.out' has not changed.
-(rerunfilecheck)             Checksum: C9C628ACC3D6AF12E8F8216916C064AE;1903.
+(rerunfilecheck)             Checksum: B93AA347B3A01A95ABAB21B372B65F1A;1628.
  ) 
 Here is how much of TeX's memory you used:
- 17705 strings out of 477843
- 343791 string characters out of 5820994
- 1942879 words of memory out of 5000000
- 38288 multiletter control sequences out of 15000+600000
- 565018 words of font info for 81 fonts, out of 8000000 for 9000
+ 17871 strings out of 477843
+ 357838 string characters out of 5820994
+ 1952879 words of memory out of 5000000
+ 38436 multiletter control sequences out of 15000+600000
+ 566571 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 114i,11n,124p,624b,493s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 114i,11n,124p,624b,489s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on Reynolds_Currie_2024_transit_supply_index_GTFS.pdf (29 pages).
+Output written on Reynolds_Currie_2024_transit_supply_index_GTFS.pdf (37 pages).
