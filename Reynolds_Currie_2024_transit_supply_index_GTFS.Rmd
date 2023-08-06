@@ -80,6 +80,13 @@ Equation \ref{eq:supply_index}^[In Equation \ref{eq:supply_index} $SI_{area, tim
 
 @currie2007identifying calculated the SI~[area, time]~  for various Census Collection Districts (CCDs)^[CCDs predate the introduction of Statistical Areas 1, 2, 3, and 4 (SA1, SA2, SA3, SA4), and other geographical divisions currently used by the Australian Bureau of Statistics (ABS), which may be more familiar to readers] in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data.  A question, therefore, is how to calculate the SI using GTFS data so that SI~areas~ can be calculated and compared for any area of interest where transit service information in that format. 
 
+## Transport Needs Index(es)
+@currie2007identifying also adopted the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD), and developed a Transport Needs index. This Transport Needs index was based on combining standardised indicators^[Set as relative scores between 0 and 100 for all areas in the analysis.] of: adults without cars^[Based on census data for the number of cars per household and number of people aged 18 or over, weighted at 19\% of the Transport Needs Index.]; accessibility^[Being the straight line distance to the CBD, weighted at 15\%.]; persons aged over 60 years^[Weighted at 14\%.]; the number of people on a disability pension^[Wrighted at 12\%.]; the number of low income households^[Weighted at 10\%.]; the number of adults not in the labour force^[Based on the number of people over 15 not in the labour force, weigthed at 9\%.]; the number of students^[Weighted at 9\%.]; and the number of people aged 5 to 9 years^[Weighted at 12\%.]. 
+
+Four separate indicators provided input to the @currie2007identifying assessment, reflecting different approaches to understanding the scale of the need for transit services. These are: 1) the Total Need IRSAD Index, based on the ABS ISRAD, weighted by the size of the population in each area of interest; 2) the Relative Need IRSAD Index, based on weighting the indicators by the proportion of the area of interest population in the social need component groups; 3) the Total Transport Need Index; and 4) the Relative Transport Need Index. These four indicators were combined in @currie2007identifying, with equal weighting^[i.e. 25\% each.] to provide a single, unified needs index (standardised to provide a combined relative score out of 100).
+
+
+
 # Methodology
 This study adopts a case research approach by developing code to calculate Supply Indexes for Melbourne (Australia), Toronto (Canada) and Washington D.C. (USA). The case research approach serves two purposes: firstly the selected cases where used to develop, test and verify the functionality of the code produced in this study.  Secondly, aspects of the the selected cases were explored; such as the impact of forthcoming upgrades and issues of level-boarding access (i.e. non-step suitable for wheelchair, pram, mobility-aid etc.) to the Supply Index scores^[A key issue in case-based research is the duality criterion, being the need to simultaneously: be engaged with depth of the individual cases included in the study; yet also be seeking findings that are generalisable to more than just the case that are studied. This study responds to this criterion by first testing the developed code across three different transit systems, which is expected to be sufficient to validate that it is generalisable to most GTFS feeds, not specific to the quirks of the Victorian GTFS feed. Additionally, this study engages with a range of issues (level-boarding access, new routes and services, and cancelled projects) across these three cities, again seeking to demonstrate how the Supply Index code might be adapted to a range of other issues and places.].  
 
@@ -471,7 +478,9 @@ convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_b
 
 ## Case research approach
 
-The three cases were selected as they are familiar to the researchers. Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of a transit system that may be familiar to many readers^[Washington DC is where the Transportation Research Board Annual Meeting is held each year.].  
+<!---The three cases were selected as they are familiar to the researchers. Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of a transit system that may be familiar to many readers^[Washington DC is where the Transportation Research Board Annual Meeting is held each year.].  --->
+
+To test the developed code results were generated for a single case: Victoria, Australia. This case was selected primarily for convenience, as the authors are familiar with the Victorian transit network and so well placed to assess whether output results are correct.  Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
 
 ### Victoria, Australia
 Victoria is the southern-most state on the Australian mainland. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London. However, with only around 5 million people Greater Melbourne has about one-third of the population density. It has an inner Central Business District (CBD) with apartments, commercial skyscrapers and extensive sporting facilities nearby; surrounded by low-density, predominately single-family-housing-dominated, inner, middle and outer suburbs. 
@@ -614,12 +623,10 @@ LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
 --->
 
 # Results
-The following subsections discuss the results of cases studies used to develop and test the code^[The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as an Rmarkdown file (used to typeset this paper).]. 
+The following subsections discuss the results of cases studies used to develop and test the code^[The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as a Rmarkdown file (used to typeset this paper).]. 
 
 
-## Victoria, Australia
-
-### Transit Supply Index
+## Victoria, Australia: transit Supply Index
 
 Figure \ref{fig:Victoria_SI_2021} show the $SI_{LGA2021, 10/8/21}$ values for Victoria (left) and Greater Melbourne (right).
 
@@ -719,7 +726,7 @@ map <- victoria_2016_SI_total %>%
 ```
  
 
-```{r Victoria_SI_2021_versus_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ violin and box plot generated using ggstatsplot package"}
+```{r Victoria_SI_2021_versus_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ violin and box plot generated using ggstatsplot package"}
 
 victoria_2021_2016_SI_total <- tibble(lga_name_2021 = victoria_2016_SI_total[,13], "2016" = victoria_2016_SI_total[,12], "2021" = victoria_2021_SI_total[,12], greater_melbourne = victoria_2016_SI_total[,19], state_name_2021 = victoria_2016_SI_total[,15])
 
@@ -770,7 +777,7 @@ ggwithinstats(
 Figure \ref{fig:Victoria_SI_2021_versus_2016} compares the SI for 2021 and 2016 for each LGA. It indicates that there are significant differences in the SI scores in 2016 and 2021.  However, it appears that the change has been relatively small, with the average SI increasing from `r (victoria_2016_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)` to `r (victoria_2021_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)`.  
 
 
-```{r Victoria_SI_2021_versus_2016_greater_melbourne, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ Greater Melbourne, violin and box plot generated using ggstatsplot package"}
+```{r Victoria_SI_2021_versus_2016_greater_melbourne, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ Greater Melbourne, violin and box plot generated using ggstatsplot package"}
 
 
 ggwithinstats(
@@ -787,7 +794,7 @@ ggwithinstats(
 
 Figure \ref{fig:Victoria_SI_2021_versus_2016_greater_melbourne} shows that there was a significant change in SI for LGAs within Greater Melbourne, rising from `r (victoria_2016_SI_total %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)` to `r (victoria_2021_SI_total %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)`. 
 
-```{r Victoria_SI_2021_versus_2016_elsewhere, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ non-Greater Melbourne parts of Victoria, violin and box plot generated using ggstatsplot package"}
+```{r Victoria_SI_2021_versus_2016_elsewhere, echo=FALSE, warning=FALSE, message=FALSE, fig.height= 3.5, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ non-Greater Melbourne parts of Victoria, violin and box plot generated using ggstatsplot package"}
 
 
 ggwithinstats(
@@ -867,7 +874,7 @@ map
 
 Figure \ref{fig:Victoria_SI_changes} maps percentage changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. 
 
-```{r Victoria_SI_changes_ggbetweenstats, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ violin and box plot generated using ggstatsplot package"}
+```{r Victoria_SI_changes_ggbetweenstats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ violin and box plot generated using ggstatsplot package"}
 
 ggbetweenstats(
   data = victoria_difference_2021_2016_SI %>%
@@ -876,7 +883,7 @@ ggbetweenstats(
   y =   "Total", ## dependent variable
   pairwise.comparisons = FALSE,
   xlab = "Census", ## label for the x-axis
-  ylab = "Change in SI on census day, 2016 to 2021", ## label for the y-axis
+  ylab = "Change in SI, 2016 to 2021", ## label for the y-axis
   caption = "Analysis using ggstatsplot package"
 ) + scale_y_continuous(labels=percent)
 
@@ -907,7 +914,7 @@ kbl(victoria_difference_2021_2016_SI[order(victoria_difference_2021_2016_SI$Tota
 ```
 
 
-The largest relative increases in SI were in Baw Baw (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$Total %>% percent_format(digits = 2)()`), Northern Grampians (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$Total %>% percent_format(digits = 2)()`) and Macedon Ranges (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$Total %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`, `r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw bus SI increase by `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services, but an increase of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in bus SI. 
+The largest relative increases in SI were in Baw Baw (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$Total %>% percent_format(digits = 2)()`), Northern Grampians (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$Total %>% percent_format(digits = 2)()`) and Macedon Ranges (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$Total %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`, `r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw $SI_{bus}$ increase by `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services, but an increase of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in $SI_{bus}$. 
 
   
 ### Supply Index by mode
@@ -967,9 +974,9 @@ ggbarstats(victoria_2021_2016_SI_by_mode_map %>% filter(greater_melbourne == "El
 
 --->
 
-There were small but significant change in rail and bus SI scores for LGAs in Victoria^[Considering only those LGAs that had rail or bus services in 2016 or 2021] between 2016 and 2021, as shown in Figures \ref{fig:SI_by_mode_individual_LGAs_rail} and \ref{fig:SI_by_mode_individual_LGAs_bus}. 
 
-```{r SI_by_mode_individual_LGAs_rail, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ rail mode only, violin and box plot generated using ggstatsplot package", fig.fullwidth=FALSE, message=FALSE, warning=FALSE}
+
+```{r SI_by_mode_individual_LGAs_rail, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ rail mode only, violin and box plot generated using ggstatsplot package", fig.height = 3.5, fig.fullwidth=FALSE, message=FALSE, warning=FALSE}
 
 #create variable showing whether the LGA had any rail, lrt or bus in 2016 or 2021
 victoria_2021_2016_SI_by_mode_wider_census <- pivot_wider(victoria_2021_2016_SI_by_mode, values_from = SI, names_from = Census)
@@ -997,7 +1004,7 @@ ggwithinstats(
 
 ```
 
-```{r SI_by_mode_individual_LGAs_bus, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ bus mode only, violin and box plot generated using ggstatsplot package", fig.fullwidth=FALSE, message=FALSE, warning=FALSE}
+```{r SI_by_mode_individual_LGAs_bus, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ bus mode only, violin and box plot generated using ggstatsplot package", fig.height = 3.5, fig.fullwidth=FALSE, message=FALSE, warning=FALSE}
 
 ggwithinstats(
   data = victoria_2021_2016_SI_by_mode_map %>% 
@@ -1017,7 +1024,7 @@ ggwithinstats(
 ```
 
 
-```{r SI_by_mode_individual_LGAs_LRT, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ tram mode only, violin and box plot generated using ggstatsplot package", fig.fullwidth=FALSE, message=FALSE, warning=FALSE}
+```{r SI_by_mode_individual_LGAs_LRT, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ tram mode only, violin and box plot generated using ggstatsplot package", fig.fullwidth=FALSE, fig.height = 3.5, message=FALSE, warning=FALSE}
 
 ggwithinstats(
   data = victoria_2021_2016_SI_by_mode_map %>% 
@@ -1032,7 +1039,7 @@ ggwithinstats(
 
 ```
 
-However, Figure \ref{fig:SI_by_mode_individual_LGAs_LRT} indicates that there have not been any significant change in SI tram scores those LGAs that have tram services.  
+There were small but significant change in $SI_{rail}$ and $SI_{bus}$ scores for LGAs in Victoria^[Considering only those LGAs that had rail or bus services in 2016 or 2021] between 2016 and 2021, as shown in Figures \ref{fig:SI_by_mode_individual_LGAs_rail} and \ref{fig:SI_by_mode_individual_LGAs_bus}. However, Figure \ref{fig:SI_by_mode_individual_LGAs_LRT} indicates that there have not been any significant change in SI tram scores those LGAs that have tram services.  
 
 
 ```{r SI_summary_table, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI by mode, Greater Melbourne and elsewhere in Victoria"}
@@ -1085,12 +1092,17 @@ However, Figure \ref{fig:SI_by_mode_individual_LGAs_LRT} indicates that there ha
   
 ```
 
+```{r New_mode_introduced, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI by mode, Greater Melbourne and elsewhere in Victoria"}
 
-The following sections further examine changes in SI scores for each mode.  
+new_mode_lgas <- victoria_2021_2016_SI_by_mode_wider_census %>% filter(`2016` == 0 & `2021` > 0)
+
+```
+
+Entirely new modes of transit were introduced in `r nrow(new_mode_lgas)` LGAs between 2016 and 2021. The following sections further examine changes in SI scores for each mode.  
 
 ### Rail Supply Index
 
-Figure \ref{fig:Victoria_SI_changes_rail} maps percentage changes in SI~rail~ between 2016 and 2021^[The City of Manningham is excluded from these results as there are no railway stations within its boundaries.  Only a tiny fraction of the LGA is within the 800m buffer zone of any railway stations, meaning that the rail SI scores are very low (i.e. <0.1). However, as a result the percentage change between 2021 and 2016 is proportionally very high.]. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_rail}.
+Figure \ref{fig:Victoria_SI_changes_rail} maps percentage changes in SI~rail~ between 2016 and 2021^[The City of Manningham is excluded from these results as there are no railway stations within its boundaries.  Only a tiny fraction of the LGA is within the 800m buffer zone of any railway stations, meaning that the $SI_{rail}$ scores are very low (i.e. <0.1). However, as a result the percentage change between 2021 and 2016 is proportionally very high.]. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_rail}.
 
 ```{r Victoria_SI_changes_rail, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ rail mode only"}
 
@@ -1143,9 +1155,9 @@ map
 
 ```
 
-The maps indicate reductions in rail SI in western Victoria and also in the north east. Within Greater Melbourne there appears to have been a small decrease on the Mornington Penninsula, while the rail SI has increased by a large amount in one of the inner east LGAs. 
+The maps indicate reductions in $SI_{rail}$ in western Victoria and also in the north east. Within Greater Melbourne there appears to have been a small decrease on the Mornington Penninsula, while the $SI_{rail}$ has increased by a large amount in one of the inner east LGAs. 
 
-```{r Victoria_SI_changes_ggbetweenstats_rail, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ rail mode only, violin and box plot generated using ggstatsplot package"}
+```{r Victoria_SI_changes_ggbetweenstats_rail, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ rail mode only, violin and box plot generated using ggstatsplot package"}
 
 ggbetweenstats(
   data = victoria_difference_2021_2016_SI_rail %>%
@@ -1156,7 +1168,7 @@ ggbetweenstats(
   y =   "rail", ## dependent variable
   pairwise.comparisons = FALSE,
   xlab = "Census", ## label for the x-axis
-  ylab = "Change in SI on census day, 2016 to 2021", ## label for the y-axis
+  ylab = "Change in SI, 2016 to 2021", ## label for the y-axis
   caption = "Analysis using ggstatsplot package"
 ) + scale_y_continuous(labels=percent)
 
@@ -1167,27 +1179,31 @@ There was no significant difference in changes in SI between LGAs in Greater Mel
 
 ```{r Victoria_SI_changes_falls_rail, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=FALSE),]  %>% filter(state_name_2021 == "Victoria") %>% filter(rail < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where rail SI has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=FALSE),]  %>% filter(state_name_2021 == "Victoria") %>% filter(rail < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{rail}$ has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 
 ```
 
 
-The largest relative changes in SI were the loss of rail services in Northern Grampians, Horsham and Hindmarsh.  These LGAs are serviced by the Overland, rather than regular V/line services, so it may be that the Overland service was not included in the GTFS file in 2021, rather than an actually cessation of services^[TO DO: look more closely at the GTFS file.]. Benalla (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Benalla"))$rail %>% percent_format(digits = 2)()`) and Wangaratta (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Wangaratta"))$rail %>% percent_format(digits = 2)()`) in the north east of Victoria had the next largest reduction in rail SI scores for 2021 compared to 2016, followed by the Monrington Peninsula (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Mornington Peninsula"))$rail %>% percent_format(digits = 2)()`).
+The largest relative changes in SI were the loss of rail services in Northern Grampians, Horsham and Hindmarsh.  These LGAs are serviced by the Overland, rather than regular V/line services, so it may be that the Overland service was not included in the GTFS file in 2021, rather than an actually cessation of services^[TO DO: look more closely at the GTFS file.]. Benalla (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Benalla"))$rail %>% percent_format(digits = 2)()`) and Wangaratta (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Wangaratta"))$rail %>% percent_format(digits = 2)()`) in the north east of Victoria had the next largest reduction in $SI_{rail}$ scores for 2021 compared to 2016, followed by the Mornington Peninsula (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Mornington Peninsula"))$rail %>% percent_format(digits = 2)()`).
 
 ```{r Victoria_SI_changes_increases_rail, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=TRUE),]  %>% filter(lga_name_2021 != "Manningham") %>% filter(rail >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where rail SI has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=TRUE),]  %>% filter(lga_name_2021 != "Manningham") %>% filter(rail >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{rail}$ has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 ```
 
 
-The largest relative increases in rail SI were in Melton (`r  (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Melton"))$rail %>% percent_format(digits = 2)()`), Central Goldfields (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Central Goldfields"))$rail %>% percent_format(digits = 2)()`) and Hepburn (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Hepburn"))$rail %>% percent_format(digits = 2)()`)^[Again, Manningham has been excluded as it does not have any railway stations within its boundaries, and its large percentage increase is due to having a very low rail SI score in 2016 (<0.1). However, Melton's rail SI in 2021 is only `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Melton") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)`, the Central Goldfields is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Central Goldfields") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)` and Hepburn's is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Hepburn") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)`, suggesting the the large relative change in rail SI is more to do with having had very, very low values in 2016. 
+The largest relative increases in $SI_{rail}$ were in Melton (`r  (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Melton"))$rail %>% percent_format(digits = 2)()`), Central Goldfields (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Central Goldfields"))$rail %>% percent_format(digits = 2)()`) and Hepburn (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Hepburn"))$rail %>% percent_format(digits = 2)()`)^[Again, Manningham has been excluded as it does not have any railway stations within its boundaries, and its large percentage increase is due to having a very low $SI_{rail}$ score in 2016 (<0.1)]. However, Melton's $SI_{rail}$ in 2021 is only `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Melton") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)`, the Central Goldfields is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Central Goldfields") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)` and Hepburn's is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Hepburn") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(accuracy = 2)`, suggesting the the large relative change in $SI_{rail}$ is more to do with having low values in 2016. 
 
   
 ### Bus Supply Index
+
+
+Figure \ref{fig:Victoria_SI_changes_bus} maps percentage changes in SI~bus~ between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_bus}.
+
 
 
 ```{r Victoria_SI_changes_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ bus mode only, violin and box plot generated using ggstatsplot package"}
@@ -1242,9 +1258,10 @@ map
 ```
 
 
+The maps indicate that the larger reductions in $SI_{bus}$ have occurred in far western and eastern Victoria, and also in the north west. Within Greater Melbourne there appears to have been a small decrease on the Mornington Penninsula, while the $SI_{rail}$ has increased by a large amount in one of the inner east LGAs. The larger increases have occurred east of Melbourne, and in some of the outer parts of Greater Melbourne.  
 
 
-```{r Victoria_SI_changes_ggbetweenstats_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ bus mode only"}
+```{r Victoria_SI_changes_ggbetweenstats_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ bus mode only"}
 
 ggbetweenstats(
   data = victoria_difference_2021_2016_SI_bus %>%
@@ -1254,41 +1271,43 @@ ggbetweenstats(
   y =   "bus", ## dependent variable
   pairwise.comparisons = FALSE,
   xlab = "Census", ## label for the x-axis
-  ylab = "Change in SI on census day, 2016 to 2021", ## label for the y-axis
+  ylab = "Change in SI, 2016 to 2021", ## label for the y-axis
   caption = "Analysis using ggstatsplot package"
 ) + scale_y_continuous(labels=percent)
 
 
 ```
-
-Figure \ref{fig:Victoria_SI_changes_bus} maps percentage changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_bus}. There was no significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria. The SI increased by an average of `r (victoria_difference_2021_2016_SI_bus %>% filter(state_name_2021 == "Victoria") %>% filter(some_bus))$bus %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls}).   
+ There was no significant difference in changes in $SI_{bus}$ between LGAs in Greater Melbourne or the Rest of Victoria (Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_bus}). $SI_{bus}$ increased by an average of `r (victoria_difference_2021_2016_SI_bus %>% filter(state_name_2021 == "Victoria") %>% filter(some_bus))$bus %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls_bus}).   
 
 ```{r Victoria_SI_changes_falls_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
 
-kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=TRUE),]  %>% filter(bus < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where rail SI has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=TRUE),]  %>% filter(bus < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{bus}$ has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 
 ```
 
 
-The largest relative changes in SI were in Hindmarsh (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Hindmarsh"))$bus %>% percent_format(digits = 2)()`), East Gippsland (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "East Gippsland"))$bus %>% percent_format(digits = 2)()`) and West Wimmera (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "West Wimmera"))$bus %>% percent_format(digits = 2)()`). For Hindmarsh this appears to have involved the entire removal of the rail service, but offset by a small increase in bus service levels (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Hindmarsh"))$bus %>% percent_format(digits = 2)()`). Central Goldfields, in contrast had a doubling of train services, but an overall change of `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Central Goldfields"))$Total) %>% percent_format(digits = 2)()`. However, some LGAs had relatively large increases in SI between 2016 and 2021.   
+The largest relative changes in SI were in East Gippsland (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "East Gippsland"))$bus %>% percent_format(digits = 2)()`), West Wimmera (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "West Wimmera"))$bus %>% percent_format(digits = 2)()`), Pyrenees (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Pyreness"))$bus %>% percent_format(digits = 2)()`)  and Gannawarra (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Gannawarra"))$bus %>% percent_format(digits = 2)()`). For Pyrenees this appears to have been offset by a large increase in rail service levels (+`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Pyrenees"))$rail %>% percent_format(digits = 2)()`).
+
+However, some LGAs had relatively large increases in $SI_{bus}$ between 2016 and 2021.   
 
 ```{r Victoria_SI_changes_increases_bus, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=FALSE),]  %>% filter(bus >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "Change in SI on census day, 2016 to 2021, by LGA, for those LGAs where SI has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=FALSE),]  %>% filter(bus >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "Change in SI, 2016 to 2021, by LGA, for those LGAs where SI has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 ```
 
 
-The largest relative increases in SI~bus~ were in Baw Baw (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`), Northern Grampians (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus %>% percent_format(digits = 2)()`) and Macedon Ranges (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`, `r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw bus SI increase by `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services, but an increase of `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in bus SI. 
+The largest relative increases in SI~bus~ were in Baw Baw (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`), Northern Grampians (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus %>% percent_format(digits = 2)()`) and Macedon Ranges (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`, `r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw $SI_{bus}$ increase by `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services, but an increase of `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in $SI_{bus}$. 
 
   
-### Tram Supply Index
+### LRT Supply Index
 
+Figure \ref{fig:Victoria_SI_changes_LRT} maps percentage changes in SI~LRT~ between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_LRT}.
 
-```{r Victoria_SI_changes_LRT, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ tram mode only, violin and box plot generated using ggstatsplot package"}
+```{r Victoria_SI_changes_LRT, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ tram mode only, violin and box plot generated using ggstatsplot package"}
 
 
 victoria_difference_2021_2016_SI_LRT <- left_join(x = victoria_difference_2021_2016_SI, y = (victoria_2021_2016_SI_by_mode %>% 
@@ -1324,7 +1343,7 @@ map
 
 
 
-```{r Victoria_SI_changes_ggbetweenstats_LRT, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ LRT mode only"}
+```{r Victoria_SI_changes_ggbetweenstats_LRT, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ LRT mode only"}
 
 ggbetweenstats(
   data = victoria_difference_2021_2016_SI_LRT %>%
@@ -1334,41 +1353,42 @@ ggbetweenstats(
   y =   "LRT", ## dependent variable
   pairwise.comparisons = FALSE,
   xlab = "Census", ## label for the x-axis
-  ylab = "Change in SI on census day, 2016 to 2021", ## label for the y-axis
+  ylab = "Change in SI, 2016 to 2021", ## label for the y-axis
   caption = "Analysis using ggstatsplot package"
 ) + scale_y_continuous(labels=percent)
 
 
 ```
 
-Figure \ref{fig:Victoria_SI_changes_LRT} maps percentage changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. There was no significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria. The SI increased by an average of `r (victoria_difference_2021_2016_SI_bus %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls}).   
+There have been increases in $SI_{LRT}$ in the south-east and some parts of the north of the Melbourne Tram network, but decreases in central Melbourne, some parts of the east and parts of the inner north.$SI_{LRT}$ increased by an average of `r (victoria_difference_2021_2016_SI_bus %>% filter(state_name_2021 == "Victoria"))$LRT %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria.
 
 ```{r Victoria_SI_changes_falls_LRT, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=TRUE),]  %>% filter(LRT < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for LGAs where LRT SI fell", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=TRUE),]  %>% filter(LRT < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for LGAs where $SI_{LRT}$ fell", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4))%>% kable_styling(font_size = 9)
 
 
 
 ```
 
-
-The largest relative changes in SI were in Hindmarsh (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Hindmarsh"))$LRT %>% percent_format(digits = 2)()`), East Gippsland (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "East Gippsland"))$Total %>% percent_format(digits = 2)()`) and West Wimmera (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "West Wimmera"))$Total %>% percent_format(digits = 2)()`). For Hindmarsh this appears to have involved the entire removal of the rail service, but offset by a small increase in bus service levels (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Hindmarsh"))$bus %>% percent_format(digits = 2)()`). Central Goldfields, in contrast had a doubling of train services, but an overall change of `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Central Goldfields"))$Total) %>% percent_format(digits = 2)()`. However, some LGAs had relatively large increases in SI between 2016 and 2021.   
+Table \ref{tab:Victoria_SI_changes_falls_LRT} shows the `r nrow(victoria_difference_2021_2016_SI_LRT  %>% filter(LRT < 0)) ` LGAs where $SI_{LRT}$ fell.  In general, the changes were relatively small.  
 
 ```{r Victoria_SI_changes_increases_LRT, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=FALSE),]  %>% filter(LRT >= 0.10) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ LGAs where LRT SI rose by at least 10 percent", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=TRUE),]  %>% filter(LRT >= 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ LGAs where $SI_{LRT}$ rose by at least 10 percent", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 ```
 
-
-The largest relative increases in SI were in Baw Baw (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$LRT %>% percent_format(digits = 2)()`), Northern Grampians (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$LRT %>% percent_format(digits = 2)()`) and Macedon Ranges (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$LRT %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`, `r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw bus SI increase by `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services, but an increase of `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in bus SI. 
-
-  
+Table \ref{tab:Victoria_SI_changes_increases_LRT} shows LGAs where $SI_{LRT}$ increased.  The largest relative increases in SI were in Stonnington (`r (victoria_difference_2021_2016_SI_LRT %>% filter(lga_name_2021 == "Stonnington"))$LRT %>% percent_format(digits = 2)()`) and Bayside (`r (victoria_difference_2021_2016_SI_LRT %>% filter(lga_name_2021 == "Bayside (Vic.)"))$LRT %>% percent_format(digits = 2)()`). 
 
 
-### Transit needs
+## Victoria, Australia: transit needs
+
+
+
+
+
 
 
 <!---
