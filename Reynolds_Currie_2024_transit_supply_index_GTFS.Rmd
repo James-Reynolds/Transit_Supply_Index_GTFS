@@ -625,7 +625,76 @@ LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
 # Results
 The following subsections discuss the results of cases studies used to develop and test the code^[The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as a Rmarkdown file (used to typeset this paper).]. 
 
+## Verifing the code output
+Code output results were verified by comparison to by-hand calculations for selected combinations of date and location in Victoria. 
 
+### Mt Buller SA1
+
+
+The SA1 area 20402106728 covers the entire Mt Buller apline village, within which there is only bus stop, which is serviced by V/Line buses.  This SA1 was selected for the purposes of verifying the code output, as it is relatively easy to calculate the relevant SI values as a cross-check. The location of the SA1 20402106728 is shown in the following figure, together with relevant geographic statistics.  
+
+![SA1 20402106728, source ABS](images/Mt_buller.png)
+
+
+
+```{r Mt_Buller_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20402106728"))
+```
+
+The area of the My Buller SA1 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20402106728"))$areasqkm_2021 %>% format(digits = 3)`km^2^.  By inspection, the entire 400m radius catchment area of the bus stop lies entirely within the SA1 20402106728 boundaries^{Although it appears that the bus stop's location has been incorrectly geocoded to be some distance south of any actual roads.].
+
+![Mt Buller Visitor Centre bus stop location, source Google Maps](images/Mt_buller_bus_stop.png)
+
+Hence the $Area_{Bn}/ Area_{SA1_Area} $ term for this bus stop is equal to $(\pi 400^2) / 829007400 =$ `r (pi * 400 * 400 / 829007400) %>% label_scientific(digits = 3)()`.  
+
+The bus arrivals time table for Mount Buller is shown below.   
+
+![Mt Buller V/Line timetable (arrivals), source: PTV website](images/Mt_buller_arrivals.png)
+
+This indicates that in a typical week during the snow season (when the bus is operational) there will be two services arriving on Mondays, Tuesdays, Wednesdays and Thursdays (1315 and 2200), three on Fridays (1315, 2030 and 2230) two on Saturdays (1315 and 2200), and two on Sundays (1450 and 1730) for a total of 15 per week^[There appears to be an inconsistency between the printed timetable, which shows two stops in Mount Buller (Mount Buller Village and Mount Buller Accommodation) and single Mount Buller Village stop shown on online mapping platforms and within the GTFS. It appears likely that this is because the V/Line bus will deliver people directly to their accommodation, on demand]. However, this schedule appears to be inconsistent with that shown in recent GTFS files^[See https://transitfeeds.com/p/ptv/497/latest/stop/18684/20230813 for details.] which show one service arriving on Saturday to Thursday, and two on Fridays, for a total of only eight arrivals per week. 
+
+Our purpose here, however, is to verify the calculation of the SI score from what is in the GTFS file, not what might be the real-world conditions. It is unclear why there is a disrepancy between the number of arrivals report in the GTFS versus the printed timetable, but for the purposes of this verfication calculation the SL~Bn~ term for one week (during the snow season) appears to be 8, giving a total $SI_{SA120402106728, one week}$ score of `r (8* pi * 400 * 400 / 829007400) %>% label_scientific(digits = 3)()`.  
+
+
+Next the SI calculation code is run on the 4 August 2023 GTFS file, for the seven days starting August 7.  However, the area of interest is reduced so as to only include the SA1 zone numbered 20402106728. 
+```{r Mt_Buller_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+
+victoria_2023_08_04 <- read_gtfs("data/Melbourne/2023/230804/gtfs.zip")
+
+##identify duplicate stops
+victoria_2023_08_04_duplicated_stops <- tabyl(victoria_2023_08_04$stops$stop_id) %>% filter (n>1)
+names(victoria_2023_08_04_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2023_08_04_duplicated_stops <- left_join(victoria_2023_08_04_duplicated_stops, victoria_2023_08_04$stops)
+
+#discard duplicates
+victoria_2023_08_04$stops <- victoria_2023_08_04$stops[!duplicated(victoria_2023_08_04$stops$stop_id),]
+
+#split modes
+victoria_2023_08_04_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2023_08_04)
+
+#delete all modes except regional bus, by replacing LRT and rail with the empty subway mode
+victoria_2023_08_04_list_by_mode$LRT <- victoria_2023_08_04_list_by_mode$subway
+victoria_2023_08_04_list_by_mode$rail <- victoria_2023_08_04_list_by_mode$subway
+
+#filter out all except the Mt buller Sop (stop ID 18684
+victoria_2023_08_04_list_by_mode$bus$stops <- victoria_2023_08_04_list_by_mode$bus$stops %>% filter(stop_id == "18684")
+
+#set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(sa1_code_2021 == "20402106728")
+start_date = "2023-08-07"
+period_in_days = 7
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
+
+##run SI_calc function
+victoria_2023_08_04_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2023_08_04_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+##run aggregation function to create df by mode for all 7 days
+victoria_2023_08_04_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2023_08_04_SI_list_by_date_and_mode)
+
+kbl(victoria_2023_08_04_SI_df_by_mode, caption = "Developed code output for Mt Buller, seven days starting August 7, 2023")
+
+```
 ## Victoria, Australia: transit Supply Index
 
 Figure \ref{fig:Victoria_SI_2021} show the $SI_{LGA2021, 10/8/21}$ values for Victoria (left) and Greater Melbourne (right).
