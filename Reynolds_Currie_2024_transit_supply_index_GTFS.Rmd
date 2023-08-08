@@ -45,6 +45,7 @@ library(gtfstools)
 library(lubridate)
 library(kableExtra)
 library(knitr)
+library(readxl)
 
 # invalidate cache when the tufte version changes
 knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
@@ -610,6 +611,184 @@ LGA_map_data <- lga2021
 #Add Greater Melbourne to LGA map data
 LGA_greater_melbourne <- read_csv("LGA_2021_greater_melbourne.csv")
 LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
+
+```
+
+The ABS provides IRSAD datasets for LGAs in excel format. Data for 2016 and 2021 was included in this study, with the scores shown in Figures \ref{Victoria_IRSAD_load_2016} and \ref{Victoria_IRSAD_load_2021}
+
+```{r Victoria_IRSAD_load_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2016 IRSAD for Victorian and Greater Melbourne LGAs", fig.show="hold", out.width="50%"}
+
+
+IRSAD_2016_lga <- read_excel("data/Melbourne/ABS/2033055001 - lga indexes.xls", 
+    sheet = "Table 3", skip = 5)
+names(IRSAD_2016_lga) <- c("lga_code_2016", "lga_name_2016", "usual_resident_population", "IRSAD_score","blank", "Australian_rank", "Australian_decile", "Australian_percentile", "blank2", "state_for_rank", "state_rank", "state_decile", "state_percentile", "IRSAD_score_lowest_SA1", "IRSAD_score_highest_SA1", "percent_usual_resident_population_no_SA1_score")
+IRSAD_2016_lga <- tibble(IRSAD_2016_lga)
+
+IRSAD_2016_lga_map <- left_join(IRSAD_2016_lga, LGA_map_data, join_by("lga_code_2016" == "lga_code_2021"))
+
+
+
+
+map <- IRSAD_2016_lga_map %>%
+  filter(state_name_2021 == "Victoria") %>%   
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = IRSAD_score),     # fill by IRSAD_score
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+
+
+map <- IRSAD_2016_lga_map %>%
+  filter(state_name_2021 == "Victoria") %>%   
+  filter(greater_melbourne == "Greater Melbourne") %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = IRSAD_score),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+```
+
+
+
+
+```{r Victoria_IRSAD_load_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2021 IRSAD for Victorian and Greater Melbourne LGAs", fig.show="hold", out.width="50%"}
+
+
+
+IRSAD_2021_lga <- read_excel("data/Melbourne/ABS/Local Government Area, Indexes, SEIFA 2021.xlsx", 
+    sheet = "Table 3", skip = 5)
+
+names(IRSAD_2021_lga) <- c("lga_code_2021", "lga_name_2021", "usual_resident_population", "IRSAD_score","blank", "Australian_rank", "Australian_decile", "Australian_percentile", "blank2", "state_for_rank", "state_rank", "state_decile", "state_percentile", "IRSAD_score_lowest_SA1", "IRSAD_score_highest_SA1", "percent_usual_resident_population_no_SA1_score")
+IRSAD_2021_lga <- tibble(IRSAD_2021_lga)
+
+IRSAD_2021_lga_map <- left_join(IRSAD_2021_lga, LGA_map_data)
+
+
+
+map <- IRSAD_2021_lga_map %>%
+  filter(state_name_2021 == "Victoria") %>%   
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = IRSAD_score),     # fill by IRSAD_score
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+
+
+map <- IRSAD_2021_lga_map %>%
+  filter(state_name_2021 == "Victoria") %>%   
+  filter(greater_melbourne == "Greater Melbourne") %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = IRSAD_score),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+
+```
+
+
+```{r Victoria_IRSAD_compare, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "Comparing 2016 and 2021 IRSAD scores for Victorian LGAs"}
+
+
+
+IRSAD_2016_2021_lga <- add_column(IRSAD_2016_lga_map, "Census" = "2016")
+
+IRSAD_2016_2021_lga$lga_code_2021 <- IRSAD_2016_2021_lga$lga_code_2016
+
+IRSAD_2016_2021_lga$areasqkm_2021 <- as.numeric(IRSAD_2016_2021_lga$areasqkm_2021)
+
+
+IRSAD_2021_lga_map$lga_name_2016 <- IRSAD_2021_lga_map$lga_name_2021
+                
+IRSAD_2016_2021_lga <- add_row(IRSAD_2016_2021_lga, (add_column(IRSAD_2021_lga_map, "Census" = "2021")))
+                                  
+ggwithinstats(IRSAD_2016_2021_lga %>% filter(state_name_2021 == "Victoria"),
+              x = "Census",
+              y = "IRSAD_score"
+                )
+```
+
+
+```{r Victoria_IRSAD_compare_map, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "Change in IRSAD scores (2021 minus 2016)", fig.show="hold", out.width="50%"}
+
+IRSAD_2016_2021_lga_wider <- pivot_wider(IRSAD_2016_2021_lga %>% filter(state_name_2021 == "Victoria") %>% select("lga_code_2021", "lga_name_2021", "IRSAD_score", "Census"), names_from = "Census", values_from = "IRSAD_score")
+
+IRSAD_2016_2021_lga_wider$Change <- IRSAD_2016_2021_lga_wider$`2021`- IRSAD_2016_2021_lga_wider$`2016`
+
+IRSAD_2016_2021_lga_wider <- left_join(IRSAD_2016_2021_lga_wider, LGA_map_data)
+
+
+map <- IRSAD_2016_2021_lga_wider %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = Change),     # fill by IRSAD_score
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+
+
+map <- IRSAD_2016_2021_lga_wider %>%
+  filter(greater_melbourne == "Greater Melbourne") %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = Change),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+
+
+
+
+
+
 
 ```
 
