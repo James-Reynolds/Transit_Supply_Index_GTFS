@@ -628,71 +628,45 @@ The following subsections discuss the results of cases studies used to develop a
 ## Verifing the code output
 Code output results were verified by comparison to by-hand calculations for selected combinations of date and location in Victoria. 
 
-### Mt Buller SA1
+### Running Creek and Morgans Bridge, Kiewa Valley Hwy
 
 
-The SA1 area 20402106728 covers the entire Mt Buller apline village, within which there is only bus stop, which is serviced by V/Line buses.  This SA1 was selected for the purposes of verifying the code output, as it is relatively easy to calculate the relevant SI values as a cross-check. The location of the SA1 20402106728 is shown in the following figure, together with relevant geographic statistics.  
+The SA1 area 20403106915 covers Running Creek and Morgans Bridge, two localities in the Victorian Alps. Within this SA1 area there are only two V/Line bus stops^{Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).}.  This SA1 was selected for the purposes of verifying the code output, as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. The location of the SA1 20403106915 is shown in the following figure, together with relevant geographic statistics.  
 
-![SA1 20402106728, source ABS](images/Mt_buller.png)
+![SA1 20403106915, with approximate location of Stop:ID 45125 highlighted, source ABS](images/Running_creek_bus_stop.png)
 
 
 
-```{r Mt_Buller_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
-st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20401105720"))
+```{r Running_Creek_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20403106915"))
 ```
 
-The area of the My Buller SA1 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20401105720"))$areasqkm_2021 %>% format(digits = 3)`km^2^.  By inspection, the entire 400m radius catchment area of the bus stop lies entirely within the SA1 20401105720 boundaries^{Although it appears that the bus stop's location has been incorrectly geocoded to be some distance south of any actual roads.].
-
-![Mt Buller Visitor Centre bus stop location, source Google Maps](images/Mt_buller_bus_stop.png)
-
-Hence the $Area_{Bn}/ Area_{SA1_Area} $ term for this bus stop is equal to $(\pi 400^2) / 829007400 =$ `r (pi * 400 * 400 / 22576200) %>% label_scientific(digits = 3)()`.  
-
-The bus arrivals time table for Mount Buller is shown below.   
-
-![Mt Buller V/Line timetable (arrivals), source: PTV website](images/Mt_buller_arrivals.png)
-
-This indicates that in a typical week during the snow season (when the bus is operational) there will be two services arriving on Mondays, Tuesdays, Wednesdays and Thursdays (1315 and 2200), three on Fridays (1315, 2030 and 2230) two on Saturdays (1315 and 2200), and two on Sundays (1450 and 1730) for a total of 15 per week^[There appears to be an inconsistency between the printed timetable, which shows two stops in Mount Buller (Mount Buller Village and Mount Buller Accommodation) and single Mount Buller Village stop shown on online mapping platforms and within the GTFS. It appears likely that this is because the V/Line bus will deliver people directly to their accommodation, on demand]. However, this schedule appears to be inconsistent with that shown in recent GTFS files^[See https://transitfeeds.com/p/ptv/497/latest/stop/18684/20230813 for details.] which show one service arriving on Saturday to Thursday, and two on Fridays, for a total of only eight arrivals per week. 
-
-Our purpose here, however, is to verify the calculation of the SI score from what is in the GTFS file, not what might be the real-world conditions. It is unclear why there is a disrepancy between the number of arrivals report in the GTFS versus the printed timetable, but for the purposes of this verfication calculation the SL~Bn~ term for one week (during the snow season) appears to be 8, giving a total $SI_{20401105720, one week}$ score of `r (8* pi * 400 * 400 / 22576200) %>% label_scientific(digits = 3)()`.  
+The area of SA1 20403106915 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20403106915"))$areasqkm_2021`km^2^.  By inspection, the entire 400m radius catchment area of both of the bus stops lie entirely within the SA1 20403106915 boundaries.
 
 
-Next the SI calculation code is run on the 4 August 2023 GTFS file, for the seven days starting August 7.  However, the area of interest is reduced so as to only include the SA1 zone numbered 20401105720. 
+
+Hence the $Area_{Bn}/ Area_{SA1_Area} $ term for each of the bus stops is equal to $(\pi 400^2) / 284598000 =$ `r (pi * 400 * 400 / 284598000) %>% label_scientific(digits = 3)()`.  
+No printed timetable has been located for the Albury - Mt Beauty via Baranduda and Tawonga South route, but stop times are provided on the PTV website^[See https://tinyurl.com/5n83ryhy], which indicates services on April 27 to Albury at 7:25am, 9:25am and 9:30am. For April 28 there are services at 7:25am and 9:30am, but then there are no services over the weekend.  May 1 has two services (7:25am and 9:30am), May 2nd and 3rd both have three (7:25, 9:25 and 9:30am), bringing the total to 13. In the opposite direction the PTV website indicates a similar service pattern, only in the opposite direction and at 2:50pm, 4:20pm and 4:40pm^[In general, this appears to be a school bus service pattern.  It is unclear, however, why some days have three services but others have only two.].  This brings the total to 26 arrivals to each of the two bus stops in a seven day week ^[The SL~Bn~ term.] Therefore the total $SI_{20403106915, 27/4-3/5/23}$ score is equal to $(2*(26* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(26* pi * 400 * 400 / 284598000))`.  
+
+The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
 ```{r Mt_Buller_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
 
-victoria_2023_08_04 <- read_gtfs("data/Melbourne/2023/230804/gtfs.zip")
 
-##identify duplicate stops
-victoria_2023_08_04_duplicated_stops <- tabyl(victoria_2023_08_04$stops$stop_id) %>% filter (n>1)
-names(victoria_2023_08_04_duplicated_stops) <- c("stop_id", "n", "percent")
-victoria_2023_08_04_duplicated_stops <- left_join(victoria_2023_08_04_duplicated_stops, victoria_2023_08_04$stops)
+Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
 
-#discard duplicates
-victoria_2023_08_04$stops <- victoria_2023_08_04$stops[!duplicated(victoria_2023_08_04$stops$stop_id),]
-
-#split modes
-victoria_2023_08_04_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2023_08_04)
-
-#delete all modes except regional bus, by replacing LRT and rail with the empty subway mode
-victoria_2023_08_04_list_by_mode$LRT <- victoria_2023_08_04_list_by_mode$subway
-victoria_2023_08_04_list_by_mode$rail <- victoria_2023_08_04_list_by_mode$subway
-
-#set inputs to SI_calc function
-victoria_areas_of_interest <- sa1_map_data %>% filter(sa1_code_2021 == "20401105720")
-start_date = "2023-08-07"
-period_in_days = 7
-EPSG_for_transform = 28355
-areas_of_interest_id_field = "sa1_code_2021"
-
-##run SI_calc function
-victoria_2023_08_04_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2023_08_04_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
-
-##run aggregation function to create df by mode for all 7 days
-victoria_2023_08_04_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2023_08_04_SI_list_by_date_and_mode)
-
-kbl(victoria_2023_08_04_SI_df_by_mode, caption = "Developed code output for Mt Buller, seven days starting August 7, 2023")
+kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, seven days starting April 27, 2023")
 
 ```
-## Victoria, Australia: transit Supply Index
+
+The hand-calculated $SI_{20403106915, 27/4-3/5/23}$ matches that produced by the developed code, suggesting that the developed code is providing the expected output.  
+
+### Further verification tests
+Further verification tests are yet to be completed.  They may include selecting: a SA1 area that has multiple modes; selecting a SA1 area that has transit stops close to its boundary (such that only part of the catchment area is within the SA1 boundaries); and selecting an SA1 area where a transit stop is located outside the boundary, but the catchment area overlaps.  
+
+Some of these verification calculations appear likely to require the use of GIS software to determine how much of a catchment area lies within a SA1 boundary^[TO BE COMPLETED.].
+
+## Victoria, Australia: Supply Index results for LGAs
+To better understand whether the SI calculation from GTFS data can be practically applied, this section presents results when the SI is calculated for Local Government Areas(LGAs) within Victoria. For the purposes of this section, the $SI_{LGA}$ is calculated for only a single day of service, being the date of the 2021 census^[Tuesday August 10, 2021]. Analysis of a single day was selected so as to reduce the processing time required to output the SI scores, as the code current takes about one day to run for all the stops in Victoria for every day that is analysed^[Code performance could be improved, but appears good enough for the purposes of this research. The rmarkdown used to typeset this paper loads pre-calculated SI scores.].
 
 Figure \ref{fig:Victoria_SI_2021} show the $SI_{LGA2021, 10/8/21}$ values for Victoria (left) and Greater Melbourne (right).
 
