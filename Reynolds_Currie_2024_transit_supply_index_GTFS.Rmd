@@ -23,7 +23,6 @@ header-includes:
 library(tufte)
 
 library(tidyverse)
-library(dplyr)
 library(tidytransit)
 library(sp)
 library(absmapsdata)
@@ -46,6 +45,7 @@ library(lubridate)
 library(kableExtra)
 library(knitr)
 library(readxl)
+library(dplyr)
 
 # invalidate cache when the tufte version changes
 knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
@@ -614,7 +614,7 @@ LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
 
 ```
 
-The ABS provides IRSAD datasets for LGAs in excel format. Data for 2016 and 2021 was included in this study, with the scores shown in Figures \ref{Victoria_IRSAD_load_2016} and \ref{Victoria_IRSAD_load_2021}
+The ABS provides IRSAD datasets for LGAs in excel format. Data for 2016 and 2021 was included in this study, with the scores shown in Figures \ref{Victoria_IRSAD_load_2016} and \ref{Victoria_IRSAD_load_2021}.
 
 ```{r Victoria_IRSAD_load_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2016 IRSAD for Victorian and Greater Melbourne LGAs", fig.show="hold", out.width="50%"}
 
@@ -720,7 +720,7 @@ map
 ```
 
 
-```{r Victoria_IRSAD_compare, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "Comparing 2016 and 2021 IRSAD scores for Victorian LGAs"}
+```{r Victoria_IRSAD_compare, echo=FALSE, warning=FALSE, message=FALSE, fig.height= 4, fig.fullwidth = FALSE, fig.cap= "Comparing 2016 and 2021 IRSAD scores for Victorian LGAs. Analysis using ggstatsplot package."}
 
 
 
@@ -744,9 +744,12 @@ ggwithinstats(IRSAD_2016_2021_lga %>% filter(state_name_2021 == "Victoria"),
 
 ```{r Victoria_IRSAD_compare_map, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "Change in IRSAD scores (2021 minus 2016)", fig.show="hold", out.width="50%"}
 
-IRSAD_2016_2021_lga_wider <- pivot_wider(IRSAD_2016_2021_lga %>% filter(state_name_2021 == "Victoria") %>% select("lga_code_2021", "lga_name_2021", "IRSAD_score", "Census"), names_from = "Census", values_from = "IRSAD_score")
+#Assume lga_code_2016 same as lga_code_2021
+IRSAD_2016_2021_lga$lga_code_2021 <- IRSAD_2016_2021_lga$lga_code_2016
 
-IRSAD_2016_2021_lga_wider$Change <- IRSAD_2016_2021_lga_wider$`2021`- IRSAD_2016_2021_lga_wider$`2016`
+IRSAD_2016_2021_lga_wider <- pivot_wider(IRSAD_2016_2021_lga %>% filter(state_name_2021 == "Victoria") %>% dplyr::select("lga_code_2021", "lga_name_2021", "IRSAD_score", "Census"), names_from = "Census", values_from = "IRSAD_score")
+
+IRSAD_2016_2021_lga_wider$Change <- (IRSAD_2016_2021_lga_wider$`2021`/ IRSAD_2016_2021_lga_wider$`2016`) -1
 
 IRSAD_2016_2021_lga_wider <- left_join(IRSAD_2016_2021_lga_wider, LGA_map_data)
 
@@ -761,7 +764,10 @@ map <- IRSAD_2016_2021_lga_wider %>%
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
   # theme_void() +                    # clears other plot elements
- coord_sf()
+ coord_sf() + 
+  scale_fill_gradient2(labels = scales::label_percent()
+                       ) 
+
 
 map
 
@@ -779,7 +785,8 @@ map <- IRSAD_2016_2021_lga_wider %>%
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
   # theme_void() +                    # clears other plot elements
- coord_sf()
+ coord_sf() + 
+   scale_fill_gradient2(labels = scales::label_percent()) 
 
 map
 
@@ -792,8 +799,120 @@ map
 
 ```
 
+Figure \ref{fig:Victoria_IRSAD_compare} indicates that has not been a significant change in IRSAD scores for Victorian LGAs between 2016 and 2021.  Figure \ref{fig:Victoria_IRSAD_compare_map} shows the percentage change in IRSAD scores for individual LGAs across Victoria and Greater Melbourne. Alpine Shire and the unincorporated Victorian areas (Mount Buller, French Island in Westernport etc.) appear to have had the largest increases in IRSAD in Victoria, while in Greater Melbourne it appears to have been mostly in inner areas where there have been increases. 
+
+There appears to have been some decreases in IRSAD scores in outer regions of Victoria. Outer-eastern parts of Melbourne, and Melton (outer-west) also also appear to have had lower IRSAD scores in 2021 than 2016.  
 
 
+
+```{r Victoria_IRSAD_rank_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "IRSAD rank 2021", fig.show="hold", out.width="50%"}
+
+
+map <- IRSAD_2021_lga_map %>%
+  filter(state_name_2021 == "Victoria") %>%   
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = as.numeric(state_rank)),     # fill by IRSAD_score
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf() +
+  scale_fill_gradient2() +
+  labs(fill = "Rank")
+
+map
+
+
+
+map <- IRSAD_2021_lga_map %>%
+  filter(state_name_2021 == "Victoria") %>%   
+  filter(greater_melbourne == "Greater Melbourne") %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = as.numeric(state_rank)),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()+
+   scale_fill_gradient2() +
+  labs(fill = "Rank")
+
+map
+
+
+
+```
+
+Figure \ref{fig:Victoria_IRSAD_rank_2021} shows the 2021 IRSAD ranking for Victoria and Greater Melbourne, with a lower rank indicating a LGA with a lower IRSAD score. Inner Melbourne LGAs appear to have the highest ranks, where as Greater Dandenong has the `r (IRSAD_2021_lga_map %>%  filter(lga_name_2021 == "Greater Dandenong"))$state_rank`rd lowest IRSAD in the state. For regional LGAs the ranking appears to be generally lower in the north-west, with Central Goldfields having the lowest IRSAD score for the entire state.  However, the Latrobe LGA in the east has the second lowest rank, while Glenelg in the south-west is the fifth lowest.    
+
+
+
+```{r Victoria_IRSAD_rank_compare, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "Change in IRSAD rank between 2021 and 2016 (lower rank = worse)", fig.show="hold", out.width="50%"}
+
+IRSAD_2016_2021_lga_wider <- pivot_wider(IRSAD_2016_2021_lga %>% filter(state_name_2021 == "Victoria") %>% dplyr::select("lga_code_2021", "lga_name_2021", "state_rank", "Census"), names_from = "Census", values_from = "state_rank")
+
+IRSAD_2016_2021_lga_wider$`2021` <- as.numeric(IRSAD_2016_2021_lga_wider$`2021`)
+IRSAD_2016_2021_lga_wider$`2016` <- as.numeric(IRSAD_2016_2021_lga_wider$`2016`)
+
+IRSAD_2016_2021_lga_wider$Change <- (IRSAD_2016_2021_lga_wider$`2021`- IRSAD_2016_2021_lga_wider$`2016`)
+
+IRSAD_2016_2021_lga_wider <- left_join(IRSAD_2016_2021_lga_wider, LGA_map_data)
+
+
+map <- IRSAD_2016_2021_lga_wider %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = Change),     # fill by IRSAD_score
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf() + 
+  scale_fill_gradient2() +
+  labs(fill = "Rank change"
+       )
+       
+
+
+map
+
+
+
+map <- IRSAD_2016_2021_lga_wider %>%
+  filter(greater_melbourne == "Greater Melbourne") %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = Change),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf() + 
+ scale_fill_gradient2() +
+  labs(fill = "Rank change"
+       )
+  
+map
+
+```
+
+
+
+Figure \ref{fig:Victoria_IRSAD_rank_compare} shows the change in ranking between the 2016 and 2021 for each LGA in Victoria and Greater Melbourne. A positive number indicates that the LGA in question had a higher IRSAD score in 2021 than more of the other Victorian LGAs than in 2016. The state ranking appears to have fallen for most of the outer suburbs in Greater Melbourne, especially for Melton, Whittlesea and Casey. Rankings have improved particularly in Brimbank, but also in some of the other nearby LGAs. In regional Victoria Gannawarra's ranking has fallen the most, while Alpine Shire and Ararat's ranking have improved the most. 
+
+. Inner Melbourne LGAs appear to have the highest ranks, where as Greater Dandenong has the `r (IRSAD_2021_lga_map %>%  filter(lga_name_2021 == "Greater Dandenong"))$state_rank`rd lowest IRSAD in the state. For regional LGAs the ranking appears to be generally lower in the north-west, with Central Goldfields having the lowest IRSAD score for the entire state.  However, the Latrobe LGA in the east has the second lowest rank, while Glenelg in the south-west is the fifth lowest.    
 
 
 <!--
@@ -828,7 +947,7 @@ Hence the $Area_{Bn}/ Area_{SA1_Area} $ term for each of the bus stops is equal 
 No printed timetable has been located for the Albury - Mt Beauty via Baranduda and Tawonga South route, but stop times are provided on the PTV website^[See https://tinyurl.com/5n83ryhy], which indicates services on April 27 to Albury at 7:25am, 9:25am and 9:30am. For April 28 there are services at 7:25am and 9:30am, but then there are no services over the weekend.  May 1 has two services (7:25am and 9:30am), May 2nd and 3rd both have three (7:25, 9:25 and 9:30am), bringing the total to 13. In the opposite direction the PTV website indicates a similar service pattern, only in the opposite direction and at 2:50pm, 4:20pm and 4:40pm^[In general, this appears to be a school bus service pattern.  It is unclear, however, why some days have three services but others have only two.].  This brings the total to 26 arrivals to each of the two bus stops in a seven day week ^[The SL~Bn~ term.] Therefore the total $SI_{20403106915, 27/4-3/5/23}$ score is equal to $(2*(26* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(26* pi * 400 * 400 / 284598000))`.  
 
 The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
-```{r Mt_Buller_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+```{r Running_Creek_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
 
 
 Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
@@ -839,10 +958,70 @@ kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20403106915"), cap
 
 The hand-calculated $SI_{20403106915, 27/4-3/5/23}$ matches that produced by the developed code, suggesting that the developed code is providing the expected output.  
 
-### Further verification tests
-Further verification tests are yet to be completed.  They may include selecting: a SA1 area that has multiple modes; selecting a SA1 area that has transit stops close to its boundary (such that only part of the catchment area is within the SA1 boundaries); and selecting an SA1 area where a transit stop is located outside the boundary, but the catchment area overlaps.  
+### Talbot, Avoca line
+Talbot, north-west of Ballarat, is provides a location where the accuracy of the developed code can be tested for both: 1) multiple modes; and 2) station/stop catchment areas spanning across multiple areas of interest.  As shown in the below figure, there the Talbot township is covered by SA1 20103101708, which lies within the SA1 20103101707.   
 
-Some of these verification calculations appear likely to require the use of GIS software to determine how much of a catchment area lies within a SA1 boundary^[TO BE COMPLETED.].
+
+![SA1 Location of 20103101707 and 20103101708 boundaries in relation to Talbot railway station and 800m catchment (red), and bus stops and 400m catchments (yellow), source ABS and PTV](images/Talbot.png)
+
+The Talbot Railway station's 800m catchment area is roughly three-fifths in SA1 20103101708. A bus stop located close to the railway station has roughly three-quarters of its catchment 20103101708. The bus stop at the Talbot Town Hall has almost its entire catchment area within 20103101708.  
+
+
+The area of SA1 20103101707 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101707"))$areasqkm_2021 %>% format(digits=3)`km^2^. For SA1 20103101708 the area is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101708"))$areasqkm_2021 %>% format(digits=3)`km^2^^[via LGA data from abs_map package.].
+
+Hence the $Area_{Bn}/ Area_{SA120103101708}$ term for the Talbot Town Hall bus stop is approximately equal to $(\pi .4^2) / 3.05=$ `r (pi * .4 * .4 / 3.05)%>% format(digits=3) `, while the $Area_{Bn}/ Area_{SA120103101707}$ is very close to zero.  For the bus stop at the Talbot Station the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits=3)`, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $1/4(\pi .4^2) / 237=$ `r ((1/4)*(pi * .4 * .4 / 237)) %>% format(digits=3)`. For the Railway Station itself the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $(3/5)(\pi .8^2) / 3.05=$ `r ((3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)`, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $2/5(\pi .8^2) / 237=$ `r ((2/5)*(pi * .8 * .8 / 237)) %>% format(digits = 3)`. 
+
+Review of the PTV website stop departures indicates that the typical service pattern appears to be: 
+
+- Talbot Town Hall bus stop (42 services per week):
+  - one Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week);
+  - 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week);
+   - two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week)
+  - Local bus services to Ballarat on Thursdays (1), Fridays (1), Monday (1), Tuesday (1) and Wednesday(1) - 5 per week; and
+  - Local bus services towards Bendigo on Thursdays (1), Fridays (1), Mondays (1), Tuesdays (1) and Wednesdays (1) - 5 per week. 
+  
+  
+- Talbot Station bus stop (32 services per week):
+  - one Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week);
+  - 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week); and
+  - two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week)
+
+- Talbot Railway Station (28 services per week):
+  - Two services towards Maryborough every day of the week; and
+  - Two services towards Melbourne every day of the week
+
+Therefore, the $SI_{20103101708}$ is approximately equal to: 
+
+- Talbot Town Hall bus stop 42 services per week x `r ((pi * .4 * .40 / 3.05)) %>% format(digits = 3)` = `r (42*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus
+- Talbot Station bus stop 32 services per week x $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 305)) %>% format(digits = 3)` = `r (32*(3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus
+- Talbot Railway Station 28 services per week x `r ((3/5)*(pi * .8 * .8 / 305)) %>% format(digits = 3)` = `r (28*(3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)`; 
+- giving a grand total of `r ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) %>% format(digits = 3)`
+
+
+The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
+```{r Talbot_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+
+
+Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
+
+kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"), caption = "Developed code output for SA1 20103101707, seven days starting April 27, 2023")
+
+```
+
+The hand-calculated $SI_{20403106915, 27/4-3/5/23}$ is within approximately `r (1-(((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) / ((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD))) %>% percent_format(digits = 3)()` lower than the value calculated by the SI code.  However, this appears to be sufficient to accept the result given that: 
+
+- the overlap of the station and stop catchment areas have been estimated based on PTV and ABS maps, rather then precisely calculated using GIS software; 
+- the hand-calculated SI is based on current (August 2023) service schedules, whereas the code-calculated value is based on a GTFS file from April 27, 2023^[The online PTV timetables only go back a month or two, so any changes in the timetables between April and now could not be checked without looking directly at the GTFS files, which sort of defeats the purpose of doing the verification calculations.]; and
+- the SI scores themselves vary greatly^[Ranging between `r min(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3)`and `r max(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3)`.], meaning that a difference of just  `r ((((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD)) - ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))))  %>% format(digits = 3)` between the hand calculated and code calculated score suggests that the code calculated score is just a bit more accurate.  
+
+Further verification work might involve:
+
+- updating the code calculated values from $SI_{20403106915, 27/4-3/5/23}$ to $SI_{20403106915, now+7days}$ such that the current PTV timetables could be directly compared to the code output using the current GTFS files^[This would remove the chance that the service patterns have actually changed between April and now, although it is expected that even if there has been a change it is unlikely to have been large.]; 
+- undertaking a GIS analysis to obtain more precise $Area_{Bn} / Area_{area of interest}$ terms; 
+- stepping through the coding calculations one at a time to verify the intermediate calculations, and hence confirm that this disrepancy is simply a matter of precision; 
+- undertaking the verification calculations for the  SA1 20103101707 area^[Unfortunately this is a large SA1 and there are other bus stops (outside of Talbot) that will contribute to the SI score.] or for some other area where hand calculations are relatively easy to perform. 
+
+
 
 ## Victoria, Australia: Supply Index results for LGAs
 To better understand whether the SI calculation from GTFS data can be practically applied, this section presents results when the SI is calculated for Local Government Areas(LGAs) within Victoria. For the purposes of this section, the $SI_{LGA}$ is calculated for only a single day of service, being the date of the 2021 census^[Tuesday August 10, 2021]. Analysis of a single day was selected so as to reduce the processing time required to output the SI scores, as the code current takes about one day to run for all the stops in Victoria for every day that is analysed^[Code performance could be improved, but appears good enough for the purposes of this research. The rmarkdown used to typeset this paper loads pre-calculated SI scores.].
@@ -956,7 +1135,7 @@ victoria_2021_2016_SI_total <- tibble(lga_name_2021 = victoria_2016_SI_total[,13
 #  xlab = "2016 SI on census day", ## label for the x-axis
 #  ylab = "2021 SI on census day", ## label for the y-axis
  # label.var = "total_2021", ## variable to use for labeling data points
-  #point.label.args = list(alpha = 0.7, size = 4, color = "grey50"),
+  #point.label.args = list(alpha = 0.7, size = 1, color = "grey50"),
 #  xfill = "#CC79A7", ## fill for marginals on the x-axis
 #  yfill = "#009E73", ## fill for marginals on the y-axis
 #  caption = "Analysis using ggstatsplot package"
@@ -1116,7 +1295,7 @@ There was no significant difference in changes in SI between LGAs in Greater Mel
 ```{r Victoria_SI_changes_falls, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
 
 kbl(
-  victoria_difference_2021_2016_SI[order(victoria_difference_2021_2016_SI$Total, decreasing=FALSE),]  %>% filter(Total < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where SI has fallen, by mode", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+  victoria_difference_2021_2016_SI[order(victoria_difference_2021_2016_SI$Total, decreasing=FALSE),]  %>% filter(Total < 0) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where SI has fallen, by mode", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 
@@ -1127,7 +1306,7 @@ The largest relative changes in SI were in Hindmarsh (`r (victoria_difference_20
 
 ```{r Victoria_SI_changes_increases, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI[order(victoria_difference_2021_2016_SI$Total, decreasing=TRUE),] %>% filter(Total >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where SI has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI[order(victoria_difference_2021_2016_SI$Total, decreasing=TRUE),] %>% filter(Total >= 0.25) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where SI has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 ```
@@ -1142,11 +1321,11 @@ Figure \ref{fig:SI_by_mode} shows changes in the proportion of the SI score^[Not
 
 ```{r SI_by_mode, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ proportion by mode, bar chart generated by ggstatsplot package", fig.height=3}
 
-victoria_2021_2016_SI_by_mode <- pivot_longer(victoria_2016_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI") 
+victoria_2021_2016_SI_by_mode <- pivot_longer(victoria_2016_SI_df_by_mode %>% dplyr::select(!Total), cols = 2:11, names_to = "mode", values_to = "SI") 
 victoria_2021_2016_SI_by_mode <- add_column(victoria_2021_2016_SI_by_mode, .after = "lga_code_2021", Census = "2016")
   
 victoria_2021_2016_SI_by_mode <- add_row(victoria_2021_2016_SI_by_mode, 
-                                         pivot_longer(victoria_2021_SI_df_by_mode %>% select(!Total), cols = 2:11, names_to = "mode", values_to = "SI") %>% add_column(.after = "lga_code_2021", Census = "2021"))  
+                                         pivot_longer(victoria_2021_SI_df_by_mode %>% dplyr::select(!Total), cols = 2:11, names_to = "mode", values_to = "SI") %>% add_column(.after = "lga_code_2021", Census = "2021"))  
 
 victoria_2021_2016_SI_by_mode_map <- left_join(victoria_2021_2016_SI_by_mode, LGA_map_data)
 victoria_2021_2016_SI_by_mode_map$round_SI <- round(victoria_2021_2016_SI_by_mode_map$SI)
@@ -1326,8 +1505,8 @@ Figure \ref{fig:Victoria_SI_changes_rail} maps percentage changes in SI~rail~ be
 ```{r Victoria_SI_changes_rail, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ rail mode only"}
 
 victoria_difference_2021_2016_SI_rail <- left_join(x = victoria_difference_2021_2016_SI, y = (victoria_2021_2016_SI_by_mode %>% 
-                                                                                                         filter(some_rail) %>% 
-                                                                                                         select(lga_code_2021, some_rail)) %>%
+                        filter(some_rail) %>% 
+                        dplyr::select(lga_code_2021, some_rail)) %>%
                                                               distinct(.keep_all = FALSE))
 
 victoria_difference_2021_2016_SI_rail <- na.omit(victoria_difference_2021_2016_SI_rail)
@@ -1398,7 +1577,7 @@ There was no significant difference in changes in SI between LGAs in Greater Mel
 
 ```{r Victoria_SI_changes_falls_rail, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=FALSE),]  %>% filter(state_name_2021 == "Victoria") %>% filter(rail < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{rail}$ has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=FALSE),]  %>% filter(state_name_2021 == "Victoria") %>% filter(rail < 0) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{rail}$ has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 
@@ -1409,7 +1588,7 @@ The largest relative changes in SI were the loss of rail services in Northern Gr
 
 ```{r Victoria_SI_changes_increases_rail, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=TRUE),]  %>% filter(lga_name_2021 != "Manningham") %>% filter(rail >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{rail}$ has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI_rail$rail, decreasing=TRUE),]  %>% filter(lga_name_2021 != "Manningham") %>% filter(rail >= 0.25) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{rail}$ has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 ```
@@ -1429,8 +1608,8 @@ Figure \ref{fig:Victoria_SI_changes_bus} maps percentage changes in SI~bus~ betw
 
 
 victoria_difference_2021_2016_SI_bus <- left_join(x = victoria_difference_2021_2016_SI, y = (victoria_2021_2016_SI_by_mode %>% 
-                                                                                                         filter(some_bus) %>% 
-                                                                                                         select(lga_code_2021, some_bus)) %>%
+                        filter(some_bus) %>% 
+                        dplyr::select(lga_code_2021, some_bus)) %>%
                                                               distinct(.keep_all = FALSE))
 
 victoria_difference_2021_2016_SI_bus <- na.omit(victoria_difference_2021_2016_SI_bus)
@@ -1500,7 +1679,7 @@ ggbetweenstats(
 
 ```{r Victoria_SI_changes_falls_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
 
-kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=TRUE),]  %>% filter(bus < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{bus}$ has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=TRUE),]  %>% filter(bus < 0) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for those LGAs where $SI_{bus}$ has fallen", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 
@@ -1513,7 +1692,7 @@ However, some LGAs had relatively large increases in $SI_{bus}$ between 2016 and
 
 ```{r Victoria_SI_changes_increases_bus, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=FALSE),]  %>% filter(bus >= 0.25) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "Change in SI, 2016 to 2021, by LGA, for those LGAs where SI has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_bus$bus, decreasing=FALSE),]  %>% filter(bus >= 0.25) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "Change in SI, 2016 to 2021, by LGA, for those LGAs where SI has risen 25 percent or more", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 ```
@@ -1530,8 +1709,8 @@ Figure \ref{fig:Victoria_SI_changes_LRT} maps percentage changes in SI~LRT~ betw
 
 
 victoria_difference_2021_2016_SI_LRT <- left_join(x = victoria_difference_2021_2016_SI, y = (victoria_2021_2016_SI_by_mode %>% 
-                                                                                                         filter(some_LRT) %>% 
-                                                                                                         select(lga_code_2021, some_LRT)) %>%
+                        filter(some_LRT) %>% 
+                        dplyr::select(lga_code_2021, some_LRT)) %>%
                                                               distinct(.keep_all = FALSE))
 
 victoria_difference_2021_2016_SI_LRT <- na.omit(victoria_difference_2021_2016_SI_LRT)
@@ -1583,7 +1762,7 @@ There have been increases in $SI_{LRT}$ in the south-east and some parts of the 
 
 ```{r Victoria_SI_changes_falls_LRT, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=TRUE),]  %>% filter(LRT < 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for LGAs where $SI_{LRT}$ fell", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=TRUE),]  %>% filter(LRT < 0) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ for LGAs where $SI_{LRT}$ fell", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4))%>% kable_styling(font_size = 9)
 
 
@@ -1594,7 +1773,7 @@ Table \ref{tab:Victoria_SI_changes_falls_LRT} shows the `r nrow(victoria_differe
 
 ```{r Victoria_SI_changes_increases_LRT, echo=FALSE, warning=FALSE, message=FALSE}
 
-kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=TRUE),]  %>% filter(LRT >= 0) %>% select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ LGAs where $SI_{LRT}$ rose by at least 10 percent", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
+kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_LRT$LRT, decreasing=TRUE),]  %>% filter(LRT >= 0) %>% dplyr::select(c("lga_name_2021", "greater_melbourne", "LRT", "rail", "bus", "Total")) %>% adorn_pct_formatting(digits=0), align = "llrrrr", caption = "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ LGAs where $SI_{LRT}$ rose by at least 10 percent", col.names = c("LGA", "Location", "LRT", "Rail", "Bus", "Total")) %>%
     add_header_above(c(" "," ", "Change in SI" = 4)) %>% kable_styling(font_size = 9)
 
 ```
@@ -1603,12 +1782,144 @@ Table \ref{tab:Victoria_SI_changes_increases_LRT} shows LGAs where $SI_{LRT}$ in
 
 
 ## Victoria, Australia: transit needs
+In the following sections assements of transport needs versus transport supply are reported. 
+
+### IRSAD needs score and SI supply score
+
+The IRSAD scores for Victorian LGAs where presented above in Figures \ref{Victoria_IRSAD_load_2021} and \ref{Victoria_IRSAD_compare_map}.  This section explores how these scores compare to the $SI_{LGA}$ scores
+
+
+```{r Victoria_IRSAD_to_SI_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.height = 4.5, fig.cap = "Relationship between IRSAD score and SI, by LGA, 2016"}
+
+#assume LGA codes have stayed the same
+IRSAD_2016_lga_map$lga_code_2021 <- IRSAD_2016_lga_map$lga_code_2016
+
+#join data
+victoria_2016_SI_df_by_mode <- left_join(victoria_2016_SI_df_by_mode, (IRSAD_2016_lga_map %>% dplyr::select(lga_code_2016, lga_code_2021, usual_resident_population, IRSAD_score, Australian_rank, Australian_decile, Australian_percentile, state_for_rank, state_rank, state_decile, state_percentile, IRSAD_score_lowest_SA1, IRSAD_score_highest_SA1)))
+victoria_2021_SI_df_by_mode <- left_join(victoria_2021_SI_df_by_mode, (IRSAD_2021_lga_map %>% dplyr::select(lga_code_2021, usual_resident_population, IRSAD_score, Australian_rank, Australian_decile, Australian_percentile, state_for_rank, state_rank, state_decile, state_percentile, IRSAD_score_lowest_SA1, IRSAD_score_highest_SA1)))
+
+
+victoria_2016_SI_total <- left_join(victoria_2016_SI_total, (IRSAD_2016_lga_map %>% dplyr::select(lga_code_2016, lga_code_2021, usual_resident_population, IRSAD_score, Australian_rank, Australian_decile, Australian_percentile, state_for_rank, state_rank, state_decile, state_percentile, IRSAD_score_lowest_SA1, IRSAD_score_highest_SA1)))
+victoria_2021_SI_total <- left_join(victoria_2021_SI_total, (IRSAD_2021_lga_map %>% dplyr::select(lga_code_2021, usual_resident_population, IRSAD_score, Australian_rank, Australian_decile, Australian_percentile, state_for_rank, state_rank, state_decile, state_percentile, IRSAD_score_lowest_SA1, IRSAD_score_highest_SA1)))
 
 
 
+ggscatterstats(
+  data = victoria_2016_SI_total,
+  x = "IRSAD_score",
+  y = "Total",
+  xlab = "IRSAD score",
+  ylab = "SI score",
+  label.var = lga_name_2021, ## variable to use for labeling data points
+  label.expression = IRSAD_score < 925 & Total < 50, ## expression for deciding which points to label
+  point.label.args = list(alpha = 0.7, size = 2, color = "grey50"),
+  ) +
+  scale_y_log10()
+
+
+```
+
+
+```{r Victoria_IRSAD_to_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.height = 4.5, fig.cap = "Relationship between IRSAD score and SI, by LGA, 2021"}
+
+
+ggscatterstats(
+  data = victoria_2021_SI_total,
+  x = "IRSAD_score",
+  y = "Total",
+  xlab = "IRSAD score",
+  ylab = "SI score",
+  label.var = lga_name_2021, ## variable to use for labeling data points
+  label.expression = IRSAD_score < 925 & Total < 50, ## expression for deciding which points to label
+  point.label.args = list(alpha = 0.7, size = 2, color = "grey50"),
+  ) +
+  scale_y_log10()
+
+
+```
 
 
 
+### Population and SI supply score
+
+
+
+```{r Victoria_Population_to_SI_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.height = 4.5, fig.cap = "Relationship between population and SI, by LGA, 2016"}
+
+ggscatterstats(
+  data = victoria_2016_SI_total,
+  x = "usual_resident_population",
+  y = "Total",
+  xlab = "Usual resident population",
+  ylab = "SI score",
+  label.var = lga_name_2021, ## variable to use for labeling data points
+  label.expression = usual_resident_population > 125000 & Total < 50, ## expression for deciding which points to label
+  point.label.args = list(alpha = 0.7, size = 2, color = "grey50"),
+) +
+  scale_y_log10()
+
+
+```
+
+
+```{r Victoria_Population_to_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap = "Relationship between population and SI, by LGA, 2021", fig.height = 4.5}
+
+
+ggscatterstats(
+  data = victoria_2021_SI_total,
+  x = "usual_resident_population",
+  y = "Total",
+  xlab = "Usual resident population",
+  ylab = "SI score",
+  label.var = lga_name_2021, ## variable to use for labeling data points
+  label.expression = usual_resident_population > 125000 & Total < 50, ## expression for deciding which points to label
+  point.label.args = list(alpha = 0.7, size = 2, color = "grey50")
+) +
+  scale_y_log10()
+
+
+```
+
+### IRSAD needs rank and SI supply rank
+
+
+```{r Victoria_IRSAD_to_SI_rank_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap = "Relationship between IRSAD rank and SI rank, by LGA, 2016", fig.height = 4.5}
+
+victoria_2016_SI_total$SI_rank <- as.numeric(rank(victoria_2016_SI_total$Total))
+victoria_2021_SI_total$SI_rank <- as.numeric(rank(victoria_2021_SI_total$Total))
+
+victoria_2016_SI_total$state_rank <- as.numeric(victoria_2016_SI_total$state_rank)
+victoria_2021_SI_total$state_rank <- as.numeric(victoria_2021_SI_total$state_rank)
+
+ggscatterstats(
+  data = victoria_2016_SI_total,
+  x = "state_rank",
+  y = "SI_rank",
+  xlab = "IRSAD rank",
+  ylab = "SI rank",
+  label.var = lga_name_2021, ## variable to use for labeling data points
+  label.expression = SI_rank + 10 < state_rank, ## expression for deciding which points to label
+  point.label.args = list(alpha = 0.7, size = 2, color = "grey50")
+)
+
+```
+
+
+```{r Victoria_IRSAD_to_SI_rank_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap = "Relationship between IRSAD rank and SI rank, by LGA, 2021", fig.height = 4.5}
+
+
+ggscatterstats(
+  data = victoria_2021_SI_total,
+  x = "state_rank",
+  y = "SI_rank",
+  xlab = "IRSAD rank",
+  ylab = "SI rank",
+  label.var = lga_name_2021, ## variable to use for labeling data points
+  label.expression = SI_rank + 10 < state_rank, ## expression for deciding which points to label
+  point.label.args = list(alpha = 0.7, size = 2, color = "grey50")
+)
+
+```
 
 <!---
 
