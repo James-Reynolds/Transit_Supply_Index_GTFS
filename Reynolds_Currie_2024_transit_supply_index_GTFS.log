@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.4)  9 AUG 2023 23:39
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.4)  10 AUG 2023 14:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -855,112 +855,69 @@ LaTeX Warning: Marginpar on page 3 moved.
 
 LaTeX Warning: Marginpar on page 3 moved.
 
+[3]
 
-LaTeX Warning: Marginpar on page 3 moved.
-
-[3] [4] [5
-
-]
-
-LaTeX Warning: Marginpar on page 6 moved.
+LaTeX Warning: Marginpar on page 4 moved.
 
 
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-Overfull \hbox (3.60051pt too wide) detected at line 259
-[][][]\OML/cmm/m/it/8 SI[] \OT1/cmr/m/n/8 = [] []
- []
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
-
-
-LaTeX Warning: Marginpar on page 6 moved.
+LaTeX Warning: Marginpar on page 4 moved.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[6]
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-
-LaTeX Warning: Marginpar on page 7 moved.
-
-[7] [8
+[4] [5] [6
 
 ]
 
+LaTeX Warning: Marginpar on page 7 moved.
+
+[7]
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+Overfull \hbox (3.60051pt too wide) detected at line 280
+[][][]\OML/cmm/m/it/8 SI[] \OT1/cmr/m/n/8 = [] []
+ []
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+
+LaTeX Warning: Marginpar on page 8 moved.
+
+[8]
+
 LaTeX Warning: Marginpar on page 9 moved.
 
 
@@ -975,31 +932,64 @@ LaTeX Warning: Marginpar on page 9 moved.
 
 LaTeX Warning: Marginpar on page 9 moved.
 
-[9]
 
-LaTeX Warning: Marginpar on page 10 moved.
+LaTeX Warning: Marginpar on page 9 moved.
 
-[10]
+
+LaTeX Warning: Marginpar on page 9 moved.
+
+
+LaTeX Warning: Marginpar on page 9 moved.
+
+
+LaTeX Warning: Marginpar on page 9 moved.
+
+
+LaTeX Warning: Marginpar on page 9 moved.
+
+[9] [10
+
+]
 
 LaTeX Warning: Marginpar on page 11 moved.
 
 
-LaTeX Warning: Reference `Victoria_IRSAD_load_2016' on page 11 undefined on input line 460.
+LaTeX Warning: Marginpar on page 11 moved.
 
 
-LaTeX Warning: Reference `Victoria_IRSAD_load_2021' on page 11 undefined on input line 460.
+LaTeX Warning: Marginpar on page 11 moved.
+
+
+LaTeX Warning: Marginpar on page 11 moved.
+
+[11]
+
+LaTeX Warning: Marginpar on page 12 moved.
+
+
+LaTeX Warning: Marginpar on page 12 moved.
+
+[12]
+
+LaTeX Warning: Marginpar on page 13 moved.
+
+
+LaTeX Warning: Marginpar on page 13 moved.
+
+
+LaTeX Warning: Marginpar on page 13 moved.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_load_2016-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_load_2016-1.pdf>
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_load_2016-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_load_2016-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 463--464
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 497--498
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 463--464
+Underfull \hbox (badness 10000) in paragraph at lines 497--498
 
  []
 
@@ -1008,19 +998,19 @@ File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_load_2021-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_load_2021-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 467--468
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 501--502
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 467--468
+Underfull \hbox (badness 10000) in paragraph at lines 501--502
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_compare-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_compare-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 471--472
+Underfull \hbox (badness 10000) in paragraph at lines 505--506
 
  []
 
@@ -1029,27 +1019,27 @@ File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_compare_map-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_compare_map-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 475--476
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 509--510
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 475--476
+Underfull \hbox (badness 10000) in paragraph at lines 509--510
 
  []
 
-[11] [12]
+[13] [14]
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_rank_2021-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_rank_2021-1.pdf>
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_rank_2021-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_rank_2021-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 494--495
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 528--529
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 494--495
+Underfull \hbox (badness 10000) in paragraph at lines 528--529
 
  []
 
@@ -1058,58 +1048,55 @@ File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_rank_compare-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_rank_compare-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 507--508
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 541--542
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 507--508
+Underfull \hbox (badness 10000) in paragraph at lines 541--542
 
  []
 
-[13] [14]
+[15] [16]
 
-LaTeX Warning: Marginpar on page 15 moved.
+LaTeX Warning: Marginpar on page 17 moved.
+
+
+LaTeX Warning: Marginpar on page 17 moved.
 
 File: images/Running_creek_bus_stop.png Graphic file (type bmp)
 <images/Running_creek_bus_stop.png>
 
-Overfull \hbox (45.0pt too wide) in paragraph at lines 570--570
+Overfull \hbox (45.0pt too wide) in paragraph at lines 598--598
 []\TU/lmtt/m/n/10 ##   sa1_code_2021 sa2_code_2021         sa2_name_2021 sa3_code_2021[] 
  []
 
 
-Overfull \hbox (45.0pt too wide) in paragraph at lines 570--570
+Overfull \hbox (45.0pt too wide) in paragraph at lines 598--598
 []\TU/lmtt/m/n/10 ## 1   20403106915     204031069 Bright - Mount Beauty         20403[] 
  []
 
 
-Overfull \hbox (92.25pt too wide) in paragraph at lines 570--570
+Overfull \hbox (92.25pt too wide) in paragraph at lines 598--598
 []\TU/lmtt/m/n/10 ##      sa3_name_2021 sa4_code_2021 sa4_name_2021 gcc_code_2021 gcc_name_2021[] 
  []
 
 
-Overfull \hbox (92.25pt too wide) in paragraph at lines 570--570
+Overfull \hbox (92.25pt too wide) in paragraph at lines 598--598
 []\TU/lmtt/m/n/10 ## 1 Wodonga - Alpine           204          Hume         2RVIC  Rest of Vic.[] 
  []
 
 
-Overfull \hbox (55.5pt too wide) in paragraph at lines 570--570
+Overfull \hbox (55.5pt too wide) in paragraph at lines 598--598
 []\TU/lmtt/m/n/10 ##   state_code_2021 state_name_2021 areasqkm_2021  cent_lat cent_long[] 
  []
 
 
-Overfull \hbox (55.5pt too wide) in paragraph at lines 570--570
+Overfull \hbox (55.5pt too wide) in paragraph at lines 598--598
 []\TU/lmtt/m/n/10 ## 1               2        Victoria       284.598 -36.57879    147.05[] 
  []
 
 
-LaTeX Warning: Marginpar on page 15 moved.
-
-[15
-
-] [16]
-
 LaTeX Warning: Marginpar on page 17 moved.
 
 
@@ -1118,113 +1105,77 @@ LaTeX Warning: Marginpar on page 17 moved.
 
 LaTeX Warning: Marginpar on page 17 moved.
 
+[17
+
+] [18]
 File: images/Talbot.png Graphic file (type bmp)
 <images/Talbot.png>
-
-LaTeX Warning: Marginpar on page 17 moved.
-
-
-Overfull \hbox (30.57416pt too wide) in paragraph at lines 643--655
-\TU/lmr/m/n/10 mately equal to $\OT1/cmr/m/n/10 3/4(\OML/cmm/m/it/10 ^^Y:\OT1/cmr/m/n/10 4[])/3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 05 =$ \TU/lmr/m/n/10 0.124, while the $\OML/cmm/m/it/10 Area[]\OT1/cmr/m/n/10 /\OML/cmm/m/it/10 Area[]$ 
- []
-
-
-Overfull \hbox (32.91197pt too wide) in paragraph at lines 643--655
-\OML/cmm/m/it/10 Area[]\OT1/cmr/m/n/10 /\OML/cmm/m/it/10 Area[]$ \TU/lmr/m/n/10 term is approximately equal to $\OT1/cmr/m/n/10 (3/5)(\OML/cmm/m/it/10 ^^Y:\OT1/cmr/m/n/10 8[])/3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 05 =$ 
- []
-
-[17] [18]
-
-LaTeX Warning: Marginpar on page 19 moved.
-
-
-LaTeX Warning: Marginpar on page 19 moved.
-
-
-LaTeX Warning: Marginpar on page 19 moved.
-
-
-LaTeX Warning: Marginpar on page 19 moved.
-
-
-Overfull \hbox (41.08351pt too wide) in paragraph at lines 782--785
-[]\TU/lmr/m/n/10 undertaking a GIS analysis to obtain more precise $\OML/cmm/m/it/10 Area[]\OT1/cmr/m/n/10 /\OML/cmm/m/it/10 Area[]$ 
- []
-
-
-LaTeX Warning: Marginpar on page 19 moved.
-
 [19]
 
 LaTeX Warning: Marginpar on page 20 moved.
 
 
+Overfull \hbox (10.10997pt too wide) in paragraph at lines 673--678
+[]\TU/lmr/m/n/10 For the bus stop at the Talbot Station the $\OML/cmm/m/it/10 Area[]\OT1/cmr/m/n/10 /\OML/cmm/m/it/10 Area[]$ 
+ []
+
+
 LaTeX Warning: Marginpar on page 20 moved.
+
+
+LaTeX Warning: Marginpar on page 20 moved.
+
+
+LaTeX Warning: Marginpar on page 20 moved.
+
+
+LaTeX Warning: Marginpar on page 20 moved.
+
+
+LaTeX Warning: Marginpar on page 20 moved.
+
+
+LaTeX Warning: Marginpar on page 20 moved.
+
+[20]
+
+LaTeX Warning: Marginpar on page 21 moved.
+
+
+LaTeX Warning: Marginpar on page 21 moved.
+
+
+LaTeX Warning: Marginpar on page 21 moved.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-1.pdf>
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 816--817
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 812--813
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 816--817
+Underfull \hbox (badness 10000) in paragraph at lines 812--813
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 824--825
+Underfull \hbox (badness 10000) in paragraph at lines 820--821
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_greater_melbourne-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 834--835
+Underfull \hbox (badness 10000) in paragraph at lines 830--831
 
  []
 
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 842--843
-
- []
-
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-1.pdf>
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf>
-
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 849--850
-[][] []
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 849--850
-
- []
-
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 857--858
-
- []
-
-
-Package fancyhdr Warning: \headheight is too small (14.0pt): 
-(fancyhdr)                Make it at least 25.36005pt, for example:
-(fancyhdr)                \setlength{\headheight}{25.36005pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-(fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
-
-[20] [21]
+[21]
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
 (fancyhdr)                Make it at least 25.36005pt, for example:
@@ -1233,13 +1184,59 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
 
 [22]
-Overfull \hbox (9.77pt too wide) in paragraph at lines 917--952
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_2021_versus_2016_elsewhere-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 838--839
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-1.pdf>
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes-2.pdf>
+
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 845--846
+[][] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 845--846
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 849--850
+
+ []
+
+
+LaTeX Warning: Marginpar on page 23 moved.
+
+
+Overfull \hbox (9.77pt too wide) in paragraph at lines 915--950
  [][] 
  []
 
+
+Underfull \vbox (badness 1552) has occurred while \output is active []
+
 [23]
 
-LaTeX Warning: Marginpar on page 24 moved.
+Package fancyhdr Warning: \headheight is too small (14.0pt): 
+(fancyhdr)                Make it at least 25.36005pt, for example:
+(fancyhdr)                \setlength{\headheight}{25.36005pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
+
+[24] [25]
+
+LaTeX Warning: Marginpar on page 26 moved.
+
+
+LaTeX Warning: Marginpar on page 26 moved.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode-1.pdf>
@@ -1254,7 +1251,7 @@ Overfull \hbox (0.96pt too wide) in paragraph at lines 973--977
  []
 
 
-LaTeX Warning: Marginpar on page 24 moved.
+LaTeX Warning: Marginpar on page 26 moved.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_rail-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/SI_by_mode_individual_LGAs_rail-1.pdf>
@@ -1278,22 +1275,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 987--988
  []
 
 
-LaTeX Warning: Marginpar on page 24 moved.
+LaTeX Warning: Marginpar on page 26 moved.
 
 
-LaTeX Warning: Marginpar on page 24 moved.
+LaTeX Warning: Marginpar on page 26 moved.
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-1.pdf>
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_rail-2.pdf>
 
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 1017--1018
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 1018--1019
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1017--1018
+Underfull \hbox (badness 10000) in paragraph at lines 1018--1019
 
  []
 
@@ -1304,53 +1301,7 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
 
-[24] [25]
-
-Package fancyhdr Warning: \headheight is too small (14.0pt): 
-(fancyhdr)                Make it at least 25.36005pt, for example:
-(fancyhdr)                \setlength{\headheight}{25.36005pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-(fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
-
-[26]
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_rail-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_rail-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 1027--1028
-
- []
-
-
-Overfull \hbox (10.31pt too wide) in paragraph at lines 1038--1063
- [][] 
- []
-
-
-LaTeX Warning: Marginpar on page 27 moved.
-
-
-Overfull \hbox (0.995pt too wide) in paragraph at lines 1079--1114
- [][] 
- []
-
-
-LaTeX Warning: Marginpar on page 27 moved.
-
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-1.pdf>
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-2.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-2.pdf>
-
-Overfull \hbox (3.32613pt too wide) in paragraph at lines 1133--1134
-[][] []
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1133--1134
-
- []
-
-[27]
+[26] [27]
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
 (fancyhdr)                Make it at least 25.36005pt, for example:
@@ -1359,29 +1310,59 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
 
 [28]
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_bus-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_bus-1.pdf>
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_rail-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_rail-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1145--1146
+Underfull \hbox (badness 10000) in paragraph at lines 1028--1029
 
  []
 
 
-Overfull \hbox (9.77pt too wide) in paragraph at lines 1212--1247
+LaTeX Warning: Reference `Victoria_SI_changes_ggbetweenstats_rail' on page 29 undefined on input line 1031.
+
+
+Overfull \hbox (10.31pt too wide) in paragraph at lines 1040--1065
  [][] 
  []
 
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_LRT-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_LRT-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1265--1266
+LaTeX Warning: Marginpar on page 29 moved.
 
+
+Overfull \hbox (0.995pt too wide) in paragraph at lines 1082--1117
+ [][] 
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Overfull \hbox (4.49602pt too wide) in paragraph at lines 1119--1128
+\TU/lmr/m/n/10 Central Goldfields (+100%) and Hepburn (+94%)[]. However, Melton’s 
+ []
 
 [29]
+
+LaTeX Warning: Marginpar on page 30 moved.
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-1.pdf>
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-2.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_bus-2.pdf>
+
+Overfull \hbox (3.32613pt too wide) in paragraph at lines 1137--1138
+[][] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1137--1138
+
+ []
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_bus-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_bus-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1146--1147
+
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
 (fancyhdr)                Make it at least 25.36005pt, for example:
@@ -1390,55 +1371,60 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
 
 [30]
+Overfull \hbox (9.77pt too wide) in paragraph at lines 1210--1245
+ [][] 
+ []
+
+
+LaTeX Warning: Marginpar on page 31 moved.
+
+
+LaTeX Warning: Marginpar on page 31 moved.
+
+
+LaTeX Warning: Marginpar on page 31 moved.
+
+File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_LRT-1.pdf Graphic file (type pdf)
+<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_LRT-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1265--1266
+
+ []
+
+[31]
+
+Package fancyhdr Warning: \headheight is too small (14.0pt): 
+(fancyhdr)                Make it at least 25.36005pt, for example:
+(fancyhdr)                \setlength{\headheight}{25.36005pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-11.36005pt}.
+
+[32]
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_LRT-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_SI_changes_ggbetweenstats_LRT-1.pdf>
+
+LaTeX Warning: Marginpar on page 33 moved.
+
 
 Overfull \hbox (1.06007pt too wide) in paragraph at lines 1299--1301
 []\TU/lmr/m/n/10 Table []9[] shows the 4 LGAs where $\OML/cmm/m/it/10 SI[]$ \TU/lmr/m/n/10 fell. In general, the changes 
  []
 
-[31]
-
-LaTeX Warning: Reference `Victoria_IRSAD_load_2021' on page 32 undefined on input line 1358.
-
-
-LaTeX Warning: Reference `Victoria_IRSAD_compare_map' on page 32 undefined on input line 1358.
-
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_2016-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_2016-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 1363--1364
-
- []
-
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_2021-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_2021-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1367--1368
-
- []
-
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_Population_to_SI_2016-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_Population_to_SI_2016-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 1375--1376
+Underfull \hbox (badness 10000) in paragraph at lines 1365--1366
 
  []
 
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_Population_to_SI_2021-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_Population_to_SI_2021-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 1379--1380
+Underfull \hbox (badness 10000) in paragraph at lines 1377--1378
 
  []
 
-File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_rank_2016-1.pdf Graphic file (type pdf)
-<use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_rank_2016-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 1387--1388
-
- []
-
+[33] [34]
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_rank_2021-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria_IRSAD_to_SI_rank_2021-1.pdf>
 
@@ -1446,17 +1432,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 1391--1392
 
  []
 
-[32] [33] [34] [35] [36] [37] [38] [39
+[35] [36] [37] [38
 
-] [40
+] [39]
 
-] [41] [42
+LaTeX Warning: Marginpar on page 40 moved.
 
-] [43] [44
 
-] (./Reynolds_Currie_2024_transit_supply_index_GTFS.bbl [45] [46
+LaTeX Warning: Marginpar on page 40 moved.
 
-] [47] [48]) [49] (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
+(./Reynolds_Currie_2024_transit_supply_index_GTFS.bbl [40] [41
+
+] [42]) [43] (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-03>
@@ -1465,15 +1452,15 @@ L3 programming layer <2023-08-03>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `Reynolds_Currie_2024_transit_supply_index_GTFS.out' has not changed.
-(rerunfilecheck)             Checksum: 062A2A04AF788892F75600EC4474C80F;2411.
+(rerunfilecheck)             Checksum: 6A541E5C6AD220C942EDD21D7E59CFCB;2186.
  ) 
 Here is how much of TeX's memory you used:
- 18102 strings out of 477843
- 374103 string characters out of 5820994
- 1945879 words of memory out of 5000000
- 38650 multiletter control sequences out of 15000+600000
- 566571 words of font info for 88 fonts, out of 8000000 for 9000
+ 18076 strings out of 477843
+ 370961 string characters out of 5820994
+ 1946879 words of memory out of 5000000
+ 38619 multiletter control sequences out of 15000+600000
+ 568148 words of font info for 98 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 114i,12n,124p,715b,489s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 114i,18n,124p,715b,488s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on Reynolds_Currie_2024_transit_supply_index_GTFS.pdf (49 pages).
+Output written on Reynolds_Currie_2024_transit_supply_index_GTFS.pdf (43 pages).
