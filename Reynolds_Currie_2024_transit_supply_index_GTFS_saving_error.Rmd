@@ -48,7 +48,7 @@ library(readxl)
 library(dplyr)
 
 # invalidate cache when the tufte version changes
-#knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
+knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
 ```
 
 # Introduction
@@ -78,7 +78,7 @@ However, many of these metrics appear difficult to calculate, complex to explain
 ```{marginfigure}
 \begin{equation}
 \label{eq:supply_index}
-  SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
+SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
 \end{equation}
 ```
 
@@ -103,8 +103,6 @@ This study adopts a case research approach by developing code to calculate Suppl
 
 ## Code development
 This document has been prepared using Rmarkdown, which allows the intermingling of written text, code segments and code outputs. Code segements developed in this research are shown in the following, together with the relevant descriptive text^[The Rmarkdown file is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS and this can be read in a plain-text editor to view the code snippets themselves. If you are reading this in a PDF document you are seeing just the descriptive text, and outputs from the code where it has been run to produce maps, charts etc.]
-
-### Tidytransit, loading GTFS data, and calculating the number of arrivals at a stop in a given time period
 
 Various analysis tools are available that make use of GTFS data, including the tidytransit package [@R-tidytransit] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term in the @currie2007identifying SI equation. 
 
@@ -254,7 +252,7 @@ arrival_timetable_function <- function(gtfs, stop_to_show, date_to_show){
 #head(arrivals_southern_cross_230427)
 ```
 
-### Spliting the GTFS file into individual modes
+
 
 The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation.  Buffer zones of 400 metres for bus and Light Rail Transit (LRT) services and 800 metres for heavy rail were adopted, as per @currie2007identifying^[There is an extended mode definition that includes modes beyond the 10 in the GTFS standard [@filter_GTFS_by_mode], but these are not dealt with by the gtfstools package. Further research may seek to extend this such that other modes can be included, but for the purposes of this study the coded buffer zone was set at 400 metres for cable trams, aerial lifts such a gondolas and trolleybuses, and at 800 metres for ferries, funiculars and monorails.].  
 
@@ -305,152 +303,24 @@ split_gtfs_into_modes_and_put_in_list <- function(gtfs){
 
 ```
 
-### Calculating the area-related terms of the SI equation
-
 Where transit stops are located close to boundaries their catchment areas may fall into multiple areas of interest. The sp package [@R-sf] provides tools for manipulating geographic data and shape files in R. This was used to calculate the proportion of each stop's catchment area that falls into each geographical area of interest^[GTFS files define stop locations based on latitude and longitude [@GTFS], whereas the Area~Bn~ calculation needs to be provided in the same units as the Area~area~ variable, necessitating the use of a geographic transform as part of the code.].   
 
 
-The area terms were calculated on a mode-by-mode and stop-by-stop basis. This involved first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for each stop. This is then combined with the area for each geographical area of interest (Area~area~), to calculate the area-related terms in the SI equation. 
-
-```{r Area_Bn_calc_as_functions, echo=FALSE, warning=FALSE, message=FALSE}
-
-
-###Temporary variables to help with writing the function
-areas_of_interest <- sa12021 %>%
-  filter(gcc_name_2021 == "Greater Melbourne") 
-mel3 <- read_gtfs("data/3google_transit.zip")
-mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
-gtfs_list_by_mode <- mel3_list_by_mode
-EPSG_for_transform = 28355
-areas_of_interest_id_field = "sa1_code_2021"
-
-
-#### The function
-
-AreaBn_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, EPSG_for_transform = EPSG_for_transform){
-  
-   ##Initialise variables used in function
-  Area_terms_for_each_area_of_interest_by_mode_by_stop <- list()
-  
-  ## Convert areas to sf format and project using EPSG transform
-  areas_of_interest_sf <- areas_of_interest %>%
-    # convert to simple features
-      sf::st_as_sf() %>%
-    st_transform(crs = EPSG_for_transform) 
-    # add Area_area value to areas_of_interest_sf 
-  areas_of_interest_sf <- areas_of_interest_sf %>% 
-    dplyr::mutate(Area_area = st_area(areas_of_interest_sf))
-  
-  
-  ## 1st level for loop, looping over modes
-  for(mode_number in seq(1, length(gtfs_list_by_mode),1)){
-    
-    ##Initialise variables used in second level of the for loop
-    Area_terms_for_each_area_of_interest_by_stop <- list()
-    Area_terms_for_each_area_of_interest_by_mode_by_stop <- append(Area_terms_for_each_area_of_interest_by_mode_by_stop, Area_terms_for_each_area_of_interest_by_stop)
-    
-    
-    #look up buffer distance for the mode in question
-    buffer_distance <- buffer_zone_definitions[[mode_number, 5]]
-    
-    #check if there are stops for the mode in question, if no stops return empty dataframe
-    if (nrow(as.tibble(gtfs_list_by_mode[[buffer_zone_definitions$short_name[mode_number]]]["stops"])) == 0){
-      Area_terms_for_each_area_of_interest_by_stop <- list()
-    } else{
-      ##2nd level for loop to loop over the stops
-      for(stop_number in seq(1, nrow(as.tibble(gtfs_list_by_mode[[buffer_zone_definitions$short_name[mode_number]]]["stops"])),1)){
-        #get stop_id
-        stop_id_matching_stop_number <- ((gtfs_list_by_mode[[buffer_zone_definitions$short_name[mode_number]]]["stops"])$stops$stop_id)[stop_number]
-        
-        Area_terms_for_each_area_of_interest_by_stop <- append(Area_terms_for_each_area_of_interest_by_stop, stop_id_matching_stop_number)
-        
-        #create dataframe with the lat and lon value for the stop "stop_number"
-        dat_sim <- data.frame(lat = gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[mode_number]))]][["stops"]]$stop_lat[stop_number],
-        long = gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[mode_number]))]][["stops"]]$stop_lon[stop_number])
-        # Convert that dataframe (with stop i latitude and longitude) into a sf object, with the crs set to EPSG:4326 (which is the CRS for lat/long values), 
-        # and then transform to be expressed as per the EPSG that is being used for the analysis (ie. shift to metres)
-        dat_sf <- st_as_sf(dat_sim, coords = c("long", "lat"), crs = 4326) %>% 
-            st_transform(crs = EPSG_for_transform)
-  
-        # make a circle with the buffer distance as the radius around stop "stop_number"    
-        dat_circles <- st_buffer(dat_sf, dist = buffer_distance)
-        # Intersect the circle with the polygons
-        int_circles <- st_intersection(areas_of_interest_sf, dat_circles)
-
-            ##TEST CODE Map to check that it is working the way it is expect to.
-            #map <- int_circles %>%
-            #  ggplot() +
-            #  geom_sf(aes(geometry = geometry,  # use the geometry variable
-            #    fill = eval(parse(text=areas_of_interest_id_field))),     # fill by SA1_code
-            #    lwd = 0,                  # remove borders
-            #    show.legend = TRUE) +    # keep legend
-            #  theme_void() +                    # clears other plot elements
-            #  coord_sf()
-              
-            #map
-
-            #calculate Area Bn 
-            int_circles$Area_Bn <- st_area(int_circles)
-            
-            #drop_geometry and unneeded columns
-            int_circles <- st_drop_geometry(int_circles) %>% 
-              select(areas_of_interest_id_field, "Area_Bn", "Area_area")
-            
-            #calculate Area Bn divided by Area_area term 
-            int_circles$Area_proportion <- int_circles$Area_Bn / int_circles$Area_area
-          
-            #drop calculated values back in the function return list
-            
-            Area_terms_for_each_area_of_interest_by_mode_by_stop[[buffer_zone_definitions$short_name[mode_number]]] <-
-              append(Area_terms_for_each_area_of_interest_by_mode_by_stop[[buffer_zone_definitions$short_name[mode_number]]],
-                   list(int_circles))
-            
-            #update the names of the stops entries to match stop_id field
-            names(Area_terms_for_each_area_of_interest_by_mode_by_stop[[buffer_zone_definitions$short_name[mode_number]]]) <- 
-              ((gtfs_list_by_mode[[buffer_zone_definitions$short_name[mode_number]]]["stops"])$stops$stop_id)[1:stop_number]
-              
-            #close the 2nd level for loop (looping over stops)
-            }
-          #close the else check for whether there are >0 stops for that mode
-              }
-      #close the 1st level for loop (looping over modes)
-      }
-    # update names of modes to match  
-    names(Area_terms_for_each_area_of_interest_by_mode_by_stop) <- buffer_zone_definitions$short_name[1:length(Area_terms_for_each_area_of_interest_by_mode_by_stop)]
-  
-    return(Area_terms_for_each_area_of_interest_by_mode_by_stop)      
-    #close the function  
-    }
-  
-
-```
-As part of the development of the $Area_{Bn}$ code, the calculated 400 metre buffer area around the tram stop 44-Duncraig Ave/Wattletree Rd (Armadale) (stop_ID 10371) was maped^[For those of you reading the rmarkdown file, the code used to produce the map is commented in the above chunk as ##TEST CODE Map to check that it is working the way it is expect to.]. Figure \ref{fig:test_10371} shows the tested stop location, the SA12021 boundaries nearby, and the map output by the code developed here.  
-```{r test_10371, echo=FALSE, fig.fullwidth = TRUE, fig.show="hold", out.width='33%', fig.cap='Code test to map tram stop at Duncraig Ave/Wattletree Rd: Google maps location (left); ABS 2021 SA1 boundaries (centre); output map of buffer zone overlayed on SA1 2021 boundaries for AreaBn calculation.'}
-knitr::include_graphics("images/Google_maps_around_10371.png")
-knitr::include_graphics("images/SA1_2021_around_10371_ABS.png")
-knitr::include_graphics("SA1_2021_10371_map_output")
-```
-
-In Figure \ref{fig:test_10371}(left) the location of the tram stop ID 10371 is shown, together with a 400m distance reaching to the intersection of Glenferrie Road and Union Street. In the centre image the ABS' map of the SA12021 boundaries are shown around the stop (indicated in green), which indicates that the stop is located within a triangular SA1 zone, which extends north and east to the intersection with Glenferrie Road and Union Street.  The right image shows the output generated by the test code, indicating the spatial areas within each of the surrounding SA12021 zones that are within the 400 metre catchment radius of the stop. This image similarly indicates the green zone (SA1 20606113507) as a triangular zone extending to the north-east of the buffer zone around the stop. 
-
-
-### Combining all the terms
-
-This is then combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals (SL~Bn~) to calculate the contribution to the SI scores made by just that single stop for every area of interest. These are then added to a cumulative total field for each area of interest, and the calculations are repeated until all stops and modes in the GTFS file have been included. 
+The SI~area~ term in the SI equation was calculated on a mode-by-mode and stop-by-stop basis, by first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for the stop in question. This is then combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals (SL~Bn~) to calculate the contribution to the SI scores made by just that single stop for every area of interest. These are then added to a cumulative total field for each area of interest, and the calculations are repeated until all stops and modes in the GTFS file have been included. 
 
 
 ```{r SICCD_calc_as_functions, echo=FALSE, warning=FALSE, message=FALSE}
 
 ###Temporary variables to help with writing the function
-areas_of_interest <- sa1_map_data %>%
-  filter(gcc_name_2021 == "Greater Melbourne") 
-mel3 <- read_gtfs("data/3google_transit.zip")
-mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
-gtfs_list_by_mode <- mel3_list_by_mode
-start_date = "2023-04-27"
-period_in_days = 2
-EPSG_for_transform = 28355
-areas_of_interest_id_field = "sa1_code_2021"
+#areas_of_interest <- sa1_map_data %>%
+#  filter(gcc_name_2021 == "Greater Melbourne") 
+#mel3 <- read_gtfs("data/3google_transit.zip")
+#mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
+#gtfs_list_by_mode <- mel3_list_by_mode
+#start_date = "2023-04-27"
+#period_in_days = 2
+#EPSG_for_transform = 28355
+#areas_of_interest_id_field = "sa1_code_2021"
 
 #### The function ________
 SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform){
@@ -472,123 +342,6 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
   areas_of_interest_sf <- areas_of_interest_sf %>% 
     dplyr::mutate(SI = 0)
     
-#look up the buffer distances for each of the modes (m)
-  buffer_distance_listing <- tibble(mode = names(gtfs_list_by_mode))
-  buffer_distance_listing$distance <- NA
-    for (m in seq(1, length(names(gtfs_list_by_mode)), 1)){   
-          buffer_distance_listing[m,"distance"] <- buffer_zone_definitions %>% filter(short_name == as.character(names(gtfs_list_by_mode[m]))) %>% select(buffer) %>% as.numeric()
-    }
-  
-#calculate the Area_Bn value, the Area_Area and the Area_Bn / Area_Area values for all stops in the gtfs file, and return as a list by day_of_analysis(j), each element of which contains a list by mode(k), each element is a stop (i). This involves 2 levels of for loops(day and mode), 1 level of if (does the mode for the day in question have any stops?), and 1 final level for loop (passing across all the stops for the mode and day in question)
-  
-  ###Initialise final reporting list (days) of lists (modes) of list (stops) of dataframe (area_code, area_bn, area_area, area_bn_divided_area_area)
-  area_bn_divided_by_area_area_list_by_date_and_mode <- list()
-  
-  for (j in seq(1, period_in_days, 1)) {
-     ##Initialise variables used in first level of the list 
-     day_of_analysis = as.character(ymd(start_date) - days(1) + days(j))
-     stop_areas_by_day_j <- list()
-      for (k in seq(1, length(names(gtfs_list_by_mode)), 1)){  
-        ##Initialise variables used in 2nd level of the list 
-          stop_areas_by_mode_k <- list()
-        
-        #check if the gtfs mode in question has any stops - many of the modes (e.g. Monorail) will typically have zero services or stops.  If the mode in question (k) does not have any stops, then there is no further calculation required, and the existing column of zeros can be left as is. 
-        if(nrow(gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[k]))]][["stops"]]) > 0) { 
-         stop_area_return_values_for_that_mode <- tibble(area_bn = rep(0,nrow(areas_of_interest)), 
-                                                         area_area = rep(0,nrow(areas_of_interest)),
-                                                         area_bn_divided_by_area_area = rep(0,nrow(areas_of_interest)),
-                                                         ) 
-         #which is calculated in the following for loop, which passes over all of the stops in the gtfs file for the mode in question
-          for (i in seq(1, nrow(gtfs_list_by_mode[[ as.character(names(gtfs_list_by_mode[k]))]][["stops"]]), 1)) {
-            ##Initialise variables used in 3rd level (list of stops)
-            stop_area_return_values_for_that_mode <- list()  
-              
-            #create dataframe with stop i lat and lon value
-            dat_sim <- data.frame(lat = gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[k]))]][["stops"]]$stop_lat[i],
-            long = gtfs_list_by_mode[[as.character(names(gtfs_list_by_mode[k]))]][["stops"]]$stop_lon[i])
-            # Convert that dataframe (with stop i latitude and longitude) into a sf object, with the crs set to EPSG:4326 (which is the CRS for lat/long values), 
-           # and then transform to be expressed as per the EPSG that is being used for the analysis (ie. shift to metres)
-            dat_sf <- st_as_sf(dat_sim, coords = c("long", "lat"), crs = 4326) %>% 
-            st_transform(crs = EPSG_for_transform)
-  
-            # make a circle with the buffer distance as the radius around stop i    
-            dat_circles <- st_buffer(dat_sf, dist = buffer_distance)
-            # Intersect the circle with the polygons
-            int_circles <- st_intersection(areas_of_interest_sf, dat_circles)
-
-            ##TEST CODE Map to check that it is working the way it is expect to.
-            #map <- int_circles %>%
-              #ggplot() +
-              #geom_sf(aes(geometry = geometry,  # use the geometry variable
-                  #fill = eval(parse(text=areas_of_interest_id_field))),     # fill by SA1_code
-                #lwd = 0,                  # remove borders
-                #show.legend = TRUE) +    # keep legend
-              #theme_void() +                    # clears other plot elements
-              #coord_sf()
-              
-            #map
-
-            #calculate Area Bn 
-            int_circles$area_bn <- st_area(int_circles)
-            
-            #drop_geometry
-            int_circles <- as.tibble(int_circles[, !(colnames(int_circles) %in% "geometry")])
-  
-            stop_area_return_values_for_that_mode[i,'area_bn'] <- int_circles$area_bn
-            stop_area_return_values_for_that_mode[i,'area_area'] <- areas_of_interest_sf$Area_area
-            stop_area_return_values_for_that_mode[i,'area_bn_divided_by_area_area'] <- 
-              stop_area_return_values_for_that_mode$area_bn / stop_area_return_values_for_that_mode$area_bn_divided_by_area_area
-          
-                #close (i) loop for calculating SIs for stop i and adding to the running total of SI
-            }
-        
-            #add the areas for stop i to the mode-specific dataframe
-            stop_areas_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] <- stop_area_return_values_for_that_mode
-         
-        #close the if(no stops in gtfs for that mode) test 
-            
-        } else {#Add a NA record in the list of modes for modes that do not have any stops on that day
-          stop_areas_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] <- NA}
-       
-        
-        stop_areas_by_day_j <- append(stop_areas_by_mode, list(stop_areas_by_mode_k), after = length(stop_areas_by_mode))
-       #close for (k) loop for calculating area_bn_divided_by_area_area for a single mode on a single day
-      }  
-       
-      #add new element to the list_by_date for the date_of_analysis
-      area_bn_divided_by_area_area_list_by_date_and_mode <- append(area_bn_divided_by_area_area_list_by_date_and_mode, list(stop_areas_by_day_j), after = length(area_bn_divided_by_area_area_list_by_date_and_mode))
-    
-      #update name of new element to match date
-      names(area_bn_divided_by_area_area_list_by_date_and_mode) <- c(names(area_bn_divided_by_area_area_list_by_date_and_mode)[1:length(names(area_bn_divided_by_area_area_list_by_date_and_mode))-1], as.character(day_of_analysis))
-
-    #close for (j) loop for creating the list of days
-    }        
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 #2-level list to put the SI results in, with each element representing one of the days that is being analysed. 
     # This becomes a list (of lists), with one element for each mode for the day_of_analysis in question (j)
     SI_for_day_of_analysis_list_by_mode <- list()
@@ -605,7 +358,7 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
     ##for loop that drives the second level of the list, recording SI by mode
       for (k in seq(1, length(names(gtfs_list_by_mode)), 1)){   
         #look up the buffer distance for mode k
-        buffer_distance <- buffer_distance_listing[k,"distance"]
+        buffer_distance <- buffer_zone_definitions %>% filter(short_name == as.character(names(gtfs_list_by_mode[k]))) %>% select(buffer) %>% as.numeric()
      
         #add zero-ed column to store SIs for mode k
         SI_for_day_of_analysis_by_mode_k <- SI_for_day_of_analysis_by_mode_k %>% tibble::add_column(a = 0)
@@ -755,7 +508,7 @@ The Australian Bureau of Statistics (ABS) provides a range of shape files and ot
 
 ```{r load_abs_data, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
 #Load SA1 data
-sa1_map_data <- sa12021
+sa1_map_data <- sa12016
 
 ##Map Greater Melbourne SA1 areas
 #map <- sa1_map_data %>%
@@ -785,8 +538,7 @@ units(p$area) <- as_units("m^2")
 
 
 ```{r Melbourne_2021, echo=FALSE, warning=FALSE, message=FALSE}
-
-
+###Commented out as 2021 has been precalculated
 #victoria_2021 <- read_gtfs("data/Melbourne/2021/gtfs.zip")
 
 ##identify duplicate stops
@@ -802,11 +554,11 @@ units(p$area) <- as_units("m^2")
 
 
 ##set inputs to SI_calc function
-#victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
+#victoria_areas_of_interest <- sa12016 %>% filter(state_name_2016 == "Victoria")
 #start_date = "2021-08-10"
-#period_in_days = 7
+#period_in_days = 1
 #EPSG_for_transform = 28355
-#areas_of_interest_id_field = "lga_code_2021"
+#areas_of_interest_id_field = "sa1_code_2016"
 
 ##run SI_calc function
 #victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2021_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
@@ -814,61 +566,67 @@ units(p$area) <- as_units("m^2")
 ##run aggregation function to create df by mode for all 7 days
 #victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
 
+##write to csv
+#write_csv2(victoria_2021_SI_df_by_mode, "~/Documents/0001_project/Transit_Supply_Index_GTFS/data/Melbourne/2021/Victoria_2021_SI_df_by_mode_SA12016_210810.csv")
+
+
 #load pre-calculated df by mode (for just one day)
-victoria_2021_SI_df_by_mode <- read.csv("victoria_2021_SI_df_by_mode_20210810.csv")
-victoria_2021_SI_df_by_mode$lga_code_2021 <- as.character(victoria_2021_SI_df_by_mode$lga_code_2021)
+#victoria_2021_SI_df_by_mode <- read.csv("~/Documents/0001_project/Transit_Supply_Index_GTFS/results/Victoria_2021_SI_df_by_mode_SA12016_210810.csv")
+#victoria_2021_SI_df_by_mode$sa1_code_2016 <- as.character(victoria_2021_SI_df_by_mode$sa1_code_2016)
 
 
-#load LGA map data
-LGA_map_data <- lga2021
-
-
-#Join SI to LGA map data
-victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, lga2021)
+#Join SI to map data
+#victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, sa12016)
 
 ```
 
 ```{r Melbourne_2016, echo=FALSE, warning=FALSE, message=FALSE}
-#victoria_2016 <- read_gtfs("data/Melbourne/2016/gtfs.zip")
+victoria_2016 <- read_gtfs("data/Melbourne/2016/gtfs.zip")
+
+
+#fix issue with missing route_color column
+victoria_2016$routes$route_color <- "Blue"
+
 
 ##identify duplicate stops
-#victoria_2016_duplicated_stops <- tabyl(victoria_2016$stops$stop_id) %>% filter (n>1)
-#names(victoria_2016_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2016_duplicated_stops <- left_join(victoria_2016_duplicated_stops, victoria_2016$stops)
+victoria_2016_duplicated_stops <- tabyl(victoria_2016$stops$stop_id) %>% filter (n>1)
+names(victoria_2016_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2016_duplicated_stops <- left_join(victoria_2016_duplicated_stops, victoria_2016$stops)
 
 ##discard duplicates
-#victoria_2016$stops <- victoria_2016$stops[!duplicated(victoria_2016$stops$stop_id),]
+victoria_2016$stops <- victoria_2016$stops[!duplicated(victoria_2016$stops$stop_id),]
 
 ##split modes
-#victoria_2016_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2016)
+victoria_2016_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2016)
 
 
 ##set inputs to SI_calc function
-#victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
-#start_date = "2016-08-09"
-#period_in_days = 7
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "lga_code_2021"
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2016 == "Victoria")
+start_date = "2016-08-09"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2016"
+
 
 ##run SI_calc function
-#victoria_2016_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2016_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+victoria_2016_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2016_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
 ##run aggregation function to create df by mode for all 7 days
-#victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
 
 
 #load pre-calculated df by mode (for just one day)
-victoria_2016_SI_df_by_mode <- read.csv("victoria_2016_SI_df_by_mode_20210810.csv")
+#victoria_2016_SI_df_by_mode <- read.csv("victoria_2016_SI_df_by_mode_20210810.csv")
 
-victoria_2016_SI_df_by_mode$lga_code_2021 <- as.character(victoria_2016_SI_df_by_mode$lga_code_2021)
+#victoria_2016_SI_df_by_mode$lga_code_2021 <- as.character(victoria_2016_SI_df_by_mode$lga_code_2021)
 
 
-#load LGA map data
-LGA_map_data <- lga2021
+##load LGA map data
+#LGA_map_data <- lga2021
 
-#Add Greater Melbourne to LGA map data
-LGA_greater_melbourne <- read_csv("LGA_2021_greater_melbourne.csv")
-LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
+###Add Greater Melbourne to LGA map data
+#LGA_greater_melbourne <- read_csv("LGA_2021_greater_melbourne.csv")
+#LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
 
 ```
 
