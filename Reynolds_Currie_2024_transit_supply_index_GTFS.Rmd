@@ -421,6 +421,7 @@ AreaBn_calc_function <- function(areas_of_interest = areas_of_interest, areas_of
     }
   
 
+
 ```
 As part of the development of the $Area_{Bn}$ code, the calculated 400 metre buffer area around the tram stop 44-Duncraig Ave/Wattletree Rd (Armadale) (stop_ID 10371) was maped^[For those of you reading the rmarkdown file, the code used to produce the map is commented in the above chunk as ##TEST CODE Map to check that it is working the way it is expect to.]. Figure \ref{fig:test_10371} shows the tested stop location, the SA12021 boundaries nearby, and the map output by the code developed here.  
 ```{r test_10371, echo=FALSE, fig.fullwidth = TRUE, fig.show="hold", out.width='33%', fig.cap='Code test to map tram stop at Duncraig Ave/Wattletree Rd: Google maps location (left); ABS 2021 SA1 boundaries (centre); output map of buffer zone overlayed on SA1 2021 boundaries for AreaBn calculation.'}
@@ -440,17 +441,16 @@ The final step is to combined all the terms calculated above^[For each stop the 
 ```{r SICCD_calc_as_functions, echo=FALSE, warning=FALSE, message=FALSE}
 
 ###Temporary variables to help with writing the function
-#areas_of_interest <- sa12021 %>%
-#  filter(gcc_name_2021 == "Greater Melbourne") 
-#mel3 <- read_gtfs("data/3google_transit.zip")
-#mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
-gtfs_list_by_mode <- mornington_2018_list_by_mode
-#start_date = "2023-04-27"
-#period_in_days = 2
+##set inputs to SI_calc function
+#areas_of_interest <- sa12021 %>% filter(sa3_name_2021 == "Mornington Peninsula")
+#start_date = "2018-01-09"
+#period_in_days = 7
 #EPSG_for_transform = 28355
 #areas_of_interest_id_field = "sa1_code_2021"
-Area_terms_for_each_area_of_interest_by_mode_by_stop = AreaBn_calc_function_output_2021 
-
+#gtfs_list_by_mode = mornington_2018_list_by_mode
+###run the Area_Bn_calc_function
+#AreaBn_calc_function_output_2021 <- AreaBn_calc_function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, EPSG_for_transform = EPSG_for_transform)
+#Area_terms_for_each_area_of_interest_by_mode_by_stop <- AreaBn_calc_function_output_2021
 
 #### The function ________
 SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform, Area_terms_for_each_area_of_interest_by_mode_by_stop=Area_terms_for_each_area_of_interest_by_mode_by_stop){
@@ -661,7 +661,7 @@ period_in_days = 7
 EPSG_for_transform = 28355
 areas_of_interest_id_field = "sa1_code_2021"
 gtfs_list_by_mode = mornington_2018_list_by_mode
-
+ 
 
 #run the Area_Bn_calc_function
 AreaBn_calc_function_output_2021 <- AreaBn_calc_function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, EPSG_for_transform = EPSG_for_transform)
