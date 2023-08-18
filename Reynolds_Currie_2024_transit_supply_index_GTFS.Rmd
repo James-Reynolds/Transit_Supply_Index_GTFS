@@ -415,8 +415,6 @@ AreaBn_calc_function <- function(areas_of_interest = areas_of_interest, areas_of
               }
       #close the 1st level for loop (looping over modes)
       }
-    # update names of modes to match  
-    names(Area_terms_for_each_area_of_interest_by_mode_by_stop) <- buffer_zone_definitions$short_name[1:length(Area_terms_for_each_area_of_interest_by_mode_by_stop)]
   
     return(Area_terms_for_each_area_of_interest_by_mode_by_stop)      
     #close the function  
@@ -446,12 +444,12 @@ The final step is to combined all the terms calculated above^[For each stop the 
 #  filter(gcc_name_2021 == "Greater Melbourne") 
 #mel3 <- read_gtfs("data/3google_transit.zip")
 #mel3_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mel3)
-#gtfs_list_by_mode <- mel3_list_by_mode
+gtfs_list_by_mode <- mornington_2018_list_by_mode
 #start_date = "2023-04-27"
 #period_in_days = 2
 #EPSG_for_transform = 28355
 #areas_of_interest_id_field = "sa1_code_2021"
-#Area_terms_for_each_area_of_interest_by_mode_by_stop = Area_terms_for_each_area_of_interest_by_mode_by_stop
+Area_terms_for_each_area_of_interest_by_mode_by_stop = AreaBn_calc_function_output_2021 
 
 
 #### The function ________
@@ -490,25 +488,35 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
             ##Initialise variables used in 3rd level (list of stops)
             stop_area_return_values_for_that_mode <- list()  
             
-            #join the pre-calculated Area_terms_for_each_area_of_interest_by_mode_by_stop for this mode (k) and stop (stop i) to the list of areas_of_interest
-            stop_area_return_values_for_that_mode <- left_join(areas_of_interest, (Area_terms_for_each_area_of_interest_by_mode_by_stop[[k]][[j]] %>% as_tibble()))
+            ###join the pre-calculated Area_terms_for_each_area_of_interest_by_mode_by_stop for this mode (k) and stop (stop i) to the list of areas_of_interest
+            
+            #first extract the values for this stop
+            For_join_Area_terms_for_each_area_of_interest_by_mode_by_stop <- (Area_terms_for_each_area_of_interest_by_mode_by_stop[[                                                                                             names(gtfs_list_by_mode[k])]][names(Area_terms_for_each_area_of_interest_by_mode_by_stop[[names(gtfs_list_by_mode[k])]])[i]])
+            
+            #then turn the extract list (with one element, a dataframe) into just a dataframe
+            For_join_Area_terms_for_each_area_of_interest_by_mode_by_stop <- For_join_Area_terms_for_each_area_of_interest_by_mode_by_stop[[1]]
+            
+            #then join the data from back to our areas_of_interest 
+            stop_area_return_values_for_that_mode <- left_join((st_drop_geometry(areas_of_interest)), 
+For_join_Area_terms_for_each_area_of_interest_by_mode_by_stop)
             #zero out any NAs after that join
             stop_area_return_values_for_that_mode[is.na(stop_area_return_values_for_that_mode)] = 0
             
             
-            #close (i) loop for calculating SIs for stop i and adding to the running total of SI
+            #close (i) loop for obtaining the area values for for stop 
             }
         
             #add the areas for stop i to the mode-specific dataframe
-            stop_areas_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] <- stop_area_return_values_for_that_mode
+            stop_areas_by_mode_k[names(gtfs_list_by_mode[k])] <- stop_area_return_values_for_that_mode
          
         #close the if(no stops in gtfs for that mode) test 
             
-        } else {#Add a NA record in the list of modes for modes that do not have any stops on that day
-          stop_areas_by_mode_k[,eval(names(gtfs_list_by_mode[k]))] <- NA}
+        } else {#Add an empty record in the list of modes for modes that do not have any stops on that day
+          stop_areas_by_mode_k[names(gtfs_list_by_mode[k])] <- tibble()
+        }
        
         
-        stop_areas_by_day_j <- append(stop_areas_by_mode, list(stop_areas_by_mode_k), after = length(stop_areas_by_mode))
+        stop_areas_by_day_j <- append(stop_areas_by_day_j, stop_areas_by_mode_k)
        #close for (k) loop for calculating Area_proportion for a single mode on a single day
       }  
        
@@ -521,6 +529,16 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
     #close for (j) loop for creating the list of days
     }        
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
 #2-level list to put the SI results in, with each element representing one of the days that is being analysed. 
     # This becomes a list (of lists), with one element for each mode for the day_of_analysis in question (j)
@@ -537,9 +555,7 @@ SI_calc_function <- function(areas_of_interest = areas_of_interest, areas_of_int
     
     ##for loop that drives the second level of the list, recording SI by mode
       for (k in seq(1, length(names(gtfs_list_by_mode)), 1)){   
-        #look up the buffer distance for mode k
-        buffer_distance <- buffer_distance_listing[k,"distance"]
-     
+
         #add zero-ed column to store SIs for mode k
         SI_for_day_of_analysis_by_mode_k <- SI_for_day_of_analysis_by_mode_k %>% tibble::add_column(a = 0)
         #change name of added column to match mode k
@@ -550,19 +566,25 @@ names(SI_for_day_of_analysis_by_mode_k) <- c( names(SI_for_day_of_analysis_by_mo
          SI_return_value_for_that_mode <- rep(0,nrow(areas_of_interest))
          #which is calculated in the following for loop, which passes over all of the stops in the gtfs file for the mode in question
           for (i in seq(1, nrow(gtfs_list_by_mode[[ as.character(names(gtfs_list_by_mode[k]))]][["stops"]]), 1)) {
-            Area_terms_for_stop_i <- (Area_terms_for_each_area_of_interest_by_mode_by_stop[[k]][[i]] %>% as_tibble())
+
+            
+            
+            
+            
+                        Area_terms_for_stop_i <-    (Area_terms_for_each_area_of_interest_by_mode_by_stop[[                                                                                             names(gtfs_list_by_mode[k])]][names(Area_terms_for_each_area_of_interest_by_mode_by_stop[[names(gtfs_list_by_mode[k])]])[i]])[[1]]
             
             ##Retrieve number of arrivals for that mode and day by...
             #first moving the gtfs for that mode out of gtfs_list_by_mode
             gtfs_k <- as_tidygtfs(eval(parse(text = paste("gtfs_list_by_mode$",names(gtfs_list_by_mode)[k],sep = ""))))
+            
             # then add the number of arrivals at stop i to all rows of the int_circles dataframe. 
             Area_terms_for_stop_i$SL_Bn <- rep(
               nrow(arrival_timetable_function(gtfs = gtfs_k, stop_to_show = gtfs_list_by_mode[[
                 as.character(names(gtfs_list_by_mode[k]))]]$stops$stop_name[i], date_to_show = day_of_analysis)), 
-              nrow(int_circles))
+              nrow(Area_terms_for_stop_i))
     
             #Calculate SI for stop i and drop units
-            Area_terms_for_stop_i$add_to_SI <- as.numeric(Area_terms_for_stop_i$area_bn / Area_terms_for_stop_i$Area_area * Area_terms_for_stop_i$SL_Bn)
+            Area_terms_for_stop_i$add_to_SI <- as.numeric(Area_terms_for_stop_i$Area_proportion * Area_terms_for_stop_i$SL_Bn)
   
             
             #Create ordinary tibble with Area of Interest identification code and SIs from stop i to add to the running totals
@@ -643,17 +665,9 @@ convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_b
 
 <!---The three cases were selected as they are familiar to the researchers. Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of a transit system that may be familiar to many readers^[Washington DC is where the Transportation Research Board Annual Meeting is held each year.].  --->
 
-To test the developed code results were generated for a single case: Victoria, Australia. This case was selected primarily for convenience, as the authors are familiar with the Victorian transit network and so well placed to assess whether output results are correct.  Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
+To test the developed code results were generated for a two cases: the Mornington Railway on the Moornington Penninsula in Victoria, Australia; and the more general PTV feed that covers public transport across all of Victoria, Australia. These cases were selected primarily for convenience, as the authors are familiar with the Victorian transit network and so well placed to assess whether output results are correct.  Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
 
-### Victoria, Australia
-Victoria is the southern-most state on the Australian mainland. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London^[Greater Melbourne is the term used to describe the larger metropolitan area, encompassing 30 LGAs. The City of Melbourne LGA covers only a small portion of the inner city.] However, with only around 5 million people Melbourne has about one-third of the population density. It has an inner Central Business District (CBD) with apartments, commercial skyscrapers and extensive sporting facilities nearby; surrounded by low-density, predominately single-family-housing-dominated, inner, middle and outer suburbs. 
-
-There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services.  Victoria's GTFS feed is published by Public Transport Victoria (PTV)^[There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].]. 
-
-The developed code was tested for both SA1- and LGA-level areas of interest. Output was obtained for SA1-level areas using a GTFS file from late April, 2023, running for a full 7-day period.  For the LGA-level output the results were compared between 2016 and 2021, to match the Australian census dates. The Australian census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself^[It takes about a day of processing time to run the code for all of the stops in Vicotira for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.]. 
-
-The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the 2021 Local Government Area (LGA) boundaries for the Greater Melbourne area.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. 
-
+The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the 2016 and 2021 SA1 (Statistical Area 1) and 2021 Local Government Area (LGA) boundaries for Victoria.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. 
 
 
 ```{r load_abs_data, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
@@ -685,6 +699,130 @@ units(p$area) <- as_units("m^2")
 
 
 ```
+
+
+### Mornington Railway, Victoria, Australia
+
+The Mornington Penninsula railway is a historic rail line, providing tourist and excursion services. GTFS feeds are available for this service for 2017 and 2018.  The developed code was tested on these GTFS feeds, which have the advantage of only having a small number of stops and services. The testing involved examination of the SI scores at the SA1 level for areas close to the railway. 
+
+
+```{r Mornington_2018, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+mornington_2018 <- read_gtfs("data/Mornington_Railway/2018/20180109/gtfs.zip")
+
+#deal with issue to do with missing route_color information
+mornington_2018$routes$route_color <- "Blue"
+
+#convert route type from 107 (tourist railway) to 2 (rail) ---NEW FEATURE NEEDED --- EXPAND HANDLING OF MODES TO ENABLE CALCULATION OF MODES FROM EXTENDED GTFS LIST
+mornington_2018$routes$route_type <- as.integer(2)
+
+
+#identify duplicate stops
+mornington_2018_duplicated_stops <- tabyl(mornington_2018$stops$stop_id) %>% filter (n>1)
+names(mornington_2018_duplicated_stops) <- c("stop_id", "n", "percent")
+mornington_2018_duplicated_stops <- left_join(mornington_2018_duplicated_stops, mornington_2018$stops)
+
+##discard duplicates
+mornington_2018$stops <- mornington_2018$stops[!duplicated(mornington_2018$stops$stop_id),]
+
+##split modes
+mornington_2018_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mornington_2018)
+
+
+##set inputs to SI_calc function
+areas_of_interest <- sa12021 %>% filter(sa3_name_2021 == "Mornington Peninsula")
+start_date = "2018-01-09"
+period_in_days = 7
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
+gtfs_list_by_mode = mornington_2018_list_by_mode
+
+
+#run the Area_Bn_calc_function
+AreaBn_calc_function_output_2021 <- AreaBn_calc_function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, EPSG_for_transform = EPSG_for_transform)
+
+##run SI_calc function
+mornington_2018_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = mornington_2018_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform, Area_terms_for_each_area_of_interest_by_mode_by_stop = AreaBn_calc_function_output_2021)
+
+#run aggregation function to create df by mode for all 7 days
+improved_speed_mornington_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(mornington_2018_SI_list_by_date_and_mode)
+
+#load pre-calculated df by mode (for just one day)
+#mornington_2018_SI_df_by_mode <- read.csv("mornington_2018_SI_df_by_mode_20210810.csv")
+#mornington_2018_SI_df_by_mode$lga_code_2021 <- as.character(mornington_2018_SI_df_by_mode$lga_code_2021)
+
+#Join SI to map data
+mornington_2018_SI_df_by_mode_sf <- left_join(mornington_2018_SI_df_by_mode, areas_of_interest)
+
+```
+
+
+
+```{r Mornington_2017, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+mornington_2017 <- read_gtfs("data/Mornington_Railway/2017/170309/gtfs.zip")
+
+#deal with issue to do with missing route_color information
+mornington_2017$routes$route_color <- "Blue"
+
+#convert route type from 107 (tourist railway) to 2 (rail) ---NEW FEATURE NEEDED --- EXPAND HANDLING OF MODES TO ENABLE CALCULATION OF MODES FROM EXTENDED GTFS LIST
+mornington_2017$routes$route_type <- as.integer(2)
+
+
+#identify duplicate stops
+mornington_2017_duplicated_stops <- tabyl(mornington_2017$stops$stop_id) %>% filter (n>1)
+names(mornington_2017_duplicated_stops) <- c("stop_id", "n", "percent")
+mornington_2017_duplicated_stops <- left_join(mornington_2017_duplicated_stops, mornington_2017$stops)
+
+##discard duplicates
+mornington_2017$stops <- mornington_2017$stops[!duplicated(mornington_2017$stops$stop_id),]
+
+##split modes
+mornington_2017_list_by_mode <- split_gtfs_into_modes_and_put_in_list(mornington_2017)
+
+
+##set inputs to SI_calc function
+areas_of_interest <- sa12021 %>% filter(sa3_name_2021 == "Mornington Peninsula")
+start_date = "2017-03-09"
+period_in_days = 7
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "lga_code_2021"
+gtfs_list_by_mode = mornington_2017_list_by_mode
+
+
+#run the Area_Bn_calc_function
+AreaBn_calc_function_output_2021 <- AreaBn_calc_function(areas_of_interest = areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = gtfs_list_by_mode, EPSG_for_transform = EPSG_for_transform)
+
+##run SI_calc function
+mornington_2017_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = mornington_2017_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform, Area_terms_for_each_area_of_interest_by_mode_by_stop = AreaBn_calc_function_output_2021)
+
+#run aggregation function to create df by mode for all 7 days
+improved_speed_mornington_2017_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(mornington_2017_SI_list_by_date_and_mode)
+
+#load pre-calculated df by mode (for just one day)
+#mornington_2017_SI_df_by_mode <- read.csv("mornington_2017_SI_df_by_mode_20210810.csv")
+#mornington_2017_SI_df_by_mode$lga_code_2021 <- as.character(mornington_2017_SI_df_by_mode$lga_code_2021)
+
+#Join SI to map data
+mornington_2017_SI_df_by_mode_sf <- left_join(mornington_2017_SI_df_by_mode, areas_of_interest)
+
+```
+
+
+
+
+
+
+
+
+### Transit services across Victoria, Australia
+Victoria is the southern-most state on the Australian mainland. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London^[Greater Melbourne is the term used to describe the larger metropolitan area, encompassing 30 LGAs. The City of Melbourne LGA covers only a small portion of the inner city.] However, with only around 5 million people Melbourne has about one-third of the population density. It has an inner Central Business District (CBD) with apartments, commercial skyscrapers and extensive sporting facilities nearby; surrounded by low-density, predominately single-family-housing-dominated, inner, middle and outer suburbs. 
+
+There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services.  Victoria's GTFS feed is published by Public Transport Victoria (PTV)^[There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].]. 
+
+The developed code was tested for both SA1- and LGA-level areas of interest. Output was obtained for SA1-level areas using a GTFS file from late April, 2023, running for a full 7-day period.  For the LGA-level output the results were compared between 2016 and 2021, to match the Australian census dates. The Australian census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself^[It takes about a day of processing time to run the code for all of the stops in Vicotira for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.]. 
 
 
 ```{r Melbourne_2021, echo=FALSE, warning=FALSE, message=FALSE}
@@ -1086,6 +1224,9 @@ map
 Figure \ref{fig:Victoria_IRSAD_rank_compare} shows the change in ranking between the 2016 and 2021 for each LGA in Victoria and Greater Melbourne. A positive number indicates that the LGA in question had a higher IRSAD score  than more of the other Victorian LGAs in 2021 than in it did in 2016. The state ranking appears to have fallen for most of the outer suburbs in Greater Melbourne, especially for Melton, Whittlesea and Casey. Rankings have improved particularly in Brimbank, but also in some of the other nearby LGAs. In regional Victoria Gannawarra's ranking has fallen the most, while Alpine Shire and Ararat's ranking have improved the most. 
 
 
+
+
+
 <!--
 ### Toronto, Ontario, Canada
 ### Washington DC, USA
@@ -1185,6 +1326,41 @@ Further verification work might involve:
 
 
 Anyhow, this concludes the hand-calculation verification efforts to date. The next sections, therefore, look at the code outputs alone, with a focus on LGAs in Greater Melbourne and Victoria. 
+
+
+## Mornington Railway, Victoria, Australia: Supply Index results for SA1s
+
+
+Figure \ref{fig:Mornington_SI_2018} show the $SI_{SA12021,9th-15thJan2018}$ values from the Mornington Railway service for SA1s within the SA3 region of the Mornington Peninsula, .
+
+
+
+```{r Mornington_SI_2018, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{SA12021,9th-15thJan2018}$"}
+mornington_2018_SI_total <- mornington_2018_SI_df_by_mode %>% adorn_totals(where = "col")
+
+mornington_2018_SI_total <- left_join(mornington_2018_SI_total, LGA_map_data)
+
+
+map <- mornington_2018_SI_total %>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = Total),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  scale_fill_gradient2(breaks = c(0.01, 1, 50), trans = "log") +    # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+
+
+
+```
+
 
 ## Victoria, Australia: Supply Index results for LGAs
 To better understand how the SI calculation from GTFS data can be practically applied, this section presents results when the SI is calculated for Local Government Areas (LGAs) within Victoria. For the purposes of this section, the $SI_{LGA}$ is calculated for 2016 and 20121, but only a single day of service, being the date of the census in each year^[Tuesday August 9, 2016, and Tuesday August 10, 2021. Analysis of a single day was selected so as to reduce the processing time required to output the SI scores, as the code currenly takes about one day to run for all the stops in Victoria for every day that is analysed. Code performance could be improved, but appears good enough for the purposes of this research. As a way to get around the slow calculation speeds, the rmarkdown used to typeset this documents loads pre-calculated SI scores, rather than calculating it fresh every time the document is 'knitted'.].
