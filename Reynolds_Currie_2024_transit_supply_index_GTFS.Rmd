@@ -413,10 +413,8 @@ AreaBn_calc_function <- function(areas_of_interest = areas_of_interest, areas_of
             }
           #close the else check for whether there are >0 stops for that mode
               }
-      #close the 1st level for loop (looping over modes)
+          #close the 1st level for loop (looping over modes)
       }
-    # update names of modes to match  
-    names(Area_terms_for_each_area_of_interest_by_mode_by_stop) <- buffer_zone_definitions$short_name[1:length(Area_terms_for_each_area_of_interest_by_mode_by_stop)]
   
     return(Area_terms_for_each_area_of_interest_by_mode_by_stop)      
     #close the function  
