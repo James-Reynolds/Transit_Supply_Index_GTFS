@@ -48,7 +48,7 @@ library(readxl)
 library(dplyr)
 
 # invalidate cache when the tufte version changes
-knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
+#knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
 ```
 
 # Introduction
@@ -581,46 +581,48 @@ victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, sa12016
 ```
 
 ```{r Melbourne_2016, echo=FALSE, warning=FALSE, message=FALSE}
-victoria_2016 <- read_gtfs("data/Melbourne/2016/gtfs.zip")
+#victoria_2016 <- read_gtfs("data/Melbourne/2016/gtfs.zip")
+
+##resolve route colour problem in gtfs file
+#victoria_2016$routes$route_color <- 0
 
 ##identify duplicate stops
-victoria_2016_duplicated_stops <- tabyl(victoria_2016$stops$stop_id) %>% filter (n>1)
-names(victoria_2016_duplicated_stops) <- c("stop_id", "n", "percent")
-victoria_2016_duplicated_stops <- left_join(victoria_2016_duplicated_stops, victoria_2016$stops)
+#victoria_2016_duplicated_stops <- tabyl(victoria_2016$stops$stop_id) %>% filter (n>1)
+#names(victoria_2016_duplicated_stops) <- c("stop_id", "n", "percent")
+#victoria_2016_duplicated_stops <- left_join(victoria_2016_duplicated_stops, victoria_2016$stops)
 
 ##discard duplicates
-victoria_2016$stops <- victoria_2016$stops[!duplicated(victoria_2016$stops$stop_id),]
+#victoria_2016$stops <- victoria_2016$stops[!duplicated(victoria_2016$stops$stop_id),]
 
 ##split modes
-victoria_2016_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2016)
+#victoria_2016_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2016)
 
 
-##set inputs to SI_calc function
-victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2016 == "Victoria")
-start_date = "2016-08-09"
-period_in_days = 1
-EPSG_for_transform = 28355
-areas_of_interest_id_field = "sa1_code_2016"
+###set inputs to SI_calc function
+#victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2016 == "Victoria")
+#start_date = "2016-08-09"
+#period_in_days = 1
+#EPSG_for_transform = 28355
+#areas_of_interest_id_field = "sa1_code_2016"
 
 ##run SI_calc function
-victoria_2016_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2016_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+#victoria_2016_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2016_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
-##run aggregation function to create df by mode for all 7 days
-victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+##run aggregation function to create df by mode 
+#victoria_2016_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2016_SI_list_by_date_and_mode)
+
+##write to csv
+#write_csv2(victoria_2016_SI_df_by_mode, "~/Documents/0001_project/Transit_Supply_Index_GTFS/results/Victoria_2016_SI_df_by_mode_SA12016_160809.csv")
 
 
 #load pre-calculated df by mode (for just one day)
-#victoria_2016_SI_df_by_mode <- read.csv("victoria_2016_SI_df_by_mode_20210810.csv")
+victoria_2016_SI_df_by_mode <- read.csv("~/Documents/0001_project/Transit_Supply_Index_GTFS/results/Victoria_2016_SI_df_by_mode_SA12016_160809.csv")
 
-#victoria_2016_SI_df_by_mode$lga_code_2021 <- as.character(victoria_2016_SI_df_by_mode$lga_code_2021)
+#Id code to characters
+victoria_2016_SI_df_by_mode$sa1_code_2016 <- as.character(victoria_2016_SI_df_by_mode$sa1_code_2016)
 
-
-##load LGA map data
-#LGA_map_data <- lga2021
-
-###Add Greater Melbourne to LGA map data
-#LGA_greater_melbourne <- read_csv("LGA_2021_greater_melbourne.csv")
-#LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
+#Join map data
+victoria_2016_SI_df_by_mode_sf <- left_join(victoria_2016_SI_df_by_mode, sa12016)
 
 ```
 
