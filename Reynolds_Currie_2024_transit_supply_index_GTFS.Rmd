@@ -1,6 +1,5 @@
-
 ---
-title: "Leveraging GTFS data to assess transit supply, and needs-gaps"
+title: "Transit Supply Index scores on the days of the 2016 and 2021 censuses: using Statistical Area Level 1 (SA1) 2016 boundaries"
 runningheader: "Reynolds and Currie" # only for pdf output
 author: "James Reynolds and Graham Currie"
 date: "`r Sys.Date()`"
@@ -46,6 +45,7 @@ library(kableExtra)
 library(knitr)
 library(readxl)
 library(dplyr)
+library(rvest)
 
 # invalidate cache when the tufte version changes
 #knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
@@ -53,15 +53,11 @@ library(dplyr)
 
 # Introduction
 
-Previous research by @currie2007identifying developed a transit Supply Index (SI), based on calculating the number of transit arrivals at stops within an area of interest, adjusted to account for the typical walk-access catchment for each stop. This documents reports the development of R code to calculate the Supply Index of @currie2007identifying directly from GTFS data. The code is used to output SI scores for the day of the 2016 census and the day of the 2021 census for each of the Australian Bureau of Statistics (ABS) 2016 Statistical Area Level 1 (SA1) zones in Victoria.
+Previous research by @currie2007identifying developed a transit Supply Index (SI), based on calculating the number of transit arrivals at stops within an area of interest, adjusted to account for the typical walk-access catchment for each stop. This document reports the development of R code to calculate the Supply Index of @currie2007identifying directly from GTFS data. The code is used to output SI scores for the day of the 2016 census and the day of the 2021 census for each of the Australian Bureau of Statistics (ABS) 2016 Statistical Area Level 1 (SA1) zones in Victoria. These scores have been requested by Maryam Jafari as an input to her PhD project. 
 
-This rest of this document is structured as follows: the next section discusses the research context of transit metrics and the the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the case study GTFS for Victoria, Australia, that was used to test and verify the code output. In the fourth section results are presented,  starting with verification of the code output through hand-calculation of SI scores for Statistical Area 1 (SA1) areas in the Victorian Alps and Talbot. SI scores for SA1s across Greater Melbourne and Victoria are also presented. Mode-by-mode SI scores are also explored, followed by an examination of needs-gaps across the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) scores, ranks and population levels.  The document then closes with a brief discussion and conclusion section. 
+This rest of this document is structured as follows: the next section discusses the research context of transit metrics and the the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the case study GTFS for Victoria, Australia, that was used to test and verify the code output. In the fourth section results are presented, starting with verification of the code output through hand-calculation of SI scores for Statistical Area 1 (SA1) areas in the Victorian Alps and Talbot. SI scores for SA1s across Greater Melbourne and Victoria are also presented. Mode-by-mode SI scores are also explored, followed by an examination of needs-gaps across the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) scores, ranks and population levels. The document then closes with a brief discussion and conclusion section.
 
 # Research context
-Even a brief search shows that there is a very large number of metrics available for benchmarking transit services^[For example: the Transit Cooperative Research Program (TCRP) Report 88 provides an extensive guidebook on developing a performance-measurement system [@Ryus:2003aa]; online databases are provided by the Florida Transit Information System (FTIS) [@Florida-Transit-Information-System:2018aa] and the International Association of Public Transport (UITP) [@UITP:2015aa]; while the Transport Strategy Centre of Imperial College London runs extensive annual benchmarking programmes across over 100 transit provides around the world [@Imperial-College-London:2023aa].].The Fielding Triangle [@FieldingGordonJ1987Mpts] provides a framework for understanding how such metrics combine service inputs, service outputs and service consumption to describe cost efficiency, cost effectiveness or service effectiveness measures. At a larger scale, @Litman:2003ab and @Litman:2016aa discuss some of the traffic, mobility, accessibility, social equity, strategic planning and other rational decision-making frames that might underlie such transit metrics, while @Reynolds:2017ah extends this into models of how institutionalism, incrementalism and other public policy models might apply to decision-making processes. Further examples are provided by @GuzmanLuisA.2017Aeit, who develop a measure of accessibility in the context of policy development and social equity for Latin American Bus Rapid Transit (BRT) based networks,  and the street space allocation metrics based around 10 ethical principles introduced by @Creutzig2020streetspaceallocation. 
-
-However, many of these metrics appear difficult to calculate, complex to explain or understand, and likely not well suited to communication with those who are not transit planners or engineers, or otherwise technical specialists. Where pre-calculated metrics are immediately available it may not be possible for  practitioners, researchers or advocates to independently generate metrics for proposed system changes or to even know exactly how scores for the existing services levels are calculated^{The TCQSM and Transit Score may provide contrasting examples:  with respect to the first challenge, TCQSM metrics may require large amounts of network, service, population and other data to be assembled before the  indicators can be calculated; whereas Transit Scores are readily available (the @WalkScore:2023tg website shows scores for locations with a published GTFS feed, eliminating the need for any calculations.). With respect to the second challenge,  the meaning of the Transit Score appears easy to explain (the closer to 100, the better), but as the score is calculated by a patented algorithm it may not be easy to understand or explain the connection between real-world conditions and the score, or what might need to be done to improve the score and service levels. Nor does it appear to be possible for Transit Scores to be generated for proposed changes to networks. The TCQSM, in contrast is open-source (In that @TCQSM:2013 provide a manual describing all the metrics and how to calculate them).].  @Wong:2013aa provides open-source code for calculating some TCQSM metrics ^[https://github.com/jcwong86/GTFS_Explore_Tool] this is now 11 years old and does not appear to be currently maintained. Future research may involve reviewing this code and using it to analyse modern GTFS feeds. However, in this paper the aim is more modest, with the objective being to develop code to calculate the Suppy Index metric from @currie2007identifying.  
-
 
 ## The Suppy Index
 
@@ -72,27 +68,49 @@ SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
 \end{equation}
 ```
 
-Equation \ref{eq:supply_index}^[In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In  @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. 
-The Supply Index does not incorporate further aspects, such as service span,  off-peak share of service or service speed, which are a feature of the TQCSM. However, including such metrics may increase the complexity of calculating and describing the index to non-transit specialists. Such simplicity is also helped by the way that the Index is additive, in that $SI_{area, time}$ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest. 
+Equation \ref{eq:supply_index}[^3] shows the Supply Index[^4]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. The Supply Index does not incorporate further aspects, such as service span, off-peak share of service or service speed, which are a feature of the TQCSM. However, including such metrics may increase the complexity of calculating and describing the index to non-transit specialists. Such simplicity is also helped by the way that the Index is additive, in that $SI_{area, time}$ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest.
 
-@currie2007identifying calculated the $SI_{area, time}$  for various Census Collection Districts (CCDs)^[CCDs predate the introduction of Statistical Areas 1, 2, 3, and 4 (SA1, SA2, SA3, SA4), and other geographical divisions currently used by the Australian Bureau of Statistics (ABS), which may be more familiar to readers.] in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data.  A question, therefore, is how to calculate the SI using GTFS data so that $SI_{area, time}$ scores can be calculated and compared for any area of interest where transit service information is available in that format. 
+[^3]: In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.
+
+[^4]: Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.
+
+@currie2007identifying calculated the $SI_{area, time}$ for various Census Collection Districts (CCDs)[^5] in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data. A question, therefore, is how to calculate the SI using GTFS data so that $SI_{area, time}$ scores can be calculated and compared for any area of interest where transit service information is available in that format.
+
+[^5]: CCDs predate the introduction of Statistical Areas 1, 2, 3, and 4 (SA1, SA2, SA3, SA4), and other geographical divisions currently used by the Australian Bureau of Statistics (ABS), which may be more familiar to readers.
 
 ## Transport Needs Index(es)
-@currie2007identifying also adopted the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD), and developed a Transport Needs index. This Transport Needs index was based on combining standardised indicators^[Set as relative scores between 0 and 100 for all areas in the analysis.] of: adults without cars^[Based on census data for the number of cars per household and number of people aged 18 or over, weighted at 19\% of the Transport Needs Index.]; accessibility^[Being the straight line distance to the Central Business District (CBD), weighted at 15\%.]; persons aged over 60 years^[Weighted at 14\%.]; the number of people on a disability pension^[Wrighted at 12\%.]; the number of low income households^[Weighted at 10\%.]; the number of adults not in the labour force^[Based on the number of people over 15 not in the labour force, weigthed at 9\%.]; the number of students^[Weighted at 9\%.]; and the number of people aged 5 to 9 years^[Weighted at 12\%.]. 
 
-Four separate indicators provided input to the @currie2007identifying assessment, reflecting different approaches to understanding the scale of the need for transit services. These are: 1) the Total Need IRSAD Index, based on the ABS ISRAD, weighted by the size of the population in each area of interest; 2) the Relative Need IRSAD Index, based on weighting the indicators by the proportion of the area of interest population in the social need component groups; 3) the Total Transport Need Index; and 4) the Relative Transport Need Index. These four indicators were combined in @currie2007identifying, with equal weighting^[i.e. 25\% each.] to provide a single, unified needs index (standardised to provide a combined relative score out of 100). 
-Later in this document a similar needs-gap analysis is presented for Victorian LGAs.  However, in the needs-gap analysis here only the IRSAD scores and population data are reported. Calculating the combined Transport Needs index as per @currie2007identifying may be a direction for future research. 
+@currie2007identifying also adopted the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD), and developed a Transport Needs index. This Transport Needs index was based on combining standardised indicators[^6] of: adults without cars[^7]; accessibility[^8]; persons aged over 60 years[^9]; the number of people on a disability pension[^10]; the number of low income households[^11]; the number of adults not in the labour force[^12]; the number of students[^13]; and the number of people aged 5 to 9 years[^14].
 
+[^6]: Set as relative scores between 0 and 100 for all areas in the analysis.
 
+[^7]: Based on census data for the number of cars per household and number of people aged 18 or over, weighted at 19% of the Transport Needs Index.
+
+[^8]: Being the straight line distance to the Central Business District (CBD), weighted at 15%.
+
+[^9]: Weighted at 14%.
+
+[^10]: Wrighted at 12%.
+
+[^11]: Weighted at 10%.
+
+[^12]: Based on the number of people over 15 not in the labour force, weigthed at 9%.
+
+[^13]: Weighted at 9%.
+
+[^14]: Weighted at 12%.
+
+Four separate indicators provided input to the @currie2007identifying assessment, reflecting different approaches to understanding the scale of the need for transit services. These are: 1) the Total Need IRSAD Index, based on the ABS ISRAD, weighted by the size of the population in each area of interest; 2) the Relative Need IRSAD Index, based on weighting the indicators by the proportion of the area of interest population in the social need component groups; 3) the Total Transport Need Index; and 4) the Relative Transport Need Index. These four indicators were combined in @currie2007identifying, with equal weighting[^15] to provide a single, unified needs index (standardised to provide a combined relative score out of 100). Later in this document a similar needs-gap analysis is presented for Victorian SA1s. However, in the needs-gap analysis here only the IRSAD scores and population data are reported. Calculating the combined Transport Needs index as per @currie2007identifying may be a direction for future research.
+
+[^15]: i.e. 25% each.
 
 # Methodology
-This study adopts a case research approach by developing code to calculate Supply Indexes for Greater Melbourne and Victoria, Australia
 
-## Code development
-This document has been prepared using Rmarkdown, which allows the intermingling of written text, code segments and code outputs. Code segments developed in this research are shown in the following, together with the relevant descriptive text^[The Rmarkdown file is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS/tree/SA12016_analysis and this can be read in a plain-text editor to view the code snippets themselves. If you are reading this in a PDF document you are seeing just the descriptive text, and outputs from the code where it has been run to produce maps, charts etc.]. This specific document is part of a branch of the developed code, specifically created for reporting the calculation of the SI scores for the SA12016 zones. 
+This document has been prepared using Rmarkdown, which allows the intermingling of written text, code segments and code outputs. Code segments developed in this research are shown in the following, together with the relevant descriptive text[^16]. This specific document is part of a branch of the developed code, specifically created for reporting the calculation of the SI scores for the SA12016 zones.
 
-Various analysis tools are available that make use of GTFS data, including the tidytransit package [@R-tidytransit] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term in the @currie2007identifying SI equation. 
+[^16]: The Rmarkdown file is available at <https://github.com/James-Reynolds/Transit_Supply_Index_GTFS/tree/SA12016_analysis> and this can be read in a plain-text editor to view the code snippets themselves. If you are reading this in a PDF document you are seeing just the descriptive text, and outputs from the code where it has been run to produce maps, charts etc.
 
+Various analysis tools are available that make use of GTFS data, including the tidytransit package [@R-tidytransit] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term in the @currie2007identifying SI equation.
 
 ```{r arrival_timetable_as_a_function, echo=FALSE, cache=TRUE}
 
@@ -239,9 +257,9 @@ arrival_timetable_function <- function(gtfs, stop_to_show, date_to_show){
 #head(arrivals_southern_cross_230427)
 ```
 
+The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation. Buffer zones of 400 metres for bus and Light Rail Transit (LRT) services and 800 metres for heavy rail were adopted, as per @currie2007identifying[^17].
 
-
-The gtfstools R package [@R-gtfstools] was used to split input GTFS feeds by mode to facilitate the buffer zone calculation.  Buffer zones of 400 metres for bus and Light Rail Transit (LRT) services and 800 metres for heavy rail were adopted, as per @currie2007identifying^[There is an extended mode definition that includes modes beyond the 10 in the GTFS standard [@filter_GTFS_by_mode], but these are not dealt with by the gtfstools package. Further research may seek to extend this such that other modes can be included, but for the purposes of this study the coded buffer zone was set at 400 metres for cable trams, aerial lifts such a gondolas and trolleybuses, and at 800 metres for ferries, funiculars and monorails.].  
+[^17]: There is an extended mode definition that includes modes beyond the 10 in the GTFS standard [@filter_GTFS_by_mode], but these are not dealt with by the gtfstools package. Further research may seek to extend this such that other modes can be included, but for the purposes of this study the coded buffer zone was set at 400 metres for cable trams, aerial lifts such a gondolas and trolleybuses, and at 800 metres for ferries, funiculars and monorails.
 
 ```{r read_buffer_zone, echo=FALSE}
 
@@ -290,11 +308,11 @@ split_gtfs_into_modes_and_put_in_list <- function(gtfs){
 
 ```
 
-Where transit stops are located close to boundaries their catchment areas may fall into multiple areas of interest. The sp package [@R-sf] provides tools for manipulating geographic data and shape files in R. This was used to calculate the proportion of each stop's catchment area that falls into each geographical area of interest^[GTFS files define stop locations based on latitude and longitude [@GTFS], whereas the Area~Bn~ calculation needs to be provided in the same units as the Area~area~ variable, necessitating the use of a geographic transform as part of the code.].   
+Where transit stops are located close to boundaries their catchment areas may fall into multiple areas of interest. The sp package [@R-sf] provides tools for manipulating geographic data and shape files in R. This was used to calculate the proportion of each stop's catchment area that falls into each geographical area of interest[^18].
 
+[^18]: GTFS files define stop locations based on latitude and longitude [@GTFS], whereas the Area~Bn~ calculation needs to be provided in the same units as the Area~area~ variable, necessitating the use of a geographic transform as part of the code.
 
-The SI~area~ term in the SI equation was calculated on a mode-by-mode and stop-by-stop basis, by first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for the stop in question. This is then combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals (SL~Bn~) to calculate the contribution to the SI scores made by just that single stop for every area of interest. These are then added to a cumulative total field for each area of interest, and the calculations are repeated until all stops and modes in the GTFS file have been included. 
-
+The SI~area~ term in the SI equation was calculated on a mode-by-mode and stop-by-stop basis, by first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for the stop in question. This is then combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals (SL~Bn~) to calculate the contribution to the SI scores made by just that single stop for every area of interest. These are then added to a cumulative total field for each area of interest, and the calculations are repeated until all stops and modes in the GTFS file have been included.
 
 ```{r SICCD_calc_as_functions, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -475,23 +493,29 @@ convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_b
 
 ```
 
-
 ## Case research approach
 
-<!---The three cases were selected as they are familiar to the researchers. Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of a transit system that may be familiar to many readers^[Washington DC is where the Transportation Research Board Annual Meeting is held each year.].  --->
-
-To test the developed code results were generated for a single case: Victoria, Australia. This case was selected primarily for convenience, as the authors are familiar with the Victorian transit network and so well placed to assess whether output results are correct.  Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
+To test the developed code and output results analysis was generated for SA1 zones within two case study areas: Clayton (SA2) and Melbourne City (SA3). Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
 
 ### Victoria, Australia
-Victoria is the southern-most state on the Australian mainland. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London^[Greater Melbourne is the term used to describe the larger metropolitan area, encompassing 30 LGAs. The City of Melbourne LGA covers only a small portion of the inner city.] However, with only around 5 million people Melbourne has about one-third of the population density. It has an inner Central Business District (CBD) with apartments, commercial skyscrapers and extensive sporting facilities nearby; surrounded by low-density, predominately single-family-housing-dominated, inner, middle and outer suburbs. 
 
-There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services.  Victoria's GTFS feed is published by Public Transport Victoria (PTV)^[There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].]. 
+Victoria is the southern-most state on the Australian mainland. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London[^19] However, with only around 5 million people Melbourne has about one-third of the population density. It has an inner Central Business District (CBD) with apartments, commercial skyscrapers and extensive sporting facilities nearby; surrounded by low-density, predominately single-family-housing-dominated, inner, middle and outer suburbs.
 
-The developed code was tested for both SA1- and LGA-level areas of interest^[This testing is reported in the main branch of the project on GitHub. This document is instead specific to the calculation of the SA1 scores for the 2016 SA1 boundaries.]. Output was obtained for SA1-level areas using GTFS files from August 2016 and 2021, running for just the day of the census in each year.  The Australian census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself^[It takes about a day of processing time to run the code for all of the stops in Vicotira for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.]. 
+[^19]: Greater Melbourne is the term used to describe the larger metropolitan area, encompassing 30 LGAs. The City of Melbourne LGA covers only a small portion of the inner city.
 
-The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the 2016 SA1 boundaries for Victoria.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. 
+There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services. Victoria's GTFS feed is published by Public Transport Victoria (PTV)[^20].
 
+[^20]: There are over 400 historical releases of the available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].
 
+The developed code has been separately tested using SA1- and LGA-level areas of interest, including hand verification of some example SA1 areas[^21]. For the results reported here output was obtained for SA1-level areas using GTFS files from August 2016 and 2021, running for just the day of the census in each year. The Australian census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself[^22]. Minor corrections were made to the GTFS files to remove duplicate stop_ids[^23].
+
+[^21]: This testing is reported in the main branch of the project on GitHub. This document is instead specific to the calculation of the SI scores for the 2016 SA1 boundaries.
+
+[^22]: It takes about a day of processing time to run the code for all of the stops in Victoria for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.
+
+[^23]: These involved minor discrepancies in either the stop name, latitude or longitude.
+
+The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the 2016 SA1 boundaries for Victoria. The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates.
 
 ```{r load_abs_data, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
 #Load SA1 data
@@ -522,7 +546,6 @@ units(p$area) <- as_units("m^2")
 
 
 ```
-
 
 ```{r Melbourne_2021, echo=FALSE, warning=FALSE, message=FALSE}
 ###Commented out as 2021 has been precalculated
@@ -559,8 +582,15 @@ units(p$area) <- as_units("m^2")
 
 #load pre-calculated df by mode (for just one day)
 victoria_2021_SI_df_by_mode <- read_delim("results/Victoria_2021_SI_df_by_mode_SA12016_210810.csv", 
-    delim = ";", escape_double = FALSE, trim_ws = TRUE)
-victoria_2021_SI_df_by_mode$sa1_code_2016 <- as.character(victoria_2021_SI_df_by_mode$sa1_code_2016)
+    delim = ";", escape_double = FALSE, col_types = cols(sa1_code_2016 = col_character(), 
+        LRT = col_number(), subway = col_number(), 
+        rail = col_number(), bus = col_number(), 
+        ferry = col_number(), cable_tram = col_number(), 
+        aerial_lift = col_number(), funicular = col_number(), 
+        trolleybus = col_number(), monorail = col_number()), 
+    trim_ws = TRUE)
+
+
 
 
 #Join SI to map data
@@ -604,17 +634,21 @@ victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, sa12016
 
 
 #load pre-calculated df by mode (for just one day)
-victoria_2016_SI_df_by_mode <- read_delim("results/Victoria_2016_SI_df_by_mode_SA12016_160809.csv" 
-    delim = ";", escape_double = FALSE, trim_ws = TRUE)
-#Id code to characters
-victoria_2016_SI_df_by_mode$sa1_code_2016 <- as.character(victoria_2016_SI_df_by_mode$sa1_code_2016)
+victoria_2016_SI_df_by_mode<- read_delim("results/Victoria_2016_SI_df_by_mode_SA12016_160809.csv", 
+    delim = ";", escape_double = FALSE, col_types = cols(sa1_code_2016 = col_character(), 
+        LRT = col_number(), subway = col_number(), 
+        rail = col_number(), bus = col_number(), 
+        ferry = col_number(), cable_tram = col_number(), 
+        aerial_lift = col_number(), funicular = col_number(), 
+        trolleybus = col_number(), monorail = col_number()), 
+    trim_ws = TRUE)
 
 #Join map data
 victoria_2016_SI_df_by_mode_sf <- left_join(victoria_2016_SI_df_by_mode, sa12016)
 
 ```
 
-The ABS provides IRSAD datasets for LGAs in excel format. Data for 2016 and 2021 was included in this study. Scores are shown in Figures \ref{fig:Victoria_IRSAD_load_2016} and \ref{fig:Victoria_IRSAD_load_2021}. Figure \ref{fig:Victoria_IRSAD_compare} shows changes in IRSAD scores between 2016 and 2021. 
+The ABS provides IRSAD datasets for SA1 in excel format. Data for 2016 and 2021 was included in this study^[The IRSAD scores for 2021 appear to only be available for the SA12021 boundaries. A correspondance file was used to match the SA12021 to SA12016 boundaries, but it was not possible to factor the scores.]. Scores for 2021 are shown in Figures \ref{fig:Victoria_IRSAD_load_2016} and \ref{fig:Victoria_IRSAD_load_2021} for the Melbourne City and Clayton case study areas. 
 
 ```{r Victoria_IRSAD_load_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2016 IRSAD for SA1s within the Clayton SA2 boundary: score (left) and percentile within Victoria (right)", fig.show="hold", out.width="50%"}
 
@@ -631,6 +665,7 @@ IRSAD_2016_sa12016 <- head(IRSAD_2016_sa12016, -2)
 IRSAD_2016_sa12016$sa1_code_2016 <- as.character(IRSAD_2016_sa12016$sa1_code_2016)
 IRSAD_2016_sa12016$sa1_code_2016_11_digit <- as.character(IRSAD_2016_sa12016$sa1_code_2016_11_digit)
 IRSAD_2016_sa12016$IRSAD_score <- as.numeric(IRSAD_2016_sa12016$IRSAD_score)
+IRSAD_2016_sa12016$usual_resident_population <- as.numeric(IRSAD_2016_sa12016$usual_resident_population)
 IRSAD_2016_sa12016$Australian_rank <- as.numeric(IRSAD_2016_sa12016$Australian_rank)
 IRSAD_2016_sa12016$Australian_decile <- as.numeric(IRSAD_2016_sa12016$Australian_decile)
 IRSAD_2016_sa12016$Australian_percentile <- as.numeric(IRSAD_2016_sa12016$Australian_percentile)
@@ -654,7 +689,7 @@ map <- IRSAD_2016_sa12016_map %>%
   # theme_void() +                    # clears other plot elements
  coord_sf()
 
-map
+#map
 
 
 map <- IRSAD_2016_sa12016_map %>%
@@ -670,15 +705,12 @@ map <- IRSAD_2016_sa12016_map %>%
   # theme_void() +                    # clears other plot elements
  coord_sf()
 
-map
+#map
 
 
 ```
 
-
-
-
-```{r Victoria_IRSAD_load_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2021 IRSAD for SA1s within the Clayton SA2 boundary: score (left) and percentile within Victoria (right)", fig.show="hold", out.width="50%"}
+```{r Victoria_IRSAD_load_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2021 IRSAD score for SA1s: within the Clayton SA2 zone (left) and within the Melbourne City SA3 zone (right)", fig.show="hold", out.width="50%"}
 
 
 
@@ -693,6 +725,7 @@ IRSAD_2021_sa12021 <- head(IRSAD_2021_sa12021, -3)
 
 IRSAD_2021_sa12021$sa1_code_2021_11_digit <- as.character(IRSAD_2021_sa12021$sa1_code_2021_11_digit)
 IRSAD_2021_sa12021$IRSAD_score <- as.numeric(IRSAD_2021_sa12021$IRSAD_score)
+IRSAD_2021_sa12021$usual_resident_population <- as.numeric(IRSAD_2021_sa12021$usual_resident_population)
 IRSAD_2021_sa12021$Australian_rank <- as.numeric(IRSAD_2021_sa12021$Australian_rank)
 IRSAD_2021_sa12021$Australian_decile <- as.numeric(IRSAD_2021_sa12021$Australian_decile)
 IRSAD_2021_sa12021$Australian_percentile <- as.numeric(IRSAD_2021_sa12021$Australian_percentile)
@@ -706,7 +739,9 @@ CG_SA1_2016_SA1_2021$SA1_MAINCODE_2016 <- as.character(CG_SA1_2016_SA1_2021$SA1_
 CG_SA1_2016_SA1_2021$SA1_CODE_2021 <- as.character(CG_SA1_2016_SA1_2021$SA1_CODE_2021)
 IRSAD_2021_sa12016 <- IRSAD_2021_sa12021
 IRSAD_2021_sa12021 <- left_join(IRSAD_2021_sa12021, CG_SA1_2016_SA1_2021, join_by("sa1_code_2021_11_digit" == "SA1_CODE_2021"), multiple = "first")
-IRSAD_2021_sa12016$IRSAD_score <- IRSAD_2021_sa12021$IRSAD_score / IRSAD_2021_sa12021$RATIO_FROM_TO
+
+### Something not working with the calculation to convert IRSAD score by the correspondence file Ratios. Likely because the rations are to do with actual number of people etc. Hence, just uses the SA12021 ISRAD scores directly onto the corresponding SA12016 zones
+IRSAD_2021_sa12016$IRSAD_score <- IRSAD_2021_sa12021$IRSAD_score 
 IRSAD_2021_sa12016$sa1_code_2016 <- IRSAD_2021_sa12021$SA1_MAINCODE_2016
 names(IRSAD_2021_sa12016) <- c("sa1_code_2021_11_digit", "usual_resident_population", "IRSAD_score","blank", "Australian_rank", "Australian_decile", "Australian_percentile", "blank2", "state_for_rank", "state_rank", "state_decile", "state_percentile", "sa1_code_2016_11_digit")
 
@@ -731,10 +766,10 @@ map
 
 
 map <- IRSAD_2021_sa12016_map %>%
-  filter(sa2_name_2016 == "Clayton") %>%   
+  filter(sa3_name_2016 == "Melbourne City") %>%   
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = state_percentile),     # fill by IRSAD_score
+             fill = IRSAD_score),     # fill by IRSAD_score
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # fill colours on log scale
 # geom_point(aes(cent_long,
@@ -747,319 +782,57 @@ map
 
 
 ```
+The ISRAD scores appear to meet expectations.  In Clayton there is no score reported for the Monash University campus^[Likely due to low resident population.]. Higher scores are reported for SA1s to the north-east of Clayton, in the Notting Hill area. For the Melbourne City SA3 zone, there are no ISRAD scores reported for the various parks^[Royal Park to the north, Fitzroy Gardens and the sporting district to the east and south east, and the SA1 with the Docklands stadium in it.]. Areas with lower IRSAD scores are located in parts of North Melbourne and in the north-east ^[Lygon Street and Nicholson Street areas.], which meets expectations. 
 
-
-```{r Victoria_IRSAD_compare, echo=FALSE, warning=FALSE, message=FALSE, fig.height= 4, fig.fullwidth = FALSE, fig.cap= "Comparing 2016 and 2021 IRSAD scores for Victorian LGAs. Analysis using ggstatsplot package."}
-
-
-
-IRSAD_2016_2021_lga <- IRSAD_2016_lga 
-#assume LGA codes 2016 is same as 2021
-names(IRSAD_2016_2021_lga) <- c("lga_code_2021", names(IRSAD_2016_2021_lga[2:16]))
-IRSAD_2016_2021_lga$Census <- "2016"
-
-IRSAD_2021_lga_hold <- IRSAD_2021_lga
-IRSAD_2021_lga_hold$Census <- "2021"
-
-IRSAD_2016_2021_lga <- add_row((IRSAD_2016_2021_lga[,!names(IRSAD_2016_2021_lga) %in% c("lga_name_2016")]), (IRSAD_2021_lga_hold[,!names(IRSAD_2021_lga_hold) %in% c("lga_name_2021")]))
-            
-
-IRSAD_2016_2021_lga_map <- left_join(IRSAD_2016_2021_lga, LGA_map_data)
-IRSAD_2016_2021_lga_map$areasqkm_2021 <- as.numeric(IRSAD_2016_2021_lga_map$areasqkm_2021)
-
-
-ggwithinstats(IRSAD_2016_2021_lga_map %>% filter(state_name_2021 == "Victoria"),
-              x = "Census",
-              y = "IRSAD_score"
-                )
-
-
-```
-
-
-```{r Victoria_IRSAD_compare_map, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "Change in IRSAD scores", fig.show="hold", out.width="50%"}
-
-IRSAD_2016_2021_lga_wider <- pivot_wider(IRSAD_2016_2021_lga_map %>% filter(state_name_2021 == "Victoria") %>% dplyr::select("lga_code_2021", "lga_name_2021", "IRSAD_score", "Census"), names_from = "Census", values_from = "IRSAD_score")
-
-IRSAD_2016_2021_lga_wider$Change <- (IRSAD_2016_2021_lga_wider$`2021`- IRSAD_2016_2021_lga_wider$`2016`)
-
-IRSAD_2016_2021_lga_wider <- left_join(IRSAD_2016_2021_lga_wider, LGA_map_data)
-
-
-map <- IRSAD_2016_2021_lga_wider %>%
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = Change),     # fill by IRSAD_score
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf() + 
-  scale_fill_gradient2()
-              
-map
-
-
-
-map <- IRSAD_2016_2021_lga_wider %>%
-  filter(greater_melbourne == "Greater Melbourne") %>%
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = Change),     # fill by TOtal SI
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # keep legend
-  # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf() + 
-   scale_fill_gradient2() 
-
-map
-
-
-
-```
-
-Figure \ref{fig:Victoria_IRSAD_compare} indicates that has not been a significant change in IRSAD scores for Victorian LGAs between 2016 and 2021.  Figure \ref{fig:Victoria_IRSAD_compare_map} shows the percentage change in IRSAD scores for individual LGAs across Victoria and Greater Melbourne. Alpine Shire and the unincorporated Victorian areas (Mount Buller, French Island in Westernport etc.) appear to have had the largest increases in IRSAD in Victoria, while in Greater Melbourne it appears to have been mostly in inner areas where there have been increases. 
-
-There appears to have been some decreases in IRSAD scores in outer regions of Victoria. Outer-eastern parts of Melbourne, and Melton (outer-west) also also appear to have had lower IRSAD scores in 2021 than 2016.  
-
-
-
-```{r Victoria_IRSAD_rank_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "IRSAD rank 2021", fig.show="hold", out.width="50%"}
-
-
-
-map <- IRSAD_2021_lga_map %>%
-  filter(state_name_2021 == "Victoria") %>%   
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = as.numeric(state_rank)),     # fill by IRSAD_score
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf() +
-  scale_fill_gradient2() +
-  labs(fill = "Rank")
-
-map
-
-
-
-map <- IRSAD_2021_lga_map %>%
-  filter(state_name_2021 == "Victoria") %>%   
-  filter(greater_melbourne == "Greater Melbourne") %>%
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = as.numeric(state_rank)),     # fill by TOtal SI
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # keep legend
-  # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf()+
-   scale_fill_gradient2() +
-  labs(fill = "Rank")
-
-map
-
-
-
-```
-
-Figure \ref{fig:Victoria_IRSAD_rank_2021} shows the 2021 IRSAD ranking for Victoria and Greater Melbourne. A lower rank indicates a LGA with a lower IRSAD score. Inner Melbourne LGAs appear to have the highest ranks, whereas Greater Dandenong has the `r (IRSAD_2021_lga_map %>%  filter(lga_name_2021 == "Greater Dandenong"))$state_rank`rd lowest IRSAD in the state. For regional LGAs the ranking appears to be generally lower in the north-west, with Central Goldfields having the lowest IRSAD score for the entire state.  However, the Latrobe LGA in the east has the second lowest rank, while Glenelg in the south-west is the fifth lowest.    
-
-
-
-```{r Victoria_IRSAD_rank_compare, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "Change in IRSAD rank between 2021 and 2016 (lower rank = worse)", fig.show="hold", out.width="50%"}
-
-IRSAD_2016_2021_lga_wider <- pivot_wider(IRSAD_2016_2021_lga_map %>% filter(state_name_2021 == "Victoria") %>% dplyr::select("lga_code_2021", "lga_name_2021", "state_rank", "Census"), names_from = "Census", values_from = "state_rank")
-
-IRSAD_2016_2021_lga_wider$`2021` <- as.numeric(IRSAD_2016_2021_lga_wider$`2021`)
-IRSAD_2016_2021_lga_wider$`2016` <- as.numeric(IRSAD_2016_2021_lga_wider$`2016`)
-
-IRSAD_2016_2021_lga_wider$Change <- (IRSAD_2016_2021_lga_wider$`2021`- IRSAD_2016_2021_lga_wider$`2016`)
-
-IRSAD_2016_2021_lga_wider <- left_join(IRSAD_2016_2021_lga_wider, LGA_map_data)
-
-
-map <- IRSAD_2016_2021_lga_wider %>%
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = Change),     # fill by IRSAD_score
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf() + 
-  scale_fill_gradient2() +
-  labs(fill = "Rank change"
-       )
-       
-
-
-map
-
-
-
-map <- IRSAD_2016_2021_lga_wider %>%
-  filter(greater_melbourne == "Greater Melbourne") %>%
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = Change),     # fill by TOtal SI
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # keep legend
-  # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf() + 
- scale_fill_gradient2() +
-  labs(fill = "Rank change"
-       )
-  
-map
-
-```
-
-
-
-Figure \ref{fig:Victoria_IRSAD_rank_compare} shows the change in ranking between the 2016 and 2021 for each LGA in Victoria and Greater Melbourne. A positive number indicates that the LGA in question had a higher IRSAD score  than more of the other Victorian LGAs in 2021 than in it did in 2016. The state ranking appears to have fallen for most of the outer suburbs in Greater Melbourne, especially for Melton, Whittlesea and Casey. Rankings have improved particularly in Brimbank, but also in some of the other nearby LGAs. In regional Victoria Gannawarra's ranking has fallen the most, while Alpine Shire and Ararat's ranking have improved the most. 
-
-
-<!--
-### Toronto, Ontario, Canada
-### Washington DC, USA
---->
 
 # Results
-The following subsections discuss the results of cases studies used to develop and test the SI calculating code^[The code is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS as a Rmarkdown file (used to typeset this paper).]. 
 
-## Verifing the code output
-Code output results were verified by comparison to by-hand calculations for selected combinations of date and location in Victoria. 
+The following subsections discuss the results of running the code for all of Victoria for 2016 and 2021, and the looks in detail at the two selected cases (Clayton and Melbourne City) as a validation of the results. 
 
-### Running Creek and Morgans Bridge, Kiewa Valley Hwy
+## Supply Index results for all of Victoria
 
-
-The SA1 area 20403106915 covers Running Creek and Morgans Bridge, two localities in the Victorian Alps. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. The location of the SA1 20403106915 is shown in the following figure. Relevant geographic statistics are shown in the following.  
-
-![SA1 20403106915, with approximate location of Stop:ID 45125 highlighted, sources ABS and Google Maps](images/Running_creek_bus_stop.png)
-
-
-
-```{r Running_Creek_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
-st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20403106915"))
-```
-
-The area of SA1 20403106915 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20403106915"))$areasqkm_2021`km^2^.  By inspection, the entire 400m radius catchment area of both of the bus stops lie entirely within the SA1 20403106915 boundaries.
-
-
-
-Hence the $Area_{Bn}/ Area_{SA1_Area}$ term for each of the bus stops is equal to $(\pi 400^2) / 284598000 =$ `r (pi * 400 * 400 / 284598000) %>% label_scientific(digits = 3)()`.  
-No printed timetable has been located for the Albury - Mt Beauty via Baranduda and Tawonga South route that services these stops, but stop times are provided on the PTV website^[See https://tinyurl.com/5n83ryhy. This indicates services on April 27 to Albury at 7:25am, 9:25am and 9:30am. For April 28 there are services at 7:25am and 9:30am, but then there are no services over the weekend.  May 1 has two services (7:25am and 9:30am), May 2nd and 3rd both have three (7:25, 9:25 and 9:30am), bringing the total to 13. In the opposite direction the PTV website indicates a similar service pattern, only in the opposite direction and at 2:50pm, 4:20pm and 4:40pm. In general, this appears to be a school bus service pattern.  It is unclear, however, why some days have three services but others have only two.].  This indicates a  total of 26 arrivals to each of the two bus stops in a seven day week ^[The SL~Bn~ term.] Therefore the total $SI_{20403106915, 27/4-3/5/23}$ score is equal to $(2*(26* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(26* pi * 400 * 400 / 284598000))`.  
-
-The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
-```{r Running_Creek_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
-
-
-Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
-
-kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, seven days starting April 27, 2023")
-
-```
-
-The hand-calculated $SI_{20403106915, 27/4-3/5/23}$ matches that produced by the developed code, suggesting that the developed code is providing the expected output.  
-
-### Talbot, Avoca line
-Talbot, north-west of Ballarat, provides a location where the accuracy of the developed code can be tested for both: 1) multiple modes; and 2) station/stop catchment areas spanning across multiple areas of interest.  As shown in the below figure, the Talbot township is covered by SA1 20103101708, which lies within the SA1 20103101707.   
-
-
-![SA1 Location of 20103101707 and 20103101708 boundaries in relation to Talbot railway station and 800m catchment (red), and bus stops and 400m catchments (yellow), source ABS and PTV](images/Talbot.png)
-
-The Talbot Railway station's 800m catchment area is roughly three-fifths in SA1 20103101708. A bus stop located close to the railway station has roughly three-quarters of its catchment in 20103101708. The bus stop at the Talbot Town Hall has almost its entire catchment area within 20103101708.  
-
-
-The area of SA1 20103101707 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101707"))$areasqkm_2021 %>% format(digits=3)`km^2^^[via LGA data from abs_map package.]. 
-
-<!--For SA1 20103101708 the area is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101708"))$areasqkm_2021 %>% format(digits=3)`km^2^ -->
-
-
-Hence the $Area_{Bn}/ Area_{SA120103101708}$ term for the Talbot Town Hall bus stop is approximately equal to $(\pi .4^2) / 3.05=$ `r (pi * .4 * .4 / 3.05)%>% format(digits=3)`.
-
-<!---, while the $Area_{Bn}/ Area_{SA120103101707}$ is very close to zero.
---->For the bus stop at the Talbot Station the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits=3)`<!---, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $1/4(\pi .4^2) / 237=$ `r ((1/4)*(pi * .4 * .4 / 237)) %>% format(digits=3)`--->. For the Railway Station itself the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $(3/5)(\pi .8^2) / 3.05=$ `r ((3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)`<!---, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $2/5(\pi .8^2) / 237=$ `r ((2/5)*(pi * .8 * .8 / 237)) %>% format(digits = 3)`--->. 
-
-Review of the PTV website stop departures indicates that the typical service pattern appears to be: 
-
-- Talbot Town Hall bus stop - 42 services per week^[One Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week); 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week); two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week); local bus services to Ballarat on Thursdays (1), Fridays (1), Monday (1), Tuesday (1) and Wednesday(1) (5 per week); and local bus services towards Bendigo on Thursdays (1), Fridays (1), Mondays (1), Tuesdays (1) and Wednesdays (1) (5 per week).] 
-  
-  
-- Talbot Station bus stop - 32 services per week^[One Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week); 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week); and two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week)]
-
-- Talbot Railway Station - 28 services per week^{Two services towards Maryborough every day of the week; and two services towards Melbourne every day of the week]
-
-Therefore, the $SI_{20103101708}$ is approximately equal to: (Talbot Town Hall bus stop) 42 services per week x `r ((pi * .4 * .40 / 3.05)) %>% format(digits = 3)` = `r (42*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus (Talbot Station bus stop) 32 services per week x $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 305)) %>% format(digits = 3)` = `r (32*(3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus (Talbot Railway Station) 28 services per week x `r ((3/5)*(pi * .8 * .8 / 305)) %>% format(digits = 3)` = `r (28*(3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)` = `r ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) %>% format(digits = 3)`
-
-
-The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
-```{r Talbot_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
-
-
-Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
-
-kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"), caption = "Developed code output for SA1 20103101707, seven days starting April 27, 2023")
-
-```
-
-The hand-calculated $SI_{20103101708, 27/4-3/5/23}$ is  approximately `r (1-(((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) / ((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD))) %>% percent_format(digits = 3)()` lower than the value calculated by the SI code.  However, this appears to be sufficient to accept the result given that: 
-
-- the overlaps of the station and stop catchment areas have been estimated based on PTV and ABS maps, rather then precisely calculated using GIS software; 
-- the hand-calculated SI is based on current (August 2023) service schedules, whereas the code-calculated value is based on a GTFS file from April 27, 2023^[The online PTV timetables only go back a month or two, so any changes in the timetables between April and now could not be checked without looking directly at the GTFS files, which sort of defeats the purpose of doing the verification calculations.]; and
-- Overall the SI scores vary greatly across LGAs^[Ranging between `r min(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3)` and `r max(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3, big.mark = ",")`.], meaning that a difference of just  `r ((((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD)) - ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))))  %>% format(digits = 3)` between the hand-calculated and code-calculated score is likely an issue of precision, rather than accuracy.  
-
-Further verification work might involve:
-
-- updating the code calculated values from $SI_{20103101708, 27/4-3/5/23}$ to $SI_{20103101708, now+7days}$ such that the current PTV timetables could be directly compared to the code output using the current GTFS files^[This would remove the chance that the service patterns have actually changed between April and now, although it is expected that even if there has been a change it is unlikely to have been large.]; 
-- obtaining more precise $Area_{Bn} / Area_{area of interest}$ terms using GIS or similar; 
-- stepping through the coding calculations one at a time to verify the intermediate calculations, and hence confirm that this disrepancy is simply a matter of precision; 
-- undertaking the verification calculations for the  SA1 20103101707 area^[Unfortunately this is a large SA1 and there are other bus stops (outside of Talbot) that will contribute to the SI score.] or for some other area where hand calculations are relatively easy to perform. 
-
-
-Anyhow, this concludes the hand-calculation verification efforts to date. The next sections, therefore, look at the code outputs alone, with a focus on LGAs in Greater Melbourne and Victoria. 
-
-## Victoria, Australia: Supply Index results for LGAs
-To better understand how the SI calculation from GTFS data can be practically applied, this section presents results when the SI is calculated for Local Government Areas (LGAs) within Victoria. For the purposes of this section, the $SI_{LGA}$ is calculated for 2016 and 20121, but only a single day of service, being the date of the census in each year^[Tuesday August 9, 2016, and Tuesday August 10, 2021. Analysis of a single day was selected so as to reduce the processing time required to output the SI scores, as the code currenly takes about one day to run for all the stops in Victoria for every day that is analysed. Code performance could be improved, but appears good enough for the purposes of this research. As a way to get around the slow calculation speeds, the rmarkdown used to typeset this documents loads pre-calculated SI scores, rather than calculating it fresh every time the document is 'knitted'.].
+Four files are included with this document^[And in the 'results' subdirectory of the SA12016 branch in the github repository.]. These include the total 2016 and 2021 SI scores for each SA12016 zone^[Victoria_2016_SA_SA2016_160809.csv and Victoria_2021_SI_SA12016_210810.csv], and the SI scores by mode^[Victoria_2016_SI_df_by_mode...etc.].  
 
 Figure \ref{fig:Victoria_SI_2021} show the $SI_{LGA2021, 10/8/21}$ values for Victoria (left) and Greater Melbourne (right).
 
+```{r Victoria_SI_outputs, echo=FALSE, warning=FALSE, message=FALSE}
+
+victoria_2016_SI_total <- victoria_2016_SI_df_by_mode %>% adorn_totals(where = "col")
+##write total to csv
+#write_csv2(victoria_2016_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2016_SI_SA12016_160809.csv")
+
+#join to map data (not included in the CSV)
+victoria_2016_SI_total <- left_join(victoria_2016_SI_total, sa1_map_data)
 
 
-```{r Victoria_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+#create total column
 victoria_2021_SI_total <- victoria_2021_SI_df_by_mode %>% adorn_totals(where = "col")
+##write total to csv
+#write_csv2(victoria_2021_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2021_SI_SA12016_210810.csv")
 
-victoria_2021_SI_total <- left_join(victoria_2021_SI_total, LGA_map_data)
+#join to map data (not included in the CSV)
+victoria_2021_SI_total <- left_join(victoria_2021_SI_total, sa1_map_data)
 
 
-map <- victoria_2021_SI_total %>%
-  filter(state_name_2021 == "Victoria") %>%   
+
+```
+
+The next sections show results for SA1 zones within Clayton and within Greater Melbourne, so as to provide some context for the results and as a cross-check. 
+
+## SA1s within the Clayton SA2 zone
+
+```{r Clayton_SI_2016_and_2021_maps, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SA1s witihn the Clayton SA2 zone: SI for 2016 (left) and 2021 (right) census days", fig.show="hold", out.width="50%"}
+
+
+
+map <- victoria_2016_SI_total %>%
+  filter(sa2_name_2016 == "Clayton") %>%   
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # keep legend
-  scale_fill_gradient2(breaks = c(0.01, 1, 50), trans = "log") +    # fill colours on log scale
+  scale_fill_gradient2() +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
@@ -1071,74 +844,33 @@ map
 
 
 map <- victoria_2021_SI_total %>%
-  filter(greater_melbourne == "Greater Melbourne") %>%   # let's just look Melbourne
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = Total),     # fill by TOtal SI
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +
-  scale_fill_gradient2(breaks = c(0.01, 1, 50, 500), trans = "log") +    # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
- # theme_void() +                    # clears other plot elements
- coord_sf()
-
-map
-
-
-
-```
-In general, Figure \ref{fig:Victoria_SI_2021} indicates that the amount of transit service is higher for LGAs that are closer to the centre of Melbourne.  
-
-
-```{r Victoria_SI_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI for 2016 census day (August 9th) by LGA", fig.show="hold", out.width="50%"}
-victoria_2016_SI_total <- victoria_2016_SI_df_by_mode %>% adorn_totals(where = "col")
-
-victoria_2016_SI_total <- left_join(victoria_2016_SI_total, LGA_map_data)
-
-
-map <- victoria_2016_SI_total %>%
-  filter(state_name_2021 == "Victoria") %>%   
+  filter(sa2_name_2016 == "Clayton") %>%   
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # keep legend
-  scale_fill_gradient2(breaks = c(0.01, 1, 50), trans = "log") +    # fill colours on log scale
+  scale_fill_gradient2() +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
-  #theme_void() +                    # clears other plot elements
+  # theme_void() +                    # clears other plot elements
  coord_sf()
 
-#map
-
-
-
-map <- victoria_2016_SI_total %>%
-  filter(greater_melbourne == "Greater Melbourne") %>%   # let's just look Melbourne
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = Total),     # fill by TOtal SI
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +
-  scale_fill_gradient2(breaks = c(0.01, 1, 50, 500), trans = "log") +    # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-#  theme_void() +                    # clears other plot elements
- coord_sf()
-
-#map
-
-
-
-
+map
 
 
 ```
- 
+
+Figure \ref{fig:Clayton_SI_2016_and_2021_maps} shows SI scores for  
+
+## SA1s within the Melbourne City SA3 zone
+
+
+
+
+## Examining SA1s across all of Greater Melbourne and all of Victoria
+
 
 ```{r Victoria_SI_2021_versus_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ violin and box plot generated using ggstatsplot package"}
 
@@ -1188,8 +920,8 @@ ggwithinstats(
 
 
 ```
-Figure \ref{fig:Victoria_SI_2021_versus_2016} compares the SI for 2016 and 2021 for each LGA. It indicates that there are significant differences in the SI scores in 2016 and 2021.  However, it appears that the change has been relatively small, with the average SI increasing from `r (victoria_2016_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)` to `r (victoria_2021_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)`.  
 
+Figure \ref{fig:Victoria_SI_2021_versus_2016} compares the SI for 2016 and 2021 for each LGA. It indicates that there are significant differences in the SI scores in 2016 and 2021. However, it appears that the change has been relatively small, with the average SI increasing from `r (victoria_2016_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)` to `r (victoria_2021_SI_total %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% format(digits=4)`.
 
 ```{r Victoria_SI_2021_versus_2016_greater_melbourne, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ Greater Melbourne, violin and box plot generated using ggstatsplot package"}
 
@@ -1206,7 +938,7 @@ ggwithinstats(
 
 ```
 
-Figure \ref{fig:Victoria_SI_2021_versus_2016_greater_melbourne} shows that there was a significant change in SI for LGAs within Greater Melbourne, rising from `r (victoria_2016_SI_total %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)` to `r (victoria_2021_SI_total %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)`. 
+Figure \ref{fig:Victoria_SI_2021_versus_2016_greater_melbourne} shows that there was a significant change in SI for LGAs within Greater Melbourne, rising from `r (victoria_2016_SI_total %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)` to `r (victoria_2021_SI_total %>% filter(state_name_2021 == "Victoria") %>% filter(greater_melbourne == "Greater Melbourne"))$Total %>% mean() %>% format(digits=4)`.
 
 ```{r Victoria_SI_2021_versus_2016_elsewhere, echo=FALSE, warning=FALSE, message=FALSE, fig.height= 3.5, fig.fullwidth = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ non-Greater Melbourne parts of Victoria, violin and box plot generated using ggstatsplot package"}
 
@@ -1223,10 +955,7 @@ ggwithinstats(
 
 ```
 
-
- There was no significant change amongst LGAs in the rest of Victoria (Figure \ref{fig:Victoria_SI_2021_versus_2016_elsewhere}).  
-
-
+There was no significant change amongst LGAs in the rest of Victoria (Figure \ref{fig:Victoria_SI_2021_versus_2016_elsewhere}).
 
 ```{r Victoria_SI_changes, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$"}
 
@@ -1285,8 +1014,6 @@ map
 
 ```
 
-
-
 ```{r Victoria_SI_changes_ggbetweenstats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ violin and box plot generated using ggstatsplot package"}
 
 ggbetweenstats(
@@ -1303,10 +1030,7 @@ ggbetweenstats(
 
 ```
 
-
-
-Figure \ref{fig:Victoria_SI_changes} maps percentage changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. There was no significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria (Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}). The SI increased by an average of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls}).   
-
+Figure \ref{fig:Victoria_SI_changes} maps percentage changes in SI between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}. There was no significant difference in changes in SI between LGAs in Greater Melbourne or the Rest of Victoria (Figure \ref{fig:Victoria_SI_changes_ggbetweenstats}). The SI increased by an average of `r (victoria_difference_2021_2016_SI %>% filter(state_name_2021 == "Victoria"))$Total %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls}).
 
 ```{r Victoria_SI_changes_falls, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
 
@@ -1317,8 +1041,9 @@ kbl(
 
 ```
 
+The largest relative changes in SI were in Hindmarsh (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Hindmarsh"))$Total %>% percent_format(digits = 2)()`), East Gippsland (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "East Gippsland"))$Total %>% percent_format(digits = 2)()`) and West Wimmera (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "West Wimmera"))$Total %>% percent_format(digits = 2)()`). For Hindmarsh this appears to have involved the entire removal of the rail service[^26], but offset by a small increase in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Hindmarsh"))$bus %>% percent_format(digits = 2)()`). Central Goldfields, in contrast had a doubling of train services, but an overall change of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Central Goldfields"))$Total) %>% percent_format(digits = 2)()`. However, some LGAs had relatively large increases in SI between 2016 and 2021.
 
-The largest relative changes in SI were in Hindmarsh (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Hindmarsh"))$Total %>% percent_format(digits = 2)()`), East Gippsland (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "East Gippsland"))$Total %>% percent_format(digits = 2)()`) and West Wimmera (`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "West Wimmera"))$Total %>% percent_format(digits = 2)()`). For Hindmarsh this appears to have involved the entire removal of the rail service^[This might be related to the Overland rail service to Adelaide. Further work might involve looking at whether this service was operational on the day of the census in 2021, and whether this service is included in the PTV GTFS feed.], but offset by a small increase in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Hindmarsh"))$bus %>% percent_format(digits = 2)()`). Central Goldfields, in contrast had a doubling of train services, but an overall change of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Central Goldfields"))$Total) %>% percent_format(digits = 2)()`. However, some LGAs had relatively large increases in SI between 2016 and 2021.   
+[^26]: This might be related to the Overland rail service to Adelaide. Further work might involve looking at whether this service was operational on the day of the census in 2021, and whether this service is included in the PTV GTFS feed.
 
 ```{r Victoria_SI_changes_increases, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1327,13 +1052,15 @@ kbl(victoria_difference_2021_2016_SI[order(victoria_difference_2021_2016_SI$Tota
 
 ```
 
+The largest relative increases in SI are shown in Table \ref{tab:Victoria_SI_changes_increases}. These were in Baw Baw (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$Total %>% percent_format(digits = 2)()`), Northern Grampians (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$Total %>% percent_format(digits = 2)()`) and Macedon Ranges (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$Total %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()` and +`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw $SI_{bus}$ increase by `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services[^27], but an increase of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in $SI_{bus}$.
 
-The largest relative increases in SI are shown in Table \ref{tab:Victoria_SI_changes_increases}. These were in Baw Baw (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$Total %>% percent_format(digits = 2)()`), Northern Grampians (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$Total %>% percent_format(digits = 2)()`) and Macedon Ranges (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$Total %>% percent_format(digits = 2)()`). For Baw Baw and Macedon Ranges this appears to have involved large increases in bus service levels (+`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()` and +`r (victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services, but saw $SI_{bus}$ increase by `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services^[Again, this might be related to the Overland rail service to Adelaide.], but an increase of `r as.numeric((victoria_difference_2021_2016_SI %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in $SI_{bus}$. 
+[^27]: Again, this might be related to the Overland rail service to Adelaide.
 
-  
 ### Supply Index by mode
 
-Figure \ref{fig:SI_by_mode} shows changes in the proportion of the SI score^[Note, SI scores have been rounded to the nearest integer.] delivered by train, tram and bus across Victoria.
+Figure \ref{fig:SI_by_mode} shows changes in the proportion of the SI score[^28] delivered by train, tram and bus across Victoria.
+
+[^28]: Note, SI scores have been rounded to the nearest integer.
 
 ```{r SI_by_mode, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ proportion by mode, bar chart generated by ggstatsplot package", fig.height=3}
 
@@ -1356,8 +1083,11 @@ ggbarstats(victoria_2021_2016_SI_by_mode_map,
   
 ```
 
-Figure \ref{fig:SI_by_mode} indicates there has not been a significant change. Changes were also not statistically significant when including only LGAs in Greater Melbourne or only LGAs elsewhere in Victoria^[Not shown.].
+Figure \ref{fig:SI_by_mode} indicates there has not been a significant change. Changes were also not statistically significant when including only LGAs in Greater Melbourne or only LGAs elsewhere in Victoria[^29].
 
+[^29]: Not shown.
+
+````{=html}
 <!--- There has no significant change across LGAs in Greater Melbourne or elsewhere in Victoria (Figures \ref{fig:SI_by_mode_greater_melbourne_proportion} and \ref{fig:SI_by_mode_elsewhere_proportion}).
 
 
@@ -1387,8 +1117,7 @@ ggbarstats(victoria_2021_2016_SI_by_mode_map %>% filter(greater_melbourne == "El
 ```
 
 --->
-
-
+````
 
 ```{r SI_by_mode_individual_LGAs_rail, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ rail mode only, violin and box plot generated using ggstatsplot package", fig.height = 3.5, fig.fullwidth=FALSE, message=FALSE, warning=FALSE}
 
@@ -1437,7 +1166,6 @@ ggwithinstats(
   
 ```
 
-
 ```{r SI_by_mode_individual_LGAs_LRT, echo=FALSE, fig.cap="$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ tram mode only, violin and box plot generated using ggstatsplot package", fig.fullwidth=FALSE, fig.height = 3.5, message=FALSE, warning=FALSE}
 
 ggwithinstats(
@@ -1453,8 +1181,9 @@ ggwithinstats(
 
 ```
 
-There were small but significant changes in $SI_{rail}$ and $SI_{bus}$ scores for LGAs in Victoria^[Considering only those LGAs that had rail or bus services in 2016 or 2021] between 2016 and 2021, as shown in Figures \ref{fig:SI_by_mode_individual_LGAs_rail} and \ref{fig:SI_by_mode_individual_LGAs_bus}. However, Figure \ref{fig:SI_by_mode_individual_LGAs_LRT} indicates that there have not been any significant change in SI tram scores for those LGAs that have tram services.  
+There were small but significant changes in $SI_{rail}$ and $SI_{bus}$ scores for LGAs in Victoria[^30] between 2016 and 2021, as shown in Figures \ref{fig:SI_by_mode_individual_LGAs_rail} and \ref{fig:SI_by_mode_individual_LGAs_bus}. However, Figure \ref{fig:SI_by_mode_individual_LGAs_LRT} indicates that there have not been any significant change in SI tram scores for those LGAs that have tram services.
 
+[^30]: Considering only those LGAs that had rail or bus services in 2016 or 2021
 
 ```{r SI_summary_table, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI by mode, Greater Melbourne and elsewhere in Victoria"}
                    
@@ -1512,11 +1241,13 @@ new_mode_lgas <- victoria_2021_2016_SI_by_mode_wider_census %>% filter(`2016` ==
 
 ```
 
-Entirely new modes of transit were introduced in `r nrow(new_mode_lgas)` LGAs between 2016 and 2021. The following sections further examine changes in SI scores for each mode.  
+Entirely new modes of transit were introduced in `r nrow(new_mode_lgas)` LGAs between 2016 and 2021. The following sections further examine changes in SI scores for each mode.
 
 ### Rail Supply Index
 
-Figure \ref{fig:Victoria_SI_changes_rail} maps percentage changes in SI~rail~ between 2016 and 2021^[The City of Manningham is excluded from these results as it has a very high percentage change, which may be misleading.  The reality is that there are no railway stations within its boundaries.  Only a tiny fraction of the LGA is within the 800m buffer zone of any railway stations, meaning that the $SI_{rail}$ scores are very low (i.e. <0.1). However, as a result the percentage change between 2021 and 2016 is proportionally very high.]. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_rail}.
+Figure \ref{fig:Victoria_SI_changes_rail} maps percentage changes in SI~rail~ between 2016 and 2021[^31]. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_rail}.
+
+[^31]: The City of Manningham is excluded from these results as it has a very high percentage change, which may be misleading. The reality is that there are no railway stations within its boundaries. Only a tiny fraction of the LGA is within the 800m buffer zone of any railway stations, meaning that the $SI_{rail}$ scores are very low (i.e. \<0.1). However, as a result the percentage change between 2021 and 2016 is proportionally very high.
 
 ```{r Victoria_SI_changes_rail, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ rail mode only"}
 
@@ -1569,7 +1300,7 @@ map
 
 ```
 
-The maps indicate reductions in $SI_{rail}$ in western Victoria and also in the north east. Within Greater Melbourne there appears to have been a small decrease on the Mornington Penninsula, while the $SI_{rail}$ has increased the most for Melton (west)and Whittlesea (north). 
+The maps indicate reductions in $SI_{rail}$ in western Victoria and also in the north east. Within Greater Melbourne there appears to have been a small decrease on the Mornington Penninsula, while the $SI_{rail}$ has increased the most for Melton (west)and Whittlesea (north).
 
 ```{r Victoria_SI_changes_ggbetweenstats_rail, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ rail mode only, violin and box plot generated using ggstatsplot package"}
 
@@ -1589,7 +1320,7 @@ ggbetweenstats(
 
 ```
 
-Figure \ref{Victoria_SI_changes_ggbetweenstats_rail} shows no significant difference in changes in SI between those LGAs in Greater Melbourne versus those in the Rest of Victoria. 
+Figure \ref{Victoria_SI_changes_ggbetweenstats_rail} shows no significant difference in changes in SI between those LGAs in Greater Melbourne versus those in the Rest of Victoria.
 
 ```{r Victoria_SI_changes_falls_rail, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1599,8 +1330,9 @@ kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI
 
 ```
 
+The largest relative changes in SI were the loss of rail services in Northern Grampians, Horsham and Hindmarsh[^32]. Benalla (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Benalla"))$rail %>% percent_format(digits = 2)()`) and Wangaratta (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Wangaratta"))$rail %>% percent_format(digits = 2)()`) in the north east of Victoria had the next largest reduction in $SI_{rail}$ scores for 2021 compared to 2016, followed by the Mornington Peninsula (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Mornington Peninsula"))$rail %>% percent_format(digits = 2)()`).
 
-The largest relative changes in SI were the loss of rail services in Northern Grampians, Horsham and Hindmarsh^[These LGAs are serviced by the Overland, rather than regular V/line services, so it may be that the Overland service was not included in the GTFS file in 2021, rather than an actually cessation of services. TO DO: look more closely at the GTFS file.]. Benalla (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Benalla"))$rail %>% percent_format(digits = 2)()`) and Wangaratta (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Wangaratta"))$rail %>% percent_format(digits = 2)()`) in the north east of Victoria had the next largest reduction in $SI_{rail}$ scores for 2021 compared to 2016, followed by the Mornington Peninsula (`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Mornington Peninsula"))$rail %>% percent_format(digits = 2)()`).
+[^32]: These LGAs are serviced by the Overland, rather than regular V/line services, so it may be that the Overland service was not included in the GTFS file in 2021, rather than an actually cessation of services. TO DO: look more closely at the GTFS file.
 
 ```{r Victoria_SI_changes_increases_rail, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1609,16 +1341,13 @@ kbl(victoria_difference_2021_2016_SI_rail[order(victoria_difference_2021_2016_SI
 
 ```
 
+The largest relative increases in $SI_{rail}$ were in Melton (+`r  (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Melton"))$rail %>% percent_format(digits = 2)()`), Central Goldfields (+`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Central Goldfields"))$rail %>% percent_format(digits = 2)()`) and Hepburn (+`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Hepburn"))$rail %>% percent_format(digits = 2)()`)[^33]. However, Melton's $SI_{rail}$ in 2021 is only `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Melton") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)`, the Central Goldfields is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Central Goldfields") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)` and Hepburn's is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Hepburn") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)`, suggesting the the large relative change in $SI_{rail}$ is more to do with having had low values in 2016.
 
-The largest relative increases in $SI_{rail}$ were in Melton (+`r  (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Melton"))$rail %>% percent_format(digits = 2)()`), Central Goldfields (+`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Central Goldfields"))$rail %>% percent_format(digits = 2)()`) and Hepburn (+`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Hepburn"))$rail %>% percent_format(digits = 2)()`)^[Again, Manningham has been excluded as it does not have any railway stations within its boundaries, and its large percentage increase is due to having a very low $SI_{rail}$ score in 2016 (<0.1)]. However, Melton's $SI_{rail}$ in 2021 is only `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Melton") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)`, the Central Goldfields is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Central Goldfields") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)` and Hepburn's is `r (victoria_2021_2016_SI_by_mode_map %>% filter(lga_name_2021 == "Hepburn") %>% filter(mode == "rail") %>% filter(Census == "2021"))$SI %>% format(digits = 2)`, suggesting the the large relative change in $SI_{rail}$ is more to do with having had low values in 2016. 
+[^33]: Again, Manningham has been excluded as it does not have any railway stations within its boundaries, and its large percentage increase is due to having a very low $SI_{rail}$ score in 2016 (\<0.1)
 
-  
 ### Bus Supply Index
 
-
 Figure \ref{fig:Victoria_SI_changes_bus} maps percentage changes in SI~bus~ between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_bus}.
-
-
 
 ```{r Victoria_SI_changes_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.show="hold", out.width="50%", fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ bus mode only, violin and box plot generated using ggstatsplot package"}
 
@@ -1671,9 +1400,7 @@ map
 
 ```
 
-
 The maps indicate that the larger reductions in $SI_{bus}$ have occurred in far western and eastern Victoria. Within Greater Melbourne there appears to have been a small decrease in some inner LGAs, but large increases for many outer LGAs.
-
 
 ```{r Victoria_SI_changes_ggbetweenstats_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.margin = FALSE, fig.cap= "$SI_{LGA2021, 10/8/21}$ and $SI_{LGA2021, 9/8/16}$ bus mode only"}
 
@@ -1691,7 +1418,8 @@ ggbetweenstats(
 
 
 ```
- Overall $SI_{bus}$ increased by an average of `r (victoria_difference_2021_2016_SI_bus %>% filter(state_name_2021 == "Victoria") %>% filter(some_bus))$bus %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. There was no significant difference in changes in $SI_{bus}$ between LGAs in Greater Melbourne or the Rest of Victoria (Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_bus}). However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls_bus}).   
+
+Overall $SI_{bus}$ increased by an average of `r (victoria_difference_2021_2016_SI_bus %>% filter(state_name_2021 == "Victoria") %>% filter(some_bus))$bus %>% mean() %>% percent_format(digits=4)()` for LGAs in Victoria. There was no significant difference in changes in $SI_{bus}$ between LGAs in Greater Melbourne or the Rest of Victoria (Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_bus}). However, there were some LGAs that saw decreases in SI between 2016 and 2021 (Table \ref{tab:Victoria_SI_changes_falls_bus}).
 
 ```{r Victoria_SI_changes_falls_bus, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = FALSE, fig.cap= "Change in SI on census day 2016 to 2021, by LGA"}
 
@@ -1701,8 +1429,7 @@ kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_
 
 ```
 
-
-The largest relative changes in SI were in East Gippsland (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "East Gippsland"))$bus %>% percent_format(digits = 2)()`), West Wimmera (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "West Wimmera"))$bus %>% percent_format(digits = 2)()`), Pyrenees (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Pyrenees"))$bus %>% percent_format(digits = 2)()`)  and Gannawarra (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Gannawarra"))$bus %>% percent_format(digits = 2)()`). For Pyrenees this appears to have been offset by a large increase in rail service levels (+`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Pyrenees"))$rail %>% percent_format(digits = 2)()`).
+The largest relative changes in SI were in East Gippsland (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "East Gippsland"))$bus %>% percent_format(digits = 2)()`), West Wimmera (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "West Wimmera"))$bus %>% percent_format(digits = 2)()`), Pyrenees (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Pyrenees"))$bus %>% percent_format(digits = 2)()`) and Gannawarra (`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Gannawarra"))$bus %>% percent_format(digits = 2)()`). For Pyrenees this appears to have been offset by a large increase in rail service levels (+`r (victoria_difference_2021_2016_SI_rail %>% filter(lga_name_2021 == "Pyrenees"))$rail %>% percent_format(digits = 2)()`).
 
 ```{r Victoria_SI_changes_increases_bus, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1711,10 +1438,12 @@ kbl(victoria_difference_2021_2016_SI_bus[order(victoria_difference_2021_2016_SI_
 
 ```
 
+In contrast, some LGAs had relatively large increases in $SI_{bus}$ between 2016 and 2021, as shown in Figure \ref{tab:Victoria_SI_changes_increases_bus}. The largest relative increases in SI~bus~ were in Baw Baw (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`), Macedon Ranges (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`) and Northern Grampians (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus %>% percent_format(digits = 2)()`). Northern Grampians, lost all of its train services[^34], but saw $SI_{bus}$ increase by `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services[^35], but an increase of `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in $SI_{bus}$.
 
-In contrast, some LGAs had relatively large increases in $SI_{bus}$ between 2016 and 2021, as shown in Figure \ref{tab:Victoria_SI_changes_increases_bus}. The largest relative increases in SI~bus~ were in Baw Baw (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Baw Baw"))$bus %>% percent_format(digits = 2)()`),  Macedon Ranges (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Macedon Ranges"))$bus %>% percent_format(digits = 2)()`) and Northern Grampians (+`r (victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus %>% percent_format(digits = 2)()`).  Northern Grampians, lost all of its train services^[Again, this may be related to the Overland.], but saw $SI_{bus}$ increase by `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Northern Grampians"))$bus) %>% percent_format(digits = 2)()`. Horsham, likewise, saw the loss of all of its rail services^[Again, this appears to be Overland related], but an increase of `r as.numeric((victoria_difference_2021_2016_SI_bus %>% filter(lga_name_2021 == "Horsham"))$bus) %>% percent_format(digits = 2)()` in $SI_{bus}$. 
+[^34]: Again, this may be related to the Overland.
 
-  
+[^35]: Again, this appears to be Overland related
+
 ### LRT Supply Index
 
 Figure \ref{fig:Victoria_SI_changes_LRT} maps percentage changes in SI~LRT~ between 2016 and 2021. These are also shown in Figure \ref{fig:Victoria_SI_changes_ggbetweenstats_LRT}.
@@ -1752,9 +1481,6 @@ map
 
 ```
 
-
-
-
 ```{r Victoria_SI_changes_ggbetweenstats_LRT, echo=FALSE, warning=FALSE, message=FALSE, fig.margin = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$ percent change from $SI_{LGA2021, 9/8/16}$ LRT mode only"}
 
 ggbetweenstats(
@@ -1783,7 +1509,7 @@ kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_
 
 ```
 
-Table \ref{tab:Victoria_SI_changes_falls_LRT} shows the `r nrow(victoria_difference_2021_2016_SI_LRT  %>% filter(LRT < 0)) ` LGAs where $SI_{LRT}$ fell.  In general, the changes were relatively small.  
+Table \ref{tab:Victoria_SI_changes_falls_LRT} shows the `r nrow(victoria_difference_2021_2016_SI_LRT  %>% filter(LRT < 0))` LGAs where $SI_{LRT}$ fell. In general, the changes were relatively small.
 
 ```{r Victoria_SI_changes_increases_LRT, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -1792,16 +1518,17 @@ kbl(victoria_difference_2021_2016_SI_LRT[order(victoria_difference_2021_2016_SI_
 
 ```
 
-Table \ref{tab:Victoria_SI_changes_increases_LRT} shows LGAs where $SI_{LRT}$ increased.  The largest relative increases in SI were in Stonnington (+`r (victoria_difference_2021_2016_SI_LRT %>% filter(lga_name_2021 == "Stonnington"))$LRT %>% percent_format(digits = 2)()`) and Bayside (+`r (victoria_difference_2021_2016_SI_LRT %>% filter(lga_name_2021 == "Bayside (Vic.)"))$LRT %>% percent_format(digits = 2)()`). 
-
+Table \ref{tab:Victoria_SI_changes_increases_LRT} shows LGAs where $SI_{LRT}$ increased. The largest relative increases in SI were in Stonnington (+`r (victoria_difference_2021_2016_SI_LRT %>% filter(lga_name_2021 == "Stonnington"))$LRT %>% percent_format(digits = 2)()`) and Bayside (+`r (victoria_difference_2021_2016_SI_LRT %>% filter(lga_name_2021 == "Bayside (Vic.)"))$LRT %>% percent_format(digits = 2)()`).
 
 ## Victoria, Australia: $\text{\underline{transit needs}}$
-In the following sections assessments of transport needs versus transport supply are reported. 
+
+In the following sections assessments of transport needs versus transport supply are reported.
 
 ### IRSAD needs score and SI supply score
 
-The IRSAD scores for Victorian LGAs where presented above in Figures \ref{fig:Victoria_IRSAD_load_2021} and \ref{fig:Victoria_IRSAD_compare_map}.  This section explores how these scores compare to the $SI_{LGA}$ scores. Figure \ref{fig:Victoria_IRSAD_to_SI_2021} compares the 2021 IRSAD and SI scores for LGAs across Victoria.  
+The IRSAD scores for Victorian LGAs where presented above in Figures \ref{fig:Victoria_IRSAD_load_2021} and \ref{fig:Victoria_IRSAD_compare_map}. This section explores how these scores compare to the $SI_{LGA}$ scores. Figure \ref{fig:Victoria_IRSAD_to_SI_2021} compares the 2021 IRSAD and SI scores for LGAs across Victoria.
 
+````{=html}
 <!---
 ```{r Victoria_IRSAD_to_SI_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.height = 4.5, fig.cap = "Relationship between IRSAD score and SI, by LGA, 2016"}
 
@@ -1834,6 +1561,8 @@ ggscatterstats(
 ```
 
 --->
+````
+
 ```{r Victoria_IRSAD_to_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.height = 4.5, fig.cap = "Relationship between IRSAD score and SI, by LGA, 2021"}
 
 
@@ -1852,10 +1581,11 @@ ggscatterstats(
 
 ```
 
-Figure \ref{fig:Victoria_IRSAD_to_SI_2021} indicates a significant association between IRSAD and SI scores for LGAs in Victoria in 2021, with SI increasing with increase IRSAD.  . 
+Figure \ref{fig:Victoria_IRSAD_to_SI_2021} indicates a significant association between IRSAD and SI scores for LGAs in Victoria in 2021, with SI increasing with increase IRSAD. .
 
 ### Population and SI supply score
 
+````{=html}
 <!---
 
 ```{r Victoria_Population_to_SI_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.height = 4.5, fig.cap = "Relationship between population and SI, by LGA, 2016"}
@@ -1876,6 +1606,7 @@ ggscatterstats(
 ```
 
 --->
+````
 
 ```{r Victoria_Population_to_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap = "Relationship between population and SI, by LGA, 2021", fig.height = 4.5}
 
@@ -1895,11 +1626,11 @@ ggscatterstats(
 
 ```
 
-Figure \ref{fig:Victoria_Population_to_SI_2021} compares population and SI score.  It indicates a significant relationship, with SI score increasing with increasing population. The City of Casey and Greater Geelong appear to be notable examples of LGAs with higher populations but SI scores that appear lower than the trend.  
-
+Figure \ref{fig:Victoria_Population_to_SI_2021} compares population and SI score. It indicates a significant relationship, with SI score increasing with increasing population. The City of Casey and Greater Geelong appear to be notable examples of LGAs with higher populations but SI scores that appear lower than the trend.
 
 ### IRSAD needs rank and SI supply rank
 
+````{=html}
 <!---
 ```{r Victoria_IRSAD_to_SI_rank_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap = "Relationship between IRSAD rank and SI rank, by LGA, 2016", fig.height = 4.5}
 
@@ -1922,6 +1653,7 @@ ggscatterstats(
 
 ```
 ---->
+````
 
 ```{r Victoria_IRSAD_to_SI_rank_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap = "Relationship between IRSAD rank and SI rank, by LGA, 2021", fig.height = 4.5}
 
@@ -1939,10 +1671,9 @@ ggscatterstats(
 
 ```
 
-Figure \ref{fig:Victoria_IRSAD_to_SI_rank_2021} compares the rank (out of all Victorian LGAs) for each LGA's IRSAD score and SI score. It indicates a significant association between IRSAD rank and SI rank, with those LGAs that have higher SI scores (better transit) tending to have higher IRSAD ranks (implying better socio-economic conditions). Various LGAs that have SI ranks 10 or more places lower than their IRSAD rank are labeled.  
+Figure \ref{fig:Victoria_IRSAD_to_SI_rank_2021} compares the rank (out of all Victorian LGAs) for each LGA's IRSAD score and SI score. It indicates a significant association between IRSAD rank and SI rank, with those LGAs that have higher SI scores (better transit) tending to have higher IRSAD ranks (implying better socio-economic conditions). Various LGAs that have SI ranks 10 or more places lower than their IRSAD rank are labeled.
 
-Further analysis of population, IRSAD, SI rank and other needs-gaps metrics might be a direction for future research.  In particular, mapping of those LGAs with low SI scores by higher needs, along the lines of the anlysis presented in @currie2007identifying, would appear to be an important next step. 
-<!---
+Further analysis of population, IRSAD, SI rank and other needs-gaps metrics might be a direction for future research. In particular, mapping of those LGAs with low SI scores by higher needs, along the lines of the anlysis presented in @currie2007identifying, would appear to be an important next step. <!---
 
 ### Level-boarding accessibility
 
@@ -1986,31 +1717,30 @@ Many proposals - look at a few of them?
 
 # Discussion and Conclusions
 
-This document presents preliminary results from the development of code to calculate the @currie2007identifying transit Supply Index (SI) directly from GTFS data. The developed code is available within the Rmarkdown file used to typesset this document, and available on github.  
+This document presents preliminary results from the development of code to calculate the @currie2007identifying transit Supply Index (SI) directly from GTFS data. The developed code is available within the Rmarkdown file used to typesset this document, and available on github.
 
-The code out has been verified by performing hand calculations for SA1 SI scores in the Victorian Alps (Running Creek) and Talbot.  The Running Creek calculation, included two bus stops. This verification check resulted in an exact match between the hand- and code-calculated values. 
+The code out has been verified by performing hand calculations for SA1 SI scores in the Victorian Alps (Running Creek) and Talbot. The Running Creek calculation, included two bus stops. This verification check resulted in an exact match between the hand- and code-calculated values.
 
-The verification calculation for Talbot involved regional train, regional bus and local bus services across two bus stops and one train station.  The catchment areas for these stops and station were only partially within the SA1.  The hand-calculated and code-calculated SI values were reasonably similar, with the different results likely due to differing levels of precision in the assessment of areas and the lack of available timetables for the service date in question.  Further verification checks, including more accurate assessment of catchment area coverage, may be a direction for future research.  Similarly, additional verification calculations or close, step-by-step review of the developed code may be a direction for future research.  
+The verification calculation for Talbot involved regional train, regional bus and local bus services across two bus stops and one train station. The catchment areas for these stops and station were only partially within the SA1. The hand-calculated and code-calculated SI values were reasonably similar, with the different results likely due to differing levels of precision in the assessment of areas and the lack of available timetables for the service date in question. Further verification checks, including more accurate assessment of catchment area coverage, may be a direction for future research. Similarly, additional verification calculations or close, step-by-step review of the developed code may be a direction for future research.
 
-The developed code was used to compare transit service levels for LGAs across Greater Melbourne and the rest of Victoria at the time of 2016 and 2021 censuses. Results appear to be largely as might be expected, with more transit service coverage generally being provided in more central LGAs.  There were significant differences between the 2016 and 2021 service levels across all of Victoria and for LGAs in Greater Melbourne (average SI increased), but not for LGAs in Victoria but outside Greater Melbourne. 
+The developed code was used to compare transit service levels for LGAs across Greater Melbourne and the rest of Victoria at the time of 2016 and 2021 censuses. Results appear to be largely as might be expected, with more transit service coverage generally being provided in more central LGAs. There were significant differences between the 2016 and 2021 service levels across all of Victoria and for LGAs in Greater Melbourne (average SI increased), but not for LGAs in Victoria but outside Greater Melbourne.
 
-Changes in SI scores appeared to be unevenly distributed across the state, with outer regional areas having reduced service levels, while some other LGAs, especially those in outer Melbourne, had higher SI scores in 2021 than in 2016. There were significant changes in rail and bus service levels between 2016 and 2021, but not for trams. 
+Changes in SI scores appeared to be unevenly distributed across the state, with outer regional areas having reduced service levels, while some other LGAs, especially those in outer Melbourne, had higher SI scores in 2021 than in 2016. There were significant changes in rail and bus service levels between 2016 and 2021, but not for trams.
 
-Some of the results suggest that the Overland train services (to Adelaide) were not included in the GTFS file in 2021. It is unclear at the moment whether this was because to the service was not operational, or simply a data accuracy issue.  However, this perhaps demonstrates the challenge of using GTFS data alone for analysis of this nature: the quality of the result is reliant on the quality of the underlying data. 
+Some of the results suggest that the Overland train services (to Adelaide) were not included in the GTFS file in 2021. It is unclear at the moment whether this was because to the service was not operational, or simply a data accuracy issue. However, this perhaps demonstrates the challenge of using GTFS data alone for analysis of this nature: the quality of the result is reliant on the quality of the underlying data.
 
-Comparisons with IRSAD scores and ranks, and population suggest that SI score is sificiantly associated with all three of these metrics.  In general, the SI increases with increases in population, IRSAD and IRSAD rank, although it is important to note that increased IRSAD implies the LGA has less social disadvantage. This would appear to be contrary to what might be desired, with greater service provided to those areas where there is greater disadvantage, but clearly there will be many confounding factors and unclear causality involved in these relationships. That said, Casey, Wyndham and Greater Geelong appear to have particularly low SI scores given their residential population. 
+Comparisons with IRSAD scores and ranks, and population suggest that SI score is sificiantly associated with all three of these metrics. In general, the SI increases with increases in population, IRSAD and IRSAD rank, although it is important to note that increased IRSAD implies the LGA has less social disadvantage. This would appear to be contrary to what might be desired, with greater service provided to those areas where there is greater disadvantage, but clearly there will be many confounding factors and unclear causality involved in these relationships. That said, Casey, Wyndham and Greater Geelong appear to have particularly low SI scores given their residential population.
 
-There is clearly much more anlaysis that can be done to expand on this code. In particular, completing mapping of needs-gaps as per @currie2007identifying would appear a promising direction for future efforts. However, in general the verification calculations appear to support the accuracy of the developed code, and the results from the analysis suggest that output about Victorian LGAs is largely as might be expected.  Next steps appear to be to use GIS to improve the Talbot verification calculations, and perhaps select a SA1 in Greater Melbourne to do verification calculation on^[This may be challenging though, as the hand-calculations are already quite involved, even for rural SA1s with only a few stops.]. 
+There is clearly much more anlaysis that can be done to expand on this code. In particular, completing mapping of needs-gaps as per @currie2007identifying would appear a promising direction for future efforts. However, in general the verification calculations appear to support the accuracy of the developed code, and the results from the analysis suggest that output about Victorian LGAs is largely as might be expected. Next steps appear to be to use GIS to improve the Talbot verification calculations, and perhaps select a SA1 in Greater Melbourne to do verification calculation on[^36].
 
-Additionally, the code will need to be forked so as to provide outputs for Deakin^{2023 and 2018 SI scores for 7 days, using SA1 areas from 2021.} and Monash^[2021 and 2016 SI scores for 1 and 7 days, using SA1 areas from 2016.]. At approximately one day of processing time per day of analysis, this would appear likely to take in the order of 4-5 weeks^{Although I'm going to try to get a few different computers going on this at the same time so that it takes less 'real' time.}. 
+[^36]: This may be challenging though, as the hand-calculations are already quite involved, even for rural SA1s with only a few stops.
 
+Additionally, the code will need to be forked so as to provide outputs for Deakin\^{2023 and 2018 SI scores for 7 days, using SA1 areas from 2021.} and Monash[^37]. At approximately one day of processing time per day of analysis, this would appear likely to take in the order of 4-5 weeks\^{Although I'm going to try to get a few different computers going on this at the same time so that it takes less 'real' time.}.
 
+[^37]: 2021 and 2016 SI scores for 1 and 7 days, using SA1 areas from 2016.
 
-
-# References {#references }
+# References {#references}
 
 ```{r, include=FALSE}
 knitr::write_bib(file = 'packages.bib')
 ```
-
-
