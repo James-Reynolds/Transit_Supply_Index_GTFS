@@ -85,18 +85,15 @@ The Supply Index does not incorporate further aspects, such as service span,  of
 @currie2007identifying also adopted the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD), and developed a Transport Needs index. This Transport Needs index was based on combining standardised indicators^[Set as relative scores between 0 and 100 for all areas in the analysis.] of: adults without cars^[Based on census data for the number of cars per household and number of people aged 18 or over, weighted at 19\% of the Transport Needs Index.]; accessibility^[Being the straight line distance to the Central Business District (CBD), weighted at 15\%.]; persons aged over 60 years^[Weighted at 14\%.]; the number of people on a disability pension^[Wrighted at 12\%.]; the number of low income households^[Weighted at 10\%.]; the number of adults not in the labour force^[Based on the number of people over 15 not in the labour force, weigthed at 9\%.]; the number of students^[Weighted at 9\%.]; and the number of people aged 5 to 9 years^[Weighted at 12\%.]. 
 
 Four separate indicators provided input to the @currie2007identifying assessment, reflecting different approaches to understanding the scale of the need for transit services. These are: 1) the Total Need IRSAD Index, based on the ABS ISRAD, weighted by the size of the population in each area of interest; 2) the Relative Need IRSAD Index, based on weighting the indicators by the proportion of the area of interest population in the social need component groups; 3) the Total Transport Need Index; and 4) the Relative Transport Need Index. These four indicators were combined in @currie2007identifying, with equal weighting^[i.e. 25\% each.] to provide a single, unified needs index (standardised to provide a combined relative score out of 100). 
-Later in this document a similar needs-gap analysis is presented for Victorian LGAs.  However, in the needs-gap analysis here only the IRSAD scores and population data are reported. Calculating the combined Transport Needs index as per @currie2007identifying may be a direction for future research. 
+Later in this document a similar needs-gap analysis is presented for Victorian SA1s.  However, in the needs-gap analysis here only the IRSAD scores and population data are reported. Calculating the combined Transport Needs index as per @currie2007identifying may be a direction for future research. 
 
 
 
 # Methodology
-This study adopts a case research approach by developing code to calculate Supply Indexes for Greater Melbourne and Victoria, Australia
-
-<!---^[A key issue in case-based research is the duality criterion, being the need to simultaneously: be engaged with depth of the individual cases included in the study; yet also be seeking findings that are generalisable to more than just the case that are studied. This study responds to this criterion by first testing the developed code across three different transit systems, which is expected to be sufficient to validate that it is generalisable to most GTFS feeds, not specific to the quirks of the Victorian GTFS feed. Additionally, this study engages with a range of issues (level-boarding access, new routes and services, and cancelled projects) across these three cities, again seeking to demonstrate how the Supply Index code might be adapted to a range of other issues and places.].  
--->
+This study adopts a case research approach by developing code to calculate Supply Indexes for Greater Melbourne and Victoria, Australia.
 
 ## Code development
-This document has been prepared using Rmarkdown, which allows the intermingling of written text, code segments and code outputs. Code segements developed in this research are shown in the following, together with the relevant descriptive text^[The Rmarkdown file is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS and this can be read in a plain-text editor to view the code snippets themselves. If you are reading this in a PDF document you are seeing just the descriptive text, and outputs from the code where it has been run to produce maps, charts etc.]
+This document has been prepared using Rmarkdown, which allows the intermingling of written text, code segments and code outputs. Code segements developed in this research are shown in the following, together with the relevant descriptive text^[The Rmarkdown file is available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS/blob/Deakin_1_day_2018_to_2023/Reynolds_Currie_2024_transit_supply_index_GTFS.Rmd and this can be read in a plain-text editor to view the code snippets themselves. If you are reading this in a PDF document you are seeing just the descriptive text, and outputs from the code where it has been run to produce maps, charts etc.]
 
 Various analysis tools are available that make use of GTFS data, including the tidytransit package [@R-tidytransit] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term in the @currie2007identifying SI equation. 
 
@@ -485,139 +482,317 @@ convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_b
 
 ## Case research approach
 
-<!---The three cases were selected as they are familiar to the researchers. Additionally, the case selection continues the long-standing practice of comparing Melbourne and Toronto, as well as grounding one of the three cases in the context of a transit system that may be familiar to many readers^[Washington DC is where the Transportation Research Board Annual Meeting is held each year.].  --->
-
 To test the developed code results were generated for a single case: Victoria, Australia. This case was selected primarily for convenience, as the authors are familiar with the Victorian transit network and so well placed to assess whether output results are correct.  Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
 
 ### Victoria, Australia
 Victoria is the southern-most state on the Australian mainland. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London^[Greater Melbourne is the term used to describe the larger metropolitan area, encompassing 30 LGAs. The City of Melbourne LGA covers only a small portion of the inner city.] However, with only around 5 million people Melbourne has about one-third of the population density. It has an inner Central Business District (CBD) with apartments, commercial skyscrapers and extensive sporting facilities nearby; surrounded by low-density, predominately single-family-housing-dominated, inner, middle and outer suburbs. 
 
-There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services.  Victoria's GTFS feed is published by Public Transport Victoria (PTV)^[There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].]. 
-
-The developed code was tested for both SA1- and LGA-level areas of interest. Output was obtained for SA1-level areas using a GTFS file from late April, 2023, running for a full 7-day period.  For the LGA-level output the results were compared between 2016 and 2021, to match the Australian census dates. The Australian census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself^[It takes about a day of processing time to run the code for all of the stops in Vicotira for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.]. 
-
-The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the 2021 Local Government Area (LGA) boundaries for the Greater Melbourne area.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. 
-
-
+The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the 2021 SA1 boundaries for Victoria.  The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates. 
 
 ```{r load_abs_data, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
 #Load SA1 data
 sa1_map_data <- sa12021
 
-##Map Greater Melbourne SA1 areas
-#map <- sa1_map_data %>%
-#  filter(gcc_name_2021 == "Greater Melbourne") %>%   # let's just look Melbourne
-#  ggplot() +
-#  geom_sf(aes(geometry = geometry,  # use the geometry variable
-#              fill = areasqkm_2021),     # fill by area size
-#          lwd = 0,                  # remove borders
-#          show.legend = TRUE) +    # keep legend
-# # geom_point(aes(cent_long,
-#  #               cent_lat),        # use the centroid long (x) and lats (y)
-#   #          colour = "white") +    # make the points white
-#  theme_void() +                    # clears other plot elements
-#  coord_sf()
-
-#map
-
-p <- sa1_map_data
-p <- p %>% 
-  dplyr::mutate(area = st_area(p))
-units(p$area) <- as_units("m^2")
-
-
-
 
 ```
 
 
-```{r Melbourne_2021, echo=FALSE, warning=FALSE, message=FALSE}
+There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services.  Victoria's GTFS feed is published by Public Transport Victoria (PTV)^[There are over 400 historical releases of the  available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].]. 
+
+The Australian census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself in 2021^[Tuesday, 10th August. GTFS feed dated August 5]. The second Tuesday in August was selected as the input timetable for 2018^[Feed 13/8, run for 14/8], 2019^[Feed 12/8, run for 13/8], 2020^[Feed 7/8, run for 11/8], 2022^[Feed 4/8, run for 9/8] and 2023^[Feed 4/8, run for 8/8]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.]. 
 
 
-#victoria_2021 <- read_gtfs("data/Melbourne/2021/gtfs.zip")
+
+```{r Victoria_2018, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+victoria_2018 <- read_gtfs("data/Melbourne/2018/180813/gtfs.zip")
 
 ##identify duplicate stops
-#victoria_2021_duplicated_stops <- tabyl(victoria_2021$stops$stop_id) %>% filter (n>1)
-#names(victoria_2021_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2021_duplicated_stops <- left_join(victoria_2021_duplicated_stops, victoria_2021$stops)
+victoria_2018_duplicated_stops <- tabyl(victoria_2018$stops$stop_id) %>% filter (n>1)
+names(victoria_2018_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2018_duplicated_stops <- left_join(victoria_2018_duplicated_stops, victoria_2018$stops)
 
 ##discard duplicates
-#victoria_2021$stops <- victoria_2021$stops[!duplicated(victoria_2021$stops$stop_id),]
+victoria_2018$stops <- victoria_2018$stops[!duplicated(victoria_2018$stops$stop_id),]
 
 ##split modes
-#victoria_2021_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2021)
+victoria_2018_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2018)
 
 
 ##set inputs to SI_calc function
-#victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
-#start_date = "2021-08-10"
-#period_in_days = 7
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "lga_code_2021"
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2018-08-14"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
 
 ##run SI_calc function
-#victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2021_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+victoria_2018_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2018_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
-##run aggregation function to create df by mode for all 7 days
-#victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+#run aggregation function to create df by mode for all 7 days
+victoria_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2018_SI_list_by_date_and_mode)
+
+##write to csv
+write_csv2(victoria_2018_SI_df_by_mode, "results/Victoria_2018_SI_df_by_mode_SA12021_180814.csv")
+
 
 #load pre-calculated df by mode (for just one day)
-victoria_2021_SI_df_by_mode <- read.csv("victoria_2021_SI_df_by_mode_20210810.csv")
-victoria_2021_SI_df_by_mode$lga_code_2021 <- as.character(victoria_2021_SI_df_by_mode$lga_code_2021)
+#victoria_2018_SI_df_by_mode <- read.csv("results/Victoria_2018_SI_df_by_mode_SA12021_180814.csv")
+#victoria_2018_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2018_SI_df_by_mode$sa1_code_2021)
 
 
-#load LGA map data
-LGA_map_data <- lga2021
-
-
-#Join SI to LGA map data
-victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, lga2021)
+#Join SI to SA1 map data
+victoria_2018_SI_df_by_mode_sf <- left_join(victoria_2018_SI_df_by_mode, sa1_map_data)
 
 ```
 
-```{r Melbourne_2016, echo=FALSE, warning=FALSE, message=FALSE}
-#victoria_2016 <- read_gtfs("data/Melbourne/2016/gtfs.zip")
+
+
+
+
+```{r Victoria_2019, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+victoria_2019 <- read_gtfs("data/Melbourne/2019/190812/gtfs.zip")
 
 ##identify duplicate stops
-#victoria_2016_duplicated_stops <- tabyl(victoria_2016$stops$stop_id) %>% filter (n>1)
-#names(victoria_2016_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2016_duplicated_stops <- left_join(victoria_2016_duplicated_stops, victoria_2016$stops)
+victoria_2019_duplicated_stops <- tabyl(victoria_2019$stops$stop_id) %>% filter (n>1)
+names(victoria_2019_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2019_duplicated_stops <- left_join(victoria_2019_duplicated_stops, victoria_2019$stops)
 
 ##discard duplicates
-#victoria_2016$stops <- victoria_2016$stops[!duplicated(victoria_2016$stops$stop_id),]
+victoria_2019$stops <- victoria_2019$stops[!duplicated(victoria_2019$stops$stop_id),]
 
 ##split modes
-#victoria_2016_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2016)
+victoria_2019_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2019)
 
 
 ##set inputs to SI_calc function
-#victoria_areas_of_interest <- lga2021 %>% filter(state_name_2021 == "Victoria")
-#start_date = "2016-08-09"
-#period_in_days = 7
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "lga_code_2021"
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2019-08-13"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
 
 ##run SI_calc function
-#victoria_2016_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2016_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+victoria_2019_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2019_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
-##run aggregation function to create df by mode for all 7 days
-#victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+#run aggregation function to create df by mode for all 7 days
+victoria_2019_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2019_SI_list_by_date_and_mode)
+
+
+##write to csv
+write_csv2(victoria_2019_SI_df_by_mode, "results/Victoria_2019_SI_df_by_mode_SA12021_190813.csv")
+
 
 
 #load pre-calculated df by mode (for just one day)
-victoria_2016_SI_df_by_mode <- read.csv("victoria_2016_SI_df_by_mode_20210810.csv")
+#victoria_2019_SI_df_by_mode <- read.csv("results/Victoria_2019_SI_df_by_mode_SA12021_190813.csv")
+#victoria_2019_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2019_SI_df_by_mode$sa1_code_2021)
 
-victoria_2016_SI_df_by_mode$lga_code_2021 <- as.character(victoria_2016_SI_df_by_mode$lga_code_2021)
 
-
-#load LGA map data
-LGA_map_data <- lga2021
-
-#Add Greater Melbourne to LGA map data
-LGA_greater_melbourne <- read_csv("LGA_2021_greater_melbourne.csv")
-LGA_map_data <- left_join(LGA_map_data, LGA_greater_melbourne[,2:3])
+#Join SI to SA1 map data
+victoria_2019_SI_df_by_mode_sf <- left_join(victoria_2019_SI_df_by_mode, sa1_map_data)
 
 ```
+
+
+
+
+```{r victoria_2020, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+victoria_2020 <- read_gtfs("data/Melbourne/2020/200807/gtfs.zip")
+
+##identify duplicate stops
+victoria_2020_duplicated_stops <- tabyl(victoria_2020$stops$stop_id) %>% filter (n>1)
+names(victoria_2020_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2020_duplicated_stops <- left_join(victoria_2020_duplicated_stops, victoria_2020$stops)
+
+##discard duplicates
+victoria_2020$stops <- victoria_2020$stops[!duplicated(victoria_2020$stops$stop_id),]
+
+##split modes
+victoria_2020_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2020)
+
+
+##set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2020-08-11"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
+
+##run SI_calc function
+victoria_2020_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2020_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2020_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2020_SI_list_by_date_and_mode)
+
+
+##write to csv
+write_csv2(victoria_2020_SI_df_by_mode, "results/Victoria_2020_SI_df_by_mode_SA12021_200811.csv")
+
+
+
+#load pre-calculated df by mode (for just one day)
+#victoria_2020_SI_df_by_mode <- read.csv("results/Victoria_2020_SI_df_by_mode_SA12021_200811.csv")
+#victoria_2020_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2020_SI_df_by_mode$sa1_code_2021)
+
+
+#Join SI to SA1 map data
+victoria_2020_SI_df_by_mode_sf <- left_join(victoria_2020_SI_df_by_mode, sa1_map_data)
+
+```
+
+
+
+
+```{r victoria_2021, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+victoria_2021 <- read_gtfs("data/Melbourne/2021/210810/gtfs.zip")
+
+##identify duplicate stops
+victoria_2021_duplicated_stops <- tabyl(victoria_2021$stops$stop_id) %>% filter (n>1)
+names(victoria_2021_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2021_duplicated_stops <- left_join(victoria_2021_duplicated_stops, victoria_2021$stops)
+
+##discard duplicates
+victoria_2021$stops <- victoria_2021$stops[!duplicated(victoria_2021$stops$stop_id),]
+
+##split modes
+victoria_2021_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2021)
+
+
+##set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2021-08-10"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
+
+##run SI_calc function
+victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2021_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+
+
+##write to csv
+write_csv2(victoria_2021_SI_df_by_mode, "results/Victoria_2021_SI_df_by_mode_SA12021_210810.csv")
+
+
+
+#load pre-calculated df by mode (for just one day)
+#victoria_2021_SI_df_by_mode <- read.csv("results/Victoria_2021_SI_df_by_mode_SA12021_210810.csv")
+#victoria_2021_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2021_SI_df_by_mode$sa1_code_2021)
+
+
+#Join SI to SA1 map data
+victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, sa1_map_data)
+
+```
+
+
+
+
+```{r victoria_2022, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+victoria_2022 <- read_gtfs("data/Melbourne/2022/220804/gtfs.zip")
+
+##identify duplicate stops
+victoria_2022_duplicated_stops <- tabyl(victoria_2022$stops$stop_id) %>% filter (n>1)
+names(victoria_2022_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2022_duplicated_stops <- left_join(victoria_2022_duplicated_stops, victoria_2022$stops)
+
+##discard duplicates
+victoria_2022$stops <- victoria_2022$stops[!duplicated(victoria_2022$stops$stop_id),]
+
+##split modes
+victoria_2022_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2022)
+
+
+##set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2022-08-14"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
+
+##run SI_calc function
+victoria_2022_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2022_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
+
+
+##write to csv
+write_csv2(victoria_2022_SI_df_by_mode, "results/Victoria_2022_SI_df_by_mode_SA12021_220814.csv")
+
+
+#load pre-calculated df by mode (for just one day)
+#victoria_2022_SI_df_by_mode <- read.csv("results/Victoria_2022_SI_df_by_mode_SA12021_220814.csv")
+#victoria_2022_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2022_SI_df_by_mode$sa1_code_2021)
+
+
+#Join SI to SA1 map data
+victoria_2022_SI_df_by_mode_sf <- left_join(victoria_2022_SI_df_by_mode, sa1_map_data)
+
+```
+
+
+
+
+```{r victoria_2023, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+victoria_2023 <- read_gtfs("data/Melbourne/2023/230804/gtfs.zip")
+
+##identify duplicate stops
+victoria_2023_duplicated_stops <- tabyl(victoria_2023$stops$stop_id) %>% filter (n>1)
+names(victoria_2023_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2023_duplicated_stops <- left_join(victoria_2023_duplicated_stops, victoria_2023$stops)
+
+##discard duplicates
+victoria_2023$stops <- victoria_2023$stops[!duplicated(victoria_2023$stops$stop_id),]
+
+##split modes
+victoria_2023_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2023)
+
+
+##set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2023-08-08"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
+
+##run SI_calc function
+victoria_2023_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2023_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2023_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2023_SI_list_by_date_and_mode)
+
+
+##write to csv
+write_csv2(victoria_2023_SI_df_by_mode, "results/Victoria_2023_SI_df_by_mode_SA12021_230808.csv")
+
+
+#load pre-calculated df by mode (for just one day)
+#victoria_2023_SI_df_by_mode <- read.csv("results/Victoria_2023_SI_df_by_mode_SA12021_230808.csv")
+#victoria_2023_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2023_SI_df_by_mode$sa1_code_2021)
+
+
+#Join SI to SA1 map data
+victoria_2023_SI_df_by_mode_sf <- left_join(victoria_2023_SI_df_by_mode, sa1_map_data)
+
+```
+
+
+<!------ BELOW HERE HAS NOT BEEN UPDATED FROM MAIN ---->
 
 The ABS provides IRSAD datasets for LGAs in excel format. Data for 2016 and 2021 was included in this study. Scores are shown in Figures \ref{fig:Victoria_IRSAD_load_2016} and \ref{fig:Victoria_IRSAD_load_2021}. Figure \ref{fig:Victoria_IRSAD_compare} shows changes in IRSAD scores between 2016 and 2021. 
 
