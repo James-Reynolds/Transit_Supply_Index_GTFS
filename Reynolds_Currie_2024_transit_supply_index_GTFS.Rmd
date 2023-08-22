@@ -670,7 +670,7 @@ AreaBn_calc_function_output_2021 <- AreaBn_calc_function(areas_of_interest = are
 mornington_2018_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = mornington_2018_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform, Area_terms_for_each_area_of_interest_by_mode_by_stop = AreaBn_calc_function_output_2021)
 
 #run aggregation function to create df by mode for all 7 days
-improved_speed_mornington_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(mornington_2018_SI_list_by_date_and_mode)
+mornington_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(mornington_2018_SI_list_by_date_and_mode)
 
 #load pre-calculated df by mode (for just one day)
 #mornington_2018_SI_df_by_mode <- read.csv("mornington_2018_SI_df_by_mode_20210810.csv")
@@ -712,7 +712,7 @@ areas_of_interest <- sa12021 %>% filter(sa3_name_2021 == "Mornington Peninsula")
 start_date = "2017-03-09"
 period_in_days = 7
 EPSG_for_transform = 28355
-areas_of_interest_id_field = "lga_code_2021"
+areas_of_interest_id_field = "sa1_code_2021"
 gtfs_list_by_mode = mornington_2017_list_by_mode
 
 
@@ -723,7 +723,7 @@ AreaBn_calc_function_output_2021 <- AreaBn_calc_function(areas_of_interest = are
 mornington_2017_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = mornington_2017_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform, Area_terms_for_each_area_of_interest_by_mode_by_stop = AreaBn_calc_function_output_2021)
 
 #run aggregation function to create df by mode for all 7 days
-improved_speed_mornington_2017_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(mornington_2017_SI_list_by_date_and_mode)
+mornington_2017_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(mornington_2017_SI_list_by_date_and_mode)
 
 #load pre-calculated df by mode (for just one day)
 #mornington_2017_SI_df_by_mode <- read.csv("mornington_2017_SI_df_by_mode_20210810.csv")
@@ -785,7 +785,7 @@ AreaBn_calc_function_output_2021 <- AreaBn_calc_function(areas_of_interest = are
 victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2021_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform, Area_terms_for_each_area_of_interest_by_mode_by_stop = AreaBn_calc_function_output_2021)
 
 #run aggregation function to create df by mode for all 7 days
-improved_speed_victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
 
 #load pre-calculated df by mode (for just one day)
 #victoria_2021_SI_df_by_mode <- read.csv("victoria_2021_SI_df_by_mode_20210810.csv")
