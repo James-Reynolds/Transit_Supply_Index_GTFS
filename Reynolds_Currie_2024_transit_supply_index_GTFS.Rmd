@@ -505,8 +505,11 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 
 ```{r Victoria_2018, echo=FALSE, warning=FALSE, message=FALSE}
 
-
 victoria_2018 <- read_gtfs("data/Melbourne/2018/180813/gtfs.zip")
+
+#deal with issue to do with missing route_color information
+victoria_2018$routes$route_color <- "Blue"
+
 
 ##identify duplicate stops
 victoria_2018_duplicated_stops <- tabyl(victoria_2018$stops$stop_id) %>% filter (n>1)
@@ -520,12 +523,15 @@ victoria_2018$stops <- victoria_2018$stops[!duplicated(victoria_2018$stops$stop_
 victoria_2018_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2018)
 
 
+
 ##set inputs to SI_calc function
 victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
 start_date = "2018-08-14"
 period_in_days = 1
 EPSG_for_transform = 28355
 areas_of_interest_id_field = "sa1_code_2021"
+
+
 
 ##run SI_calc function
 victoria_2018_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2018_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
@@ -556,6 +562,11 @@ victoria_2018_SI_df_by_mode_sf <- left_join(victoria_2018_SI_df_by_mode, sa1_map
 
 victoria_2019 <- read_gtfs("data/Melbourne/2019/190812/gtfs.zip")
 
+
+#deal with issue to do with missing route_color information
+victoria_2019$routes$route_color <- "Blue"
+
+
 ##identify duplicate stops
 victoria_2019_duplicated_stops <- tabyl(victoria_2019$stops$stop_id) %>% filter (n>1)
 names(victoria_2019_duplicated_stops) <- c("stop_id", "n", "percent")
@@ -566,6 +577,9 @@ victoria_2019$stops <- victoria_2019$stops[!duplicated(victoria_2019$stops$stop_
 
 ##split modes
 victoria_2019_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2019)
+
+
+
 
 
 ##set inputs to SI_calc function
@@ -604,6 +618,12 @@ victoria_2019_SI_df_by_mode_sf <- left_join(victoria_2019_SI_df_by_mode, sa1_map
 
 
 victoria_2020 <- read_gtfs("data/Melbourne/2020/200807/gtfs.zip")
+
+
+
+#deal with issue to do with missing route_color information
+victoria_2020$routes$route_color <- "Blue"
+
 
 ##identify duplicate stops
 victoria_2020_duplicated_stops <- tabyl(victoria_2020$stops$stop_id) %>% filter (n>1)
@@ -654,6 +674,10 @@ victoria_2020_SI_df_by_mode_sf <- left_join(victoria_2020_SI_df_by_mode, sa1_map
 
 victoria_2021 <- read_gtfs("data/Melbourne/2021/210810/gtfs.zip")
 
+#deal with issue to do with missing route_color information
+victoria_2021$routes$route_color <- "Blue"
+
+
 ##identify duplicate stops
 victoria_2021_duplicated_stops <- tabyl(victoria_2021$stops$stop_id) %>% filter (n>1)
 names(victoria_2021_duplicated_stops) <- c("stop_id", "n", "percent")
@@ -703,6 +727,10 @@ victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, sa1_map
 
 victoria_2022 <- read_gtfs("data/Melbourne/2022/220804/gtfs.zip")
 
+
+#deal with issue to do with missing route_color information
+victoria_2022$routes$route_color <- "Blue"
+
 ##identify duplicate stops
 victoria_2022_duplicated_stops <- tabyl(victoria_2022$stops$stop_id) %>% filter (n>1)
 names(victoria_2022_duplicated_stops) <- c("stop_id", "n", "percent")
@@ -750,6 +778,10 @@ victoria_2022_SI_df_by_mode_sf <- left_join(victoria_2022_SI_df_by_mode, sa1_map
 
 
 victoria_2023 <- read_gtfs("data/Melbourne/2023/230804/gtfs.zip")
+
+#deal with issue to do with missing route_color information
+victoria_2023$routes$route_color <- "Blue"
+
 
 ##identify duplicate stops
 victoria_2023_duplicated_stops <- tabyl(victoria_2023$stops$stop_id) %>% filter (n>1)
