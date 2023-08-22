@@ -1,6 +1,6 @@
 
 ---
-title: "Leveraging GTFS data to assess transit supply, and needs-gaps"
+title: "Preliminary SA1_2021 SI scores (one day only) for 2018, 2019, 2020, 2021, 2022 and 2023"
 runningheader: "Reynolds and Currie" # only for pdf output
 author: "James Reynolds and Graham Currie"
 date: "`r Sys.Date()`"
