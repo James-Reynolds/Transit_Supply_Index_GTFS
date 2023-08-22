@@ -7,8 +7,6 @@ output:
   tufte::tufte_book:
     citation_package: natbib
     latex_engine: xelatex
-    includes:
-      in_header: "preamble.tex"
 bibliography: [packages.bib, References.bib]
 link-citations: yes
 header-includes:
@@ -53,9 +51,9 @@ library(rvest)
 
 # Introduction
 
-Previous research by @currie2007identifying developed a transit Supply Index (SI), based on calculating the number of transit arrivals at stops within an area of interest, adjusted to account for the typical walk-access catchment for each stop. This document reports the development of R code to calculate the Supply Index of @currie2007identifying directly from GTFS data. The code is used to output SI scores for the day of the 2016 census and the day of the 2021 census for each of the Australian Bureau of Statistics (ABS) 2016 Statistical Area Level 1 (SA1) zones in Victoria. These scores have been requested by Maryam Jafari as an input to her PhD project. 
+Previous research by @currie2007identifying developed a transit Supply Index (SI), based on calculating the number of transit arrivals at stops within an area of interest, adjusted to account for the typical walk-access catchment for each stop. The Public Transport Research Group (PTRG) has been developing R code to calculate this Supply Index directly from GTFS data. This document describes how the code has been used to output SI scores for the day of the 2016 census and the day of the 2021 census for each of the Australian Bureau of Statistics (ABS) 2016 Statistical Area Level 1 (SA1) zones in Victoria^[These scores have been requested by Maryam Jafari as an input to her PhD project.]. It also presents verification checks to determine the accuracy of the output scores, and shows some statistical analysis of the scores as a way of exploring the output. 
 
-This rest of this document is structured as follows: the next section discusses the research context of transit metrics and the the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the case study GTFS for Victoria, Australia, that was used to test and verify the code output. In the fourth section results are presented, starting with verification of the code output through hand-calculation of SI scores for Statistical Area 1 (SA1) areas in the Victorian Alps and Talbot. SI scores for SA1s across Greater Melbourne and Victoria are also presented. Mode-by-mode SI scores are also explored, followed by an examination of needs-gaps across the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) scores, ranks and population levels. The document then closes with a brief discussion and conclusion section.
+This rest of this document is structured as follows: the next section discusses the research context of the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the case study GTFS for Victoria, Australia, that was used to test and verify the code output. In the fourth section results are presented, starting with verification of the code output through hand-calculation of SI scores for Statistical Area 1 (SA1) areas in the Victorian Alps and Talbot. SI scores for SA1s across the Clayton Statistical Area Level 2 (SA2) zone and the Melbourne City Statistical Area Level 3 (SA3) zones are also examined, followed by a review of the SI scores for SA1s across all of Greater Melbourne and all of Victoria. Mode-by-mode SI scores are also explored, followed by an examination of needs-gaps across the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) scores, ranks and population levels. The document then closes with a brief discussion and conclusion section.
 
 # Research context
 
@@ -69,14 +67,20 @@ SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
 ```
 
 Equation \ref{eq:supply_index}^[In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.
-] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. The Supply Index does not incorporate further aspects, such as service span, off-peak share of service or service speed, which are a feature of the TQCSM. However, including such metrics may increase the complexity of calculating and describing the index to non-transit specialists. Such simplicity is also helped by the way that the Index is additive, in that $SI_{area, time}$ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest.
+] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. 
+
+The Supply Index does not incorporate further aspects, such as service span, off-peak share of service or service speed, which are a feature of the Transit Capaicity and Quality of Service Manual (TCQSM) [@TCQSM:2013] and other transit supply metrics. However, including such factirs may increase the complexity of calculating and describing the index to non-transit specialists. 
+
+Simplicity is also helped by the way that the SI is additive. Hence, $SI_{area, time}$ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest.
 
 
 @currie2007identifying calculated the $SI_{area, time}$ for various Census Collection Districts (CCDs)^[CCDs predate the introduction of Statistical Areas 1, 2, 3, and 4 (SA1, SA2, SA3, SA4), and other geographical divisions currently used by the Australian Bureau of Statistics (ABS), which may be more familiar to readers.] in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data. A question, therefore, is how to calculate the SI using GTFS data so that $SI_{area, time}$ scores can be calculated and compared for any area of interest where transit service information is available in that format.
 
 ## Transport Needs Index(es)
 
-@currie2007identifying also developed a Transport Needs Index based around population, transport and employment data. This was combined with the ABS' Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) to produce a combine index addressing social and transport needs  Later in this document a similar needs-gap analysis is presented for Victorian SA1s. However, in the needs-gap analysis here only the IRSAD scores and population data are reported. Calculating the combined Transport Needs index as per @currie2007identifying may be a direction for future research.
+@currie2007identifying also developed a Transport Needs Index based around population, transport and employment data. This was combined with the ABS' Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) to produce a combined index addressing social and transport needs. This was then used to assess the gap between transit needs and supply. 
+
+Later in this document a similar needs-gap analysis is presented for Victorian SA1s. However, in the needs-gap analysis here only the IRSAD scores and population data are reported. Calculating the combined Transport Needs index as per @currie2007identifying may be a direction for future research.
 
 
 
@@ -476,9 +480,11 @@ Victoria is the southern-most state on the Australian mainland. The state capita
 
 There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services. Victoria's GTFS feed is published by Public Transport Victoria (PTV)^[There are over 400 historical releases of the available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].].
 
-The developed code has been separately tested using SA1- and LGA-level areas of interest, including hand verification of some example SA1 areas^[This testing is reported in the main branch of the project on GitHub. This document is instead specific to the calculation of the SI scores for the 2016 SA1 boundaries.]. For the results reported here output was obtained for SA1-level areas using GTFS files from August 2016 and 2021, running for just the day of the census in each year. The Australian census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself^[It takes about a day of processing time to run the code for all of the stops in Victoria for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.].
+The developed code has been separately tested using SA1- and LGA-level areas of interest, including hand verification of some example SA1 areas^[This testing is reported in the main branch of the project on GitHub. This document is instead specific to the calculation of the SI scores for the 2016 SA1 boundaries.]. 
 
-The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the 2016 SA1 boundaries for Victoria. The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates.
+For the results reported here output was obtained for SA1-level areas using GTFS files from August 2016 and 2021, running for just the day of the census in each year. The Australian Census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself^[It takes about a day of processing time to run the code for all of the stops in Victoria for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.].
+
+The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the SA1 boundaries for Victoria used during the 2016 census (SA1_2016)^[Note, there is also a set of SA1 boundaries that are relevant to the 2021 census (SA1_2021).]. The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates.
 
 ```{r load_abs_data, messages = FALSE, warnings = FALSE, echo=FALSE, fig.fullwidth=TRUE, fig.cap="Melbourne SA1 map"}
 #Load SA1 data
@@ -611,7 +617,9 @@ victoria_2016_SI_df_by_mode_sf <- left_join(victoria_2016_SI_df_by_mode, sa12016
 
 ```
 
-The ABS provides IRSAD datasets for SA1 in excel format. Data for 2016 and 2021 was included in this study^[The IRSAD scores for 2021 appear to only be available for the SA12021 boundaries. A correspondance file was used to match the SA12021 to SA12016 boundaries, but it was not possible to factor the scores.]. Scores for 2021 are shown in Figures \ref{fig:Victoria_IRSAD_load_2016} and \ref{fig:Victoria_IRSAD_load_2021} for the Melbourne City and Clayton case study areas. 
+The ABS provides IRSAD datasets for SA1 in excel format. Data for 2016 and 2021 was included in this study^[The IRSAD scores for 2021 appear to only be available for the SA12021 boundaries. A correspondance file was used to match the SA12021 to SA12016 boundaries, but it was not possible to factor the scores.]. 
+
+ISRAD Scores for 2021 are shown in Figure \ref{fig:Victoria_IRSAD_load_2021} for the Melbourne City and Clayton case study areas. 
 
 ```{r Victoria_IRSAD_load_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2016 IRSAD for SA1s within the Clayton SA2 boundary: score (left) and percentile within Victoria (right)", fig.show="hold", out.width="50%"}
 
@@ -745,7 +753,10 @@ map
 
 
 ```
-The ISRAD scores appear to meet expectations.  In Clayton there is no score reported for the Monash University campus^[Likely due to low resident population.]. Higher scores are reported for SA1s to the north-east of Clayton, in the Notting Hill area. For the Melbourne City SA3 zone, there are no ISRAD scores reported for the various parks^[Royal Park to the north, Fitzroy Gardens and the sporting district to the east and south east, and the SA1 with the Docklands stadium in it.]. Areas with lower IRSAD scores are located in parts of North Melbourne and in the north-east ^[Lygon Street and Nicholson Street areas.], which meets expectations. 
+
+The ISRAD scores appear to meet expectations.  In Clayton there is no score reported for the Monash University campus, Likely due to its low resident population. Higher scores are reported for SA1s to the north-east of Clayton, in the Notting Hill area. 
+
+For the Melbourne City SA3 zone, there are no ISRAD scores reported for the various parks^[Royal Park to the north, Fitzroy Gardens and the sporting district to the east and south east, and the SA1 with the Docklands stadium in it.]. Areas with lower IRSAD scores are located in parts of North Melbourne and in the north-east ^[Lygon Street and Nicholson Street areas.], which meets expectations. 
 
 
 # Results
@@ -754,9 +765,7 @@ The following subsections discuss the results of running the code for all of Vic
 
 ## Supply Index results for all of Victoria
 
-Four files are included with this document^[And in the 'results' subdirectory of the SA12016 branch in the github repository.]. These include the total 2016 and 2021 SI scores for each SA12016 zone^[Victoria_2016_SA_SA2016_160809.csv and Victoria_2021_SI_SA12016_210810.csv], and the SI scores by mode^[Victoria_2016_SI_df_by_mode...etc.].  
-
-Figure \ref{fig:Victoria_SI_2021} show the $SI_{LGA2021, 10/8/21}$ values for Victoria (left) and Greater Melbourne (right).
+Four files are output by this document^[Located in the 'results' subdirectory of the SA12016 branch in the github repository.]. These include the total 2016 and 2021 SI scores for each SA12016 zone^[Victoria_2016_SA_SA2016_160809.csv and Victoria_2021_SI_SA12016_210810.csv], and the SI scores by mode^[Victoria_2016_SI_df_by_mode...etc.].  
 
 ```{r Victoria_SI_outputs, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -779,6 +788,102 @@ victoria_2021_SI_total <- left_join(victoria_2021_SI_total, sa1_map_data)
 
 
 ```
+
+
+## Verifing the code output
+Code output results were verified by comparison to by-hand calculations for selected combinations of date and location in Victoria. 
+
+### Running Creek and Morgans Bridge, Kiewa Valley Hwy
+The SA1 area 20403106915 covers Running Creek and Morgans Bridge, two localities in the Victorian Alps. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. The location of the SA1 20403106915 is shown in the following figure. Relevant geographic statistics are shown in the following.  
+
+![SA1 20403106915, with approximate location of Stop:ID 45125 highlighted, sources ABS and Google Maps](images/Running_creek_bus_stop.png)
+
+
+
+```{r Running_Creek_SA1_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+kable(st_drop_geometry(sa1_map_data %>% filter(sa1_code_2016 == "20403106915")), caption = "SA1 zone 20403106915 geographic data")
+```
+
+The area of SA1 20403106915 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2016 == "20403106915"))$areasqkm_2021`km^2^.  By inspection, the entire 400m radius catchment area of both of the bus stops lie entirely within the SA1 20403106915 boundaries.
+
+Hence the $Area_{Bn}/ Area_{SA1_Area}$ term for each of the bus stops is equal to $(\pi 400^2) / 284598000 =$ `r (pi * 400 * 400 / 284598000) %>% label_scientific(digits = 3)()`.  
+
+
+
+Anyhow, this concludes the hand-calculation verification efforts to date. The next sections, therefore, look at the code outputs alone, with a focus on LGAs in Greater Melbourne and Victoria. 
+
+
+
+No printed timetable has been located for the Albury - Mt Beauty via Baranduda and Tawonga South route that services these stops, but stop times are provided on the PTV website^[See https://tinyurl.com/5n83ryhy. This indicates services on April 27 to Albury at 7:25am, 9:25am and 9:30am. For April 28 there are services at 7:25am and 9:30am, but then there are no services over the weekend.  May 1 has two services (7:25am and 9:30am), May 2nd and 3rd both have three (7:25, 9:25 and 9:30am), bringing the total to 13. In the opposite direction the PTV website indicates a similar service pattern, only in the opposite direction and at 2:50pm, 4:20pm and 4:40pm. In general, this appears to be a school bus service pattern.  It is unclear, however, why some days have three services but others have only two.].  This indicates a  total of 26 arrivals to each of the two bus stops in a seven day week ^[The SL~Bn~ term.] Therefore the total $SI_{20403106915, 27/4-3/5/23}$ score is equal to $(2*(26* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(26* pi * 400 * 400 / 284598000))`.  
+
+The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
+```{r Running_Creek_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+
+
+Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
+
+kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, seven days starting April 27, 2023")
+
+```
+
+The hand-calculated $SI_{20403106915, 27/4-3/5/23}$ matches that produced by the developed code, suggesting that the developed code is providing the expected output.  
+
+### Talbot, Avoca line
+Talbot, north-west of Ballarat, provides a location where the accuracy of the developed code can be tested for both: 1) multiple modes; and 2) station/stop catchment areas spanning across multiple areas of interest.  As shown in the below figure, the Talbot township is covered by SA1 20103101708, which lies within the SA1 20103101707.   
+
+
+![SA1 Location of 20103101707 and 20103101708 boundaries in relation to Talbot railway station and 800m catchment (red), and bus stops and 400m catchments (yellow), source ABS and PTV](images/Talbot.png)
+
+The Talbot Railway station's 800m catchment area is roughly three-fifths in SA1 20103101708. A bus stop located close to the railway station has roughly three-quarters of its catchment in 20103101708. The bus stop at the Talbot Town Hall has almost its entire catchment area within 20103101708.  
+
+
+The area of SA1 20103101707 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101707"))$areasqkm_2021 %>% format(digits=3)`km^2^^[via LGA data from abs_map package.]. 
+
+<!--For SA1 20103101708 the area is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101708"))$areasqkm_2021 %>% format(digits=3)`km^2^ -->
+
+
+Hence the $Area_{Bn}/ Area_{SA120103101708}$ term for the Talbot Town Hall bus stop is approximately equal to $(\pi .4^2) / 3.05=$ `r (pi * .4 * .4 / 3.05)%>% format(digits=3)`.
+
+<!---, while the $Area_{Bn}/ Area_{SA120103101707}$ is very close to zero.
+--->For the bus stop at the Talbot Station the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits=3)`<!---, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $1/4(\pi .4^2) / 237=$ `r ((1/4)*(pi * .4 * .4 / 237)) %>% format(digits=3)`--->. For the Railway Station itself the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $(3/5)(\pi .8^2) / 3.05=$ `r ((3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)`<!---, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $2/5(\pi .8^2) / 237=$ `r ((2/5)*(pi * .8 * .8 / 237)) %>% format(digits = 3)`--->. 
+
+Review of the PTV website stop departures indicates that the typical service pattern appears to be: 
+
+- Talbot Town Hall bus stop - 42 services per week^[One Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week); 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week); two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week); local bus services to Ballarat on Thursdays (1), Fridays (1), Monday (1), Tuesday (1) and Wednesday(1) (5 per week); and local bus services towards Bendigo on Thursdays (1), Fridays (1), Mondays (1), Tuesdays (1) and Wednesdays (1) (5 per week).] 
+  
+  
+- Talbot Station bus stop - 32 services per week^[One Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week); 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week); and two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week)]
+
+- Talbot Railway Station - 28 services per week^{Two services towards Maryborough every day of the week; and two services towards Melbourne every day of the week]
+
+Therefore, the $SI_{20103101708}$ is approximately equal to: (Talbot Town Hall bus stop) 42 services per week x `r ((pi * .4 * .40 / 3.05)) %>% format(digits = 3)` = `r (42*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus (Talbot Station bus stop) 32 services per week x $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 305)) %>% format(digits = 3)` = `r (32*(3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus (Talbot Railway Station) 28 services per week x `r ((3/5)*(pi * .8 * .8 / 305)) %>% format(digits = 3)` = `r (28*(3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)` = `r ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) %>% format(digits = 3)`
+
+
+The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
+```{r Talbot_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+
+
+Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
+
+kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"), caption = "Developed code output for SA1 20103101707, seven days starting April 27, 2023")
+
+```
+
+The hand-calculated $SI_{20103101708, 27/4-3/5/23}$ is  approximately `r (1-(((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) / ((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD))) %>% percent_format(digits = 3)()` lower than the value calculated by the SI code.  However, this appears to be sufficient to accept the result given that: 
+
+- the overlaps of the station and stop catchment areas have been estimated based on PTV and ABS maps, rather then precisely calculated using GIS software; 
+- the hand-calculated SI is based on current (August 2023) service schedules, whereas the code-calculated value is based on a GTFS file from April 27, 2023^[The online PTV timetables only go back a month or two, so any changes in the timetables between April and now could not be checked without looking directly at the GTFS files, which sort of defeats the purpose of doing the verification calculations.]; and
+- Overall the SI scores vary greatly across LGAs^[Ranging between `r min(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3)` and `r max(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3, big.mark = ",")`.], meaning that a difference of just  `r ((((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD)) - ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))))  %>% format(digits = 3)` between the hand-calculated and code-calculated score is likely an issue of precision, rather than accuracy.  
+
+Further verification work might involve:
+
+- updating the code calculated values from $SI_{20103101708, 27/4-3/5/23}$ to $SI_{20103101708, now+7days}$ such that the current PTV timetables could be directly compared to the code output using the current GTFS files^[This would remove the chance that the service patterns have actually changed between April and now, although it is expected that even if there has been a change it is unlikely to have been large.]; 
+- obtaining more precise $Area_{Bn} / Area_{area of interest}$ terms using GIS or similar; 
+- stepping through the coding calculations one at a time to verify the intermediate calculations, and hence confirm that this disrepancy is simply a matter of precision; 
+- undertaking the verification calculations for the  SA1 20103101707 area^[Unfortunately this is a large SA1 and there are other bus stops (outside of Talbot) that will contribute to the SI score.] or for some other area where hand calculations are relatively easy to perform. 
+
+
+
 
 The next sections show results for SA1 zones within Clayton and within Greater Melbourne, so as to provide some context for the results and as a cross-check. 
 
