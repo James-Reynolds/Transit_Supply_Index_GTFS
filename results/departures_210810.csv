@@ -1,0 +1,7 @@
+stop_id;trip_id;arrival_time;departure_time;route_id;service_id;trip_headsign;trip_origin;route_short_name
+45125;9950.T0.6-MtB-mjp-1.1.H;07:25:00;07:25:00;6-MtB-mjp-1;6_T0;Albury;Falls Creek Coaches/233 Kiewa Valley Hwy (Mount Beauty);
+45125;9951.T0.6-MtB-mjp-1.8.R;16:40:00;16:40:00;6-MtB-mjp-1;6_T0;Mt Beauty;Snow White Depot/David St (Albury (NSW));
+45125;9952.T0.6-MtB-mjp-1.2.H;09:25:00;09:25:00;6-MtB-mjp-1;6_T0+pn;Albury;Falls Creek Coaches/233 Kiewa Valley Hwy (Mount Beauty);
+45125;9953.T0.6-MtB-mjp-1.5.R;14:50:00;14:50:00;6-MtB-mjp-1;6_T0+pn;Mt Beauty;Albury Railway Station (Albury (NSW));
+45125;9956.T0.6-MtB-mjp-1.4.H;09:30:00;09:30:00;6-MtB-mjp-1;6_T0+pn;Albury;Falls Creek Coaches/233 Kiewa Valley Hwy (Mount Beauty);
+45125;9957.T0.6-MtB-mjp-1.7.R;16:20:00;16:20:00;6-MtB-mjp-1;6_T0+pn;Mt Beauty;QEII Square/Dean St (Albury (NSW));

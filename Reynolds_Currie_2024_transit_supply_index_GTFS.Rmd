@@ -20,7 +20,6 @@ header-includes:
 library(tufte)
 
 library(tidyverse)
-library(tidytransit)
 library(sp)
 library(absmapsdata)
 library(ptinpoly)
@@ -51,9 +50,11 @@ library(rvest)
 
 # Introduction
 
-Previous research by @currie2007identifying developed a transit Supply Index (SI), based on calculating the number of transit arrivals at stops within an area of interest, adjusted to account for the typical walk-access catchment for each stop. The Public Transport Research Group (PTRG) has been developing R code to calculate this Supply Index directly from GTFS data. This document describes how the code has been used to output SI scores for the day of the 2016 census and the day of the 2021 census for each of the Australian Bureau of Statistics (ABS) 2016 Statistical Area Level 1 (SA1) zones in Victoria^[These scores have been requested by Maryam Jafari as an input to her PhD project.]. It also presents verification checks to determine the accuracy of the output scores, and shows some statistical analysis of the scores as a way of exploring the output. 
+Previous research by @currie2007identifying developed a transit Supply Index (SI), based on calculating the number of transit arrivals at stops within an area of interest, adjusted to account for the typical walk-access catchment for each stop. The Public Transport Research Group (PTRG) has been developing R code to calculate this Supply Index directly from GTFS data. 
 
-This rest of this document is structured as follows: the next section discusses the research context of the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the case study GTFS for Victoria, Australia, that was used to test and verify the code output. In the fourth section results are presented, starting with verification of the code output through hand-calculation of SI scores for Statistical Area 1 (SA1) areas in the Victorian Alps and Talbot. SI scores for SA1s across the Clayton Statistical Area Level 2 (SA2) zone and the Melbourne City Statistical Area Level 3 (SA3) zones are also examined, followed by a review of the SI scores for SA1s across all of Greater Melbourne and all of Victoria. Mode-by-mode SI scores are also explored, followed by an examination of needs-gaps across the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) scores, ranks and population levels. The document then closes with a brief discussion and conclusion section.
+This document describes results from using the code to output SI scores for the day of the 2016 census and the day of the 2021 census for each of the Australian Bureau of Statistics (ABS) 2016 Statistical Area Level 1 (SA1) zones in Victoria^[These scores have been requested by Maryam Jafari as an input to her PhD project.]. It also presents verification checks to determine the accuracy of the output scores, and shows some statistical analysis of the scores as a way of exploring the output. 
+
+This rest of this document is structured as follows: the next section discusses the research context of the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the overall context of the Victoria, Australia, case for which the scores are being calculatted. It also discusses the individual (sub-)cases within Victoria^[An SA1 in the Alpine are, an SA1 in Talbot (near Ballarat), SA1s within the Clayton SA2 area and SA1s witihin the Greater Melbouren SA3 area) used to verify and explore the scores outputed by the code. In the fourth section results are presented, including the verification results, exploration of the scores across Clayton and Melbourne City,  and a review of the SI scores for SA1s across all of Greater Melbourne and all of Victoria. Mode-by-mode SI scores are also explored, followed by an examination of needs-gaps across the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) scores, ranks and population levels. The document then closes with a brief discussion and conclusion section.
 
 # Research context
 
@@ -69,7 +70,7 @@ SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
 Equation \ref{eq:supply_index}^[In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.
 ] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. 
 
-The Supply Index does not incorporate further aspects, such as service span, off-peak share of service or service speed, which are a feature of the Transit Capaicity and Quality of Service Manual (TCQSM) [@TCQSM:2013] and other transit supply metrics. However, including such factirs may increase the complexity of calculating and describing the index to non-transit specialists. 
+The Supply Index does not incorporate further aspects, such as service span, off-peak share of service or service speed, which are a feature of the Transit Capaicity and Quality of Service Manual (TCQSM) [@TCQSM:2013] and other transit supply metrics. However, including such factors may increase the complexity of calculating and describing the index. 
 
 Simplicity is also helped by the way that the SI is additive. Hence, $SI_{area, time}$ scores can be aggregated to calculate an overall score across multiple time periods or for a region encompassing multiple areas of interest.
 
@@ -470,19 +471,15 @@ convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function <- function(SI_list_b
 
 ## Case research approach
 
-To test the developed code and output results analysis was generated for SA1 zones within two case study areas: Clayton (SA2) and Melbourne City (SA3). Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
-
-### Victoria, Australia
-
-Victoria is the southern-most state on the Australian mainland. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London^[Greater Melbourne is the term used to describe the larger metropolitan area, encompassing 30 LGAs. The City of Melbourne LGA covers only a small portion of the inner city.
+This document reports results for a single case, the state of Victoria. The state capital is in Melbourne, which has a similar metropolitan area to of Paris or London^[Greater Melbourne is the term used to describe the larger metropolitan area, encompassing 30 LGAs. The City of Melbourne LGA covers only a small portion of the inner city.
 ]. However, with only around 5 million people Melbourne has about one-third of the population density. It has an inner Central Business District (CBD) with apartments, commercial skyscrapers and extensive sporting facilities nearby; surrounded by low-density, predominately single-family-housing-dominated, inner, middle and outer suburbs.
 
 
 There are train and tram networks radiating from the CBD, but for most of the suburban areas the reality is that transit is provided by circuitious bus routes that are mostly used by those who cannot otherwise drive. An extensive freeway (and tollway) network provides connections across the Greater Melbourne area, further around Port Phillip Bay to Geelong (south-west) and the Mornington Penninsula (south-east) as well as to regional centres elsewhere in Victoria. There is a state-wide regional train and bus network (VLine), which also provides connections into South Australia, New South Wales and the Australian Capital Territory (Canberra) and local bus services in many regional towns and cities. However, accessibility to most of the city and state tends to be car-dominated. The Overland train service to Adelaide and the XPT to Sydney are provided seperately to VLine services. Victoria's GTFS feed is published by Public Transport Victoria (PTV)^[There are over 400 historical releases of the available on the transitfeeds.com website, with the first dating from March 2015 [@transitfeeds_victoria:2023aa].].
 
-The developed code has been separately tested using SA1- and LGA-level areas of interest, including hand verification of some example SA1 areas^[This testing is reported in the main branch of the project on GitHub. This document is instead specific to the calculation of the SI scores for the 2016 SA1 boundaries.]. 
-
 For the results reported here output was obtained for SA1-level areas using GTFS files from August 2016 and 2021, running for just the day of the census in each year. The Australian Census is undertaken in early August every 5 years. GTFS feeds were therefore selected for the first week of August of each year, with code output produced for only the day of the census itself^[It takes about a day of processing time to run the code for all of the stops in Victoria for a single 'day' of service. Hence, only the census days (rather than weeks) were analysed to speed development.]. Minor corrections were made to the GTFS files to remove duplicate stop_ids^[These involved minor discrepancies in either the stop name, latitude or longitude.].
+
+
 
 The Australian Bureau of Statistics (ABS) provides a range of shape files and other resources. This study made use of the absmapsdata R package [@R-absmapsdata] to access the SA1 boundaries for Victoria used during the 2016 census (SA1_2016)^[Note, there is also a set of SA1 boundaries that are relevant to the 2021 census (SA1_2021).]. The EPSG:28355 transform [@EPSG_28355] was used to shift longitude and latitude into metres, as per the Geocentric Datum of Australia 1994 (GDA95 / MGA zone 55) coordinates.
 
@@ -617,6 +614,29 @@ victoria_2016_SI_df_by_mode_sf <- left_join(victoria_2016_SI_df_by_mode, sa12016
 
 ```
 
+
+Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
+
+
+
+### Sub-cases
+
+The developed code has been separately tested using SA1- and LGA-level areas of interest, including hand verification of some example SA1 areas^[This testing is reported in the main branch of the project on GitHub. This document is instead specific to the calculation of the SI scores for the 2016 SA1 boundaries.]. Here the results are examined in detail for:  
+ 
+- SA1 zone 20403106915, which covers Running Creek and Morgans Bridge, two localities in the Victorian Alps^[The aforementioned hand verification of example SA1 areas reported in the main branch of the project on GitHub also examined SA1 zone 20403106915. This is repeated here for consistency.]. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. The location of the SA1 20403106915 is shown in Figure 1.  
+
+![SA1 20403106915, with approximate location of Stop:ID 45125 highlighted, sources ABS and Google Maps](images/Running_creek_bus_stop.png)
+
+- Output results for SA1 zones within the Clayton Statistical Area Level 2 (SA2) were also examined.  This SA2 includes the Monash University Clayton campus, and is selected because it is familiar to authors and likely readers. 
+
+![Clayton SA2 zone. Source ABS.](images/Clayton.png)
+
+- Output results for SA1 zones within the Melbourne City Statistical Area Level 3 (SA3) were also examined.  This SA3 includes Melbourne CBD, north Melbourne, Royal Park, Carlton, East Melbourne. parts of South Yarra and Prahan, and Southbank. Again, it has been selected for familiarity so as to help assess the accuracy of the reported SI results.   
+
+![Melbourne City SA3 zone. Source: ABS.](images/Melbourne_city.png)
+
+### Transit needs: ISRAD scores
+
 The ABS provides IRSAD datasets for SA1 in excel format. Data for 2016 and 2021 was included in this study^[The IRSAD scores for 2021 appear to only be available for the SA12021 boundaries. A correspondance file was used to match the SA12021 to SA12016 boundaries, but it was not possible to factor the scores.]. 
 
 ISRAD Scores for 2021 are shown in Figure \ref{fig:Victoria_IRSAD_load_2021} for the Melbourne City and Clayton case study areas. 
@@ -682,7 +702,6 @@ map <- IRSAD_2016_sa12016_map %>%
 ```
 
 ```{r Victoria_IRSAD_load_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2021 IRSAD score for SA1s: within the Clayton SA2 zone (left) and within the Melbourne City SA3 zone (right)", fig.show="hold", out.width="50%"}
-
 
 
 IRSAD_2021_sa12021 <- read_excel("data/Melbourne/2021/Statistical Area Level 1, Indexes, SEIFA 2021.xlsx", 
@@ -774,7 +793,7 @@ victoria_2016_SI_total <- victoria_2016_SI_df_by_mode %>% adorn_totals(where = "
 #write_csv2(victoria_2016_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2016_SI_SA12016_160809.csv")
 
 #join to map data (not included in the CSV)
-victoria_2016_SI_total <- left_join(victoria_2016_SI_total, sa1_map_data)
+victoria_2016_SI_total_map <- left_join(victoria_2016_SI_total, sa1_map_data)
 
 
 #create total column
@@ -783,124 +802,136 @@ victoria_2021_SI_total <- victoria_2021_SI_df_by_mode %>% adorn_totals(where = "
 #write_csv2(victoria_2021_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2021_SI_SA12016_210810.csv")
 
 #join to map data (not included in the CSV)
-victoria_2021_SI_total <- left_join(victoria_2021_SI_total, sa1_map_data)
+victoria_2021_SI_total_map <- left_join(victoria_2021_SI_total, sa1_map_data)
 
 
 
 ```
 
 
-## Verifing the code output
-Code output results were verified by comparison to by-hand calculations for selected combinations of date and location in Victoria. 
-
-### Running Creek and Morgans Bridge, Kiewa Valley Hwy
-The SA1 area 20403106915 covers Running Creek and Morgans Bridge, two localities in the Victorian Alps. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. The location of the SA1 20403106915 is shown in the following figure. Relevant geographic statistics are shown in the following.  
-
-![SA1 20403106915, with approximate location of Stop:ID 45125 highlighted, sources ABS and Google Maps](images/Running_creek_bus_stop.png)
-
-
+## Verifing the code output: Running Creek and Mongans Bridge, Kiewa Valley Hwy
+Code output results were verified by comparison to by-hand calculations for the SA1 area 20403106915. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. Relevant geographic statistics are shown in the following.  
 
 ```{r Running_Creek_SA1_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
-kable(st_drop_geometry(sa1_map_data %>% filter(sa1_code_2016 == "20403106915")), caption = "SA1 zone 20403106915 geographic data")
+kable(t(st_drop_geometry(sa1_map_data %>% filter(sa1_code_2016 == "20403106915"))), caption = "SA1 zone 20403106915 geographic data")
 ```
 
-The area of SA1 20403106915 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2016 == "20403106915"))$areasqkm_2021`km^2^.  By inspection, the entire 400m radius catchment area of both of the bus stops lie entirely within the SA1 20403106915 boundaries.
+The area of SA1 20403106915 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2016 == "20403106915"))$areasqkm_2016`km^2^.  By inspection, the entire 400m radius catchment area of both of the bus stops lie entirely within the SA1 20403106915 boundaries.
 
 Hence the $Area_{Bn}/ Area_{SA1_Area}$ term for each of the bus stops is equal to $(\pi 400^2) / 284598000 =$ `r (pi * 400 * 400 / 284598000) %>% label_scientific(digits = 3)()`.  
+The number of services stopping at the two stops were extracted from the GTFS files, using instructions provided by @tidytransit_timetable on the tidytransit r package manual pages.  
+
+
+```{r Running_Creek_time_table, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE}
+
+##THe Melbourne GTFS file is very big, so I have pre-calculated this and stored in a csv.  
+#gtfs <- read_gtfs("data/Melbourne/2021/210805/gtfs.zip")
+#gtfs <- as_tidygtfs(gtfs)
+
+## get the id of the first stop in the trip's stop sequence
+#first_stop_id <- gtfs$stop_times %>% 
+#  group_by(trip_id) %>% 
+#  summarise(stop_id = stop_id[which.min(stop_sequence)])
+
+## join with the stops table to get the stop_name
+#first_stop_names <- left_join(first_stop_id, gtfs$stops, by="stop_id")
+
+## rename the first stop_name as trip_origin
+#trip_origins <- first_stop_names %>% select(trip_id, trip_origin = stop_name)
+
+## join the trip origins back onto the trips
+#gtfs$trips <- left_join(gtfs$trips, trip_origins, by = "trip_id")
+
+#gtfs$trips %>%
+ # select(route_id, trip_origin) %>%
+#  head()
+
+#if(!exists("trip_headsign", where = gtfs$trips)) {
+  # get the last id of the trip's stop sequence
+#  trip_headsigns <- gtfs$stop_times %>% 
+ #   group_by(trip_id) %>% 
+#    summarise(stop_id = stop_id[which.max(stop_sequence)]) %>% 
+#    left_join(gtfs$stops, by="stop_id") %>%
+ #   select(trip_id, trip_headsign.computed = stop_name)
+
+  # assign the headsign to the gtfs object 
+#  gtfs$trips <- left_join(gtfs$trips, trip_headsigns, by = "trip_id")
+#}
+
+###CREAte A DEPARTURE TIME TABLE
+#stop_ids <- gtfs$stops %>% 
+ # filter(stop_name == "Running Creek Rd/Kiewa Valley Hwy (Running Creek)") %>% 
+#  select(stop_id)
+
+#departures <- stop_ids %>% 
+#  inner_join(gtfs$stop_times %>% 
+#               select(trip_id, arrival_time, 
+#                      departure_time, stop_id), 
+#             by = "stop_id")
+
+#departures <- departures %>% 
+#  left_join(gtfs$trips %>% 
+#              select(trip_id, route_id, 
+#                     service_id, trip_headsign, 
+#                     trip_origin), 
+#            by = "trip_id") 
+
+#departures <- departures %>% 
+#  left_join(gtfs$routes %>% 
+#              select(route_id, 
+#                     route_short_name), 
+#            by = "route_id")
+
+#departures %>% 
+#  select(arrival_time,
+#         departure_time,
+#        trip_headsign,trip_origin,
+#         route_id) %>%
+#  head() %>%
+#  knitr::kable()
 
 
 
-Anyhow, this concludes the hand-calculation verification efforts to date. The next sections, therefore, look at the code outputs alone, with a focus on LGAs in Greater Melbourne and Victoria. 
+##EXTRACT A SINGLE DAY
 
 
+#services_on_210810 <- gtfs$.$dates_services %>% 
+#  filter(date == "2021-08-10") %>% select(service_id)
 
-No printed timetable has been located for the Albury - Mt Beauty via Baranduda and Tawonga South route that services these stops, but stop times are provided on the PTV website^[See https://tinyurl.com/5n83ryhy. This indicates services on April 27 to Albury at 7:25am, 9:25am and 9:30am. For April 28 there are services at 7:25am and 9:30am, but then there are no services over the weekend.  May 1 has two services (7:25am and 9:30am), May 2nd and 3rd both have three (7:25, 9:25 and 9:30am), bringing the total to 13. In the opposite direction the PTV website indicates a similar service pattern, only in the opposite direction and at 2:50pm, 4:20pm and 4:40pm. In general, this appears to be a school bus service pattern.  It is unclear, however, why some days have three services but others have only two.].  This indicates a  total of 26 arrivals to each of the two bus stops in a seven day week ^[The SL~Bn~ term.] Therefore the total $SI_{20403106915, 27/4-3/5/23}$ score is equal to $(2*(26* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(26* pi * 400 * 400 / 284598000))`.  
+#departures_210810 <- departures %>% 
+#  inner_join(services_on_210810, by = "service_id")
 
-The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
-```{r Running_Creek_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
+#write_csv2(departures_210810, "results/departures_210810.csv")
 
+departures_210810 <- read_delim("results/departures_210810.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
-Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
+departures_210810 %>%
+  arrange(departure_time, stop_id, route_short_name) %>% 
+  select(departure_time, stop_id, route_short_name, trip_headsign) %>% 
+  knitr::kable()
 
-kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, seven days starting April 27, 2023")
 
 ```
 
-The hand-calculated $SI_{20403106915, 27/4-3/5/23}$ matches that produced by the developed code, suggesting that the developed code is providing the expected output.  
+The GTFS feed shows six departures for the stop, with three services running towards Albury and three towards Mt Beauty. This suggests a  total of 6 arrivals to each of the two bus stops in a single day week ^[The SL~Bn~ term.] Therefore the total $SI_{SA1,2016,20403106915, 10/8/21}$ score is equal to $(2*(6* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(6* pi * 400 * 400 / 284598000))`.  
 
-### Talbot, Avoca line
-Talbot, north-west of Ballarat, provides a location where the accuracy of the developed code can be tested for both: 1) multiple modes; and 2) station/stop catchment areas spanning across multiple areas of interest.  As shown in the below figure, the Talbot township is covered by SA1 20103101708, which lies within the SA1 20103101707.   
+The $SI_{SA1,2016,20403106915, 10/8/21}$ score calculated by the developed code is `r (victoria_2021_SI_total %>% filter(sa1_code_2016 == "20403106915"))$Total`. The hand-calculated $SI_{SA1,2016,20403106915, 10/8/21}$ matches that produced by the developed code, suggesting that the developed code is providing the expected output.  
 
-
-![SA1 Location of 20103101707 and 20103101708 boundaries in relation to Talbot railway station and 800m catchment (red), and bus stops and 400m catchments (yellow), source ABS and PTV](images/Talbot.png)
-
-The Talbot Railway station's 800m catchment area is roughly three-fifths in SA1 20103101708. A bus stop located close to the railway station has roughly three-quarters of its catchment in 20103101708. The bus stop at the Talbot Town Hall has almost its entire catchment area within 20103101708.  
+## Clayton SA2: SI scores for SA1 zones
+This section briefly reviews the SI scores for SA1 zones within the Clayton SA2 area. SI scores for the day of the 2016 and 2021 censuses are compared, together with review of the ratio of the ISRAD to SI scores
 
 
-The area of SA1 20103101707 is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101707"))$areasqkm_2021 %>% format(digits=3)`km^2^^[via LGA data from abs_map package.]. 
+```{r Clayton_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI scores for SA1 zones within the Clayton SA2 area, 2016 census day (left) and 2021 census day (right)", fig.show="hold", out.width="50%"}
 
-<!--For SA1 20103101708 the area is `r st_drop_geometry(sa1_map_data %>% filter(sa1_code_2021 == "20103101708"))$areasqkm_2021 %>% format(digits=3)`km^2^ -->
-
-
-Hence the $Area_{Bn}/ Area_{SA120103101708}$ term for the Talbot Town Hall bus stop is approximately equal to $(\pi .4^2) / 3.05=$ `r (pi * .4 * .4 / 3.05)%>% format(digits=3)`.
-
-<!---, while the $Area_{Bn}/ Area_{SA120103101707}$ is very close to zero.
---->For the bus stop at the Talbot Station the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits=3)`<!---, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $1/4(\pi .4^2) / 237=$ `r ((1/4)*(pi * .4 * .4 / 237)) %>% format(digits=3)`--->. For the Railway Station itself the $Area_{Bn}/ Area_{SA120103101708}$ term is approximately equal to $(3/5)(\pi .8^2) / 3.05=$ `r ((3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)`<!---, while the $Area_{Bn}/ Area_{SA120103101707}$  term is $2/5(\pi .8^2) / 237=$ `r ((2/5)*(pi * .8 * .8 / 237)) %>% format(digits = 3)`--->. 
-
-Review of the PTV website stop departures indicates that the typical service pattern appears to be: 
-
-- Talbot Town Hall bus stop - 42 services per week^[One Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week); 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week); two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week); local bus services to Ballarat on Thursdays (1), Fridays (1), Monday (1), Tuesday (1) and Wednesday(1) (5 per week); and local bus services towards Bendigo on Thursdays (1), Fridays (1), Mondays (1), Tuesdays (1) and Wednesdays (1) (5 per week).] 
-  
-  
-- Talbot Station bus stop - 32 services per week^[One Vline bus service towards Maryborough on Thursdays, Fridays, Saturdays, Mondays and Tuesdays(5 per week); 3 Vline services towards Melbourne and/or Ballarat on Thursdays and Fridays, 2 on Saturdays, 1 on Sundays, 3 on Mondays and Tuesdays,  and 1 on Wednesdays (16 per week); and two Vline bus serices towards Mildura on Thursdays and Fridays, 1 on Satudays and Sundays, 2 on Mondays and Tuesdays and 1 on Wednesdays (11 per week)]
-
-- Talbot Railway Station - 28 services per week^{Two services towards Maryborough every day of the week; and two services towards Melbourne every day of the week]
-
-Therefore, the $SI_{20103101708}$ is approximately equal to: (Talbot Town Hall bus stop) 42 services per week x `r ((pi * .4 * .40 / 3.05)) %>% format(digits = 3)` = `r (42*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus (Talbot Station bus stop) 32 services per week x $3/4(\pi .4^2) / 3.05=$ `r ((3/4)*(pi * .4 * .4 / 305)) %>% format(digits = 3)` = `r (32*(3/4)*(pi * .4 * .4 / 3.05)) %>% format(digits = 3)`; plus (Talbot Railway Station) 28 services per week x `r ((3/5)*(pi * .8 * .8 / 305)) %>% format(digits = 3)` = `r (28*(3/5)*(pi * .8 * .8 / 3.05)) %>% format(digits = 3)` = `r ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) %>% format(digits = 3)`
-
-
-The $SI_{20403106915, 27/4-3/5/23}$ score calculated by the developed code is shown in the following table.  
-```{r Talbot_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
-
-
-Victoria_total_SI_SA1_230427 <- read_csv("Victoria_total_SI_SA1_230427.csv")
-
-kbl(Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"), caption = "Developed code output for SA1 20103101707, seven days starting April 27, 2023")
-
-```
-
-The hand-calculated $SI_{20103101708, 27/4-3/5/23}$ is  approximately `r (1-(((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))) / ((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD))) %>% percent_format(digits = 3)()` lower than the value calculated by the SI code.  However, this appears to be sufficient to accept the result given that: 
-
-- the overlaps of the station and stop catchment areas have been estimated based on PTV and ABS maps, rather then precisely calculated using GIS software; 
-- the hand-calculated SI is based on current (August 2023) service schedules, whereas the code-calculated value is based on a GTFS file from April 27, 2023^[The online PTV timetables only go back a month or two, so any changes in the timetables between April and now could not be checked without looking directly at the GTFS files, which sort of defeats the purpose of doing the verification calculations.]; and
-- Overall the SI scores vary greatly across LGAs^[Ranging between `r min(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3)` and `r max(Victoria_total_SI_SA1_230427$SI_CCD) %>% format(digits=3, big.mark = ",")`.], meaning that a difference of just  `r ((((Victoria_total_SI_SA1_230427 %>% filter(sa1_code_2021 == "20103101708"))$SI_CCD)) - ((42*(pi * .4 * .4 / 3.05)) + (32*(3/4*(pi * .4 * .4 / 3.05))) + ((28*(3/5)*(pi * .8 * .8 / 3.05)))))  %>% format(digits = 3)` between the hand-calculated and code-calculated score is likely an issue of precision, rather than accuracy.  
-
-Further verification work might involve:
-
-- updating the code calculated values from $SI_{20103101708, 27/4-3/5/23}$ to $SI_{20103101708, now+7days}$ such that the current PTV timetables could be directly compared to the code output using the current GTFS files^[This would remove the chance that the service patterns have actually changed between April and now, although it is expected that even if there has been a change it is unlikely to have been large.]; 
-- obtaining more precise $Area_{Bn} / Area_{area of interest}$ terms using GIS or similar; 
-- stepping through the coding calculations one at a time to verify the intermediate calculations, and hence confirm that this disrepancy is simply a matter of precision; 
-- undertaking the verification calculations for the  SA1 20103101707 area^[Unfortunately this is a large SA1 and there are other bus stops (outside of Talbot) that will contribute to the SI score.] or for some other area where hand calculations are relatively easy to perform. 
-
-
-
-
-The next sections show results for SA1 zones within Clayton and within Greater Melbourne, so as to provide some context for the results and as a cross-check. 
-
-## SA1s within the Clayton SA2 zone
-
-```{r Clayton_SI_2016_and_2021_maps, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SA1s witihn the Clayton SA2 zone: SI for 2016 (left) and 2021 (right) census days", fig.show="hold", out.width="50%"}
-
-
-
-map <- victoria_2016_SI_total %>%
-  filter(sa2_name_2016 == "Clayton") %>%   
+map <- victoria_2016_SI_total_map %>%
+  filter(sa2_code_2016 == "Clayton") %>%   
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # keep legend
-  scale_fill_gradient2() +    # fill colours on log scale
+  scale_fill_gradient2(breaks = c(0.01, 1, 50), trans = "log") +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
@@ -911,14 +942,14 @@ map
 
 
 
-map <- victoria_2021_SI_total %>%
-  filter(sa2_name_2016 == "Clayton") %>%   
+map <- victoria_2021_SI_total_map %>%
+  filter(sa2_code_2016 == "Clayton") %>%   
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # keep legend
-  scale_fill_gradient2() +    # fill colours on log scale
+  scale_fill_gradient2(breaks = c(0.01, 1, 50), trans = "log") +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
@@ -930,10 +961,9 @@ map
 
 ```
 
-Figure \ref{fig:Clayton_SI_2016_and_2021_maps} shows SI scores for  
 
 
-## SA1s within the Melbourne City SA3 zone
+## Melbourne City SA3 zone
 
 
 
