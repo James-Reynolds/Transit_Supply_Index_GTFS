@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2022.4.19)  23 AUG 2023 18:39
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2022.4.19)  24 AUG 2023 10:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -859,12 +859,13 @@ LaTeX Warning: Marginpar on page 3 moved.
 [3] [4
 
 ]
-Overfull \hbox (3.60051pt too wide) detected at line 145
-[][]\OML/cmm/m/it/8 SI[] \OT1/cmr/m/n/8 = [] []
- []
+
+LaTeX Warning: Reference `eq:supply_index' on page 5 undefined on input line 14
+1.
 
 
-LaTeX Warning: Marginpar on page 5 moved.
+LaTeX Warning: Reference `eq:supply_index' on page 5 undefined on input line 14
+9.
 
 
 LaTeX Warning: Marginpar on page 5 moved.
@@ -880,7 +881,7 @@ LaTeX Warning: Marginpar on page 5 moved.
 
 [5]
 
-Package fontspec Warning: \addfontfeature(s) ignored on line 209; it cannot be
+Package fontspec Warning: \addfontfeature(s) ignored on line 202; it cannot be
 (fontspec)                used with a font that wasn't selected by a fontspec
 (fontspec)                command.
 (fontspec)                 
@@ -893,16 +894,16 @@ LaTeX Warning: Marginpar on page 7 moved.
 
 
 Package natbib Warning: Citation `R-tidytransit' on page 7 undefined on input l
-ine 225.
+ine 218.
 
 
-Overfull \hbox (8.25pt too wide) in paragraph at lines 241--241
+Overfull \hbox (8.25pt too wide) in paragraph at lines 234--234
 []\TU/lmtt/m/n/10 ## The following objects are masked from 'package:gtfstools':
 [] 
  []
 
 
-Overfull \hbox (13.5pt too wide) in paragraph at lines 241--241
+Overfull \hbox (13.5pt too wide) in paragraph at lines 234--234
 []\TU/lmtt/m/n/10 ##     get_trip_geometry, read_gtfs, validate_gtfs, write_gtf
 s[] 
  []
@@ -941,7 +942,7 @@ LaTeX Warning: Marginpar on page 8 moved.
 LaTeX Warning: Marginpar on page 8 moved.
 
 
-Package fontspec Warning: \addfontfeature(s) ignored on line 331; it cannot be
+Package fontspec Warning: \addfontfeature(s) ignored on line 324; it cannot be
 (fontspec)                used with a font that wasn't selected by a fontspec
 (fontspec)                command.
 (fontspec)                 
@@ -967,7 +968,7 @@ LaTeX Warning: Marginpar on page 9 moved.
 File: images/Running_creek_bus_stop.png Graphic file (type bmp)
 <images/Running_creek_bus_stop.png>
 
-Package fontspec Warning: \addfontfeature(s) ignored on line 378; it cannot be
+Package fontspec Warning: \addfontfeature(s) ignored on line 371; it cannot be
 (fontspec)                used with a font that wasn't selected by a fontspec
 (fontspec)                command.
 (fontspec)                 
@@ -991,12 +992,12 @@ a_IRSAD_load_2021-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Victoria
 _IRSAD_load_2021-2.pdf>
 
-Overfull \hbox (3.33006pt too wide) in paragraph at lines 418--419
+Overfull \hbox (3.33006pt too wide) in paragraph at lines 411--412
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 418--419
+Underfull \hbox (badness 10000) in paragraph at lines 411--412
 
  []
 
@@ -1010,7 +1011,7 @@ LaTeX Warning: Marginpar on page 10 moved.
 LaTeX Warning: Marginpar on page 10 moved.
 
 
-Package fontspec Warning: \addfontfeature(s) ignored on line 434; it cannot be
+Package fontspec Warning: \addfontfeature(s) ignored on line 427; it cannot be
 (fontspec)                used with a font that wasn't selected by a fontspec
 (fontspec)                command.
 (fontspec)                 
@@ -1019,7 +1020,7 @@ Package fontspec Warning: \addfontfeature(s) ignored on line 434; it cannot be
 
 [10]
 
-Package fontspec Warning: \addfontfeature(s) ignored on line 434; it cannot be
+Package fontspec Warning: \addfontfeature(s) ignored on line 427; it cannot be
 (fontspec)                used with a font that wasn't selected by a fontspec
 (fontspec)                command.
 (fontspec)                 
@@ -1029,17 +1030,17 @@ Package fontspec Warning: \addfontfeature(s) ignored on line 434; it cannot be
 [11] [12
 
 ]
-Overfull \hbox (15.71562pt too wide) in paragraph at lines 449--449
+Overfull \hbox (15.71562pt too wide) in paragraph at lines 442--442
 $[]$\TU/lmr/m/n/8 Victoria_2016_SA_SA2016_160809.csv 
  []
 
 
-Underfull \hbox (badness 5431) in paragraph at lines 449--449
+Underfull \hbox (badness 5431) in paragraph at lines 442--442
 \TU/lmr/m/n/8 and Victo- 
  []
 
 
-Overfull \hbox (6.49962pt too wide) in paragraph at lines 450--450
+Overfull \hbox (6.49962pt too wide) in paragraph at lines 443--443
 $[]$\TU/lmr/m/n/8 Victoria_2016_SI_df_by_mode…etc.  
  []
 
@@ -1059,7 +1060,7 @@ LaTeX Warning: Marginpar on page 13 moved.
 LaTeX Warning: Marginpar on page 13 moved.
 
 
-Overfull \hbox (9.728pt too wide) in paragraph at lines 455--455
+Overfull \hbox (9.728pt too wide) in paragraph at lines 448--448
 |\TU/lmr/m/it/12 Verifing the code output: Running Creek and Mongans Bridge,
  []
 
@@ -1073,13 +1074,6 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 LaTeX Warning: Marginpar on page 14 moved.
 
-
-Overfull \hbox (11.84515pt too wide) in paragraph at lines 544--549
-\TU/lmr/m/n/10 code is $\OT1/cmr/m/n/10 2\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 1194
-406 \OMS/cmsy/m/n/10 ^^B \OT1/cmr/m/n/10 10[]$\TU/lmr/m/n/10 . The hand-calcula
-ted $\OML/cmm/m/it/10 SI[]$ 
- []
-
 File: Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Clayton
 _SI_2021-1.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Clayton_
@@ -1089,17 +1083,17 @@ _SI_2021-2.pdf Graphic file (type pdf)
 <use Reynolds_Currie_2024_transit_supply_index_GTFS_files/figure-latex/Clayton_
 SI_2021-2.pdf>
 
-Overfull \hbox (3.34825pt too wide) in paragraph at lines 560--561
+Overfull \hbox (3.34825pt too wide) in paragraph at lines 553--554
 [][] []
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 560--561
+Underfull \hbox (badness 10000) in paragraph at lines 553--554
 
  []
 
 
-Overfull \hbox (18.77998pt too wide) in paragraph at lines 568--568
+Overfull \hbox (18.77998pt too wide) in paragraph at lines 561--561
 |\TU/lmr/m/it/12 Examining SA1s across all of Greater Melbourne and all of Vic-
 
  []
@@ -1131,7 +1125,7 @@ Package fontspec Warning: \addfontfeature(s) ignored on line 1; it cannot be
 Package natbib Warning: There were undefined citations.
 
 
-Package fontspec Warning: \addfontfeature(s) ignored on line 575; it cannot be
+Package fontspec Warning: \addfontfeature(s) ignored on line 568; it cannot be
 (fontspec)                used with a font that wasn't selected by a fontspec
 (fontspec)                command.
 (fontspec)                 
@@ -1139,16 +1133,19 @@ Package fontspec Warning: \addfontfeature(s) ignored on line 575; it cannot be
 (fontspec)                  The requested feature is "LetterSpace=10". 
 
 [18] (./Reynolds_Currie_2024_transit_supply_index_GTFS.aux)
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `Reynolds_Currie_2024_transit_supply_index_GT
 FS.out' has not changed.
 (rerunfilecheck)             Checksum: BEB16D8CDA2C9D7A3090401F1B4486A9;2602.
  ) 
 Here is how much of TeX's memory you used:
- 17697 strings out of 476179
- 337955 string characters out of 5809544
- 719244 words of memory out of 5000000
- 38067 multiletter control sequences out of 15000+600000
- 476521 words of font info for 74 fonts, out of 8000000 for 9000
+ 17700 strings out of 476179
+ 338034 string characters out of 5809544
+ 718201 words of memory out of 5000000
+ 38068 multiletter control sequences out of 15000+600000
+ 476529 words of font info for 75 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  108i,12n,108p,647b,466s stack positions out of 10000i,1000n,20000p,200000b,200000s
 

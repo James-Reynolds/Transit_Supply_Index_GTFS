@@ -59,14 +59,14 @@ This rest of this document is structured as follows: the next section discusses 
 # Research context
 
 ## The Suppy Index
-
+<!----
 ```{marginfigure}
 \begin{equation}
 \label{eq:supply_index}
 SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
 \end{equation}
 ```
-
+--->
 Equation \ref{eq:supply_index}^[In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.
 ] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. 
 
@@ -548,7 +548,7 @@ units(p$area) <- as_units("m^2")
 
 #load pre-calculated df by mode (for just one day)
 victoria_2021_SI_df_by_mode <- read_delim("results/Victoria_2021_SI_df_by_mode_SA12016_210810.csv", 
-    delim = ";", escape_double = FALSE, col_types = cols(sa1_code_2016 = col_character(), 
+    delim = ";", locale = locale(decimal_mark = ","), escape_double = FALSE, col_types = cols(sa1_code_2016 = col_character(), 
         LRT = col_number(), subway = col_number(), 
         rail = col_number(), bus = col_number(), 
         ferry = col_number(), cable_tram = col_number(), 
@@ -601,7 +601,7 @@ victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, sa12016
 
 #load pre-calculated df by mode (for just one day)
 victoria_2016_SI_df_by_mode<- read_delim("results/Victoria_2016_SI_df_by_mode_SA12016_160809.csv", 
-    delim = ";", escape_double = FALSE, col_types = cols(sa1_code_2016 = col_character(), 
+    delim = ";", locale = locale(decimal_mark = ","), escape_double = FALSE, col_types = cols(sa1_code_2016 = col_character(), 
         LRT = col_number(), subway = col_number(), 
         rail = col_number(), bus = col_number(), 
         ferry = col_number(), cable_tram = col_number(), 
