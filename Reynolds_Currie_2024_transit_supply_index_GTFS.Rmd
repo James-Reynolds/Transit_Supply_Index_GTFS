@@ -54,21 +54,21 @@ Previous research by @currie2007identifying developed a transit Supply Index (SI
 
 This document describes results from using the code to output SI scores for the day of the 2016 census and the day of the 2021 census for each of the Australian Bureau of Statistics (ABS) 2016 Statistical Area Level 1 (SA1) zones in Victoria^[These scores have been requested by Maryam Jafari as an input to her PhD project.]. It also presents verification checks to determine the accuracy of the output scores, and shows some statistical analysis of the scores as a way of exploring the output. 
 
-This rest of this document is structured as follows: the next section discusses the research context of the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the overall context of the Victoria, Australia, case for which the scores are being calculatted. It also discusses the individual (sub-)cases within Victoria^[An SA1 in the Alpine are, an SA1 in Talbot (near Ballarat), SA1s within the Clayton SA2 area and SA1s witihin the Greater Melbouren SA3 area) used to verify and explore the scores outputed by the code. In the fourth section results are presented, including the verification results, exploration of the scores across Clayton and Melbourne City,  and a review of the SI scores for SA1s across all of Greater Melbourne and all of Victoria. Mode-by-mode SI scores are also explored, followed by an examination of needs-gaps across the ABS Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) scores, ranks and population levels. The document then closes with a brief discussion and conclusion section.
+This rest of this document is structured as follows: the next section discusses the research context of the Supply Index. In the third section the methodology for the code development is outlined, including discussion of the overall context of the Victoria, Australia, case for which the scores are being calculated. It also discusses the individual (sub-)cases within Victoria^[An SA1 in the Alpine area, SA1s within the Clayton SA2 area and SA1s within the Melbourne City SA3 area] used to verify and explore the scores outputted by the code. In the fourth section results are presented, including the verification results, exploration of the scores across Clayton and Melbourne City,  and a review of the SI scores for SA1s across all of Victoria. The document then closes with a brief discussion and conclusion.
 
 # Research context
 
 ## The Suppy Index
-<!----
+
 ```{marginfigure}
 \begin{equation}
 \label{eq:supply_index}
 SI_{area, time} = \sum{\frac{Area_{Bn}}{Area_{area}}*SL_{n, time}}
 \end{equation}
 ```
---->
+
 Equation \ref{eq:supply_index}^[In Equation \ref{eq:supply_index} $SI_{area, time}$ is the Supply Index for the area of interest and a given period of time. $Area_{Bn}$ is the buffer area for each stop (n) within the area of interest. In @currie2007identifying this was based on a radius of 400 metres for bus and tram stops, and 800 metres for railway stations. $Area_area$ is the area of the area of interest, and $SL_{n,time}$ is the number of transit arrivals for each stop for a given time period.
-] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. An advantage of the Supply Index is that it is a relatively simple number to calculate, understand and explain. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. 
+] shows the Supply Index^[Minor adjustments have been made to generalise the equation, as @currie2007identifying focused on the context of Melbourne's Census Collection Districts (CCD) and calculations based on a week of transit service.]. It describes the number of transit arrivals at stops within an area of interest and time frame, multiplied by a factor accounting for the proportion of the area of interest that is within typical walking distance of each stop. Hence, more services, more stops and higher frequencies would all result in an increase in Supply Index score. 
 
 The Supply Index does not incorporate further aspects, such as service span, off-peak share of service or service speed, which are a feature of the Transit Capaicity and Quality of Service Manual (TCQSM) [@TCQSM:2013] and other transit supply metrics. However, including such factors may increase the complexity of calculating and describing the index. 
 
@@ -77,13 +77,6 @@ Simplicity is also helped by the way that the SI is additive. Hence, $SI_{area, 
 
 @currie2007identifying calculated the $SI_{area, time}$ for various Census Collection Districts (CCDs)^[CCDs predate the introduction of Statistical Areas 1, 2, 3, and 4 (SA1, SA2, SA3, SA4), and other geographical divisions currently used by the Australian Bureau of Statistics (ABS), which may be more familiar to readers.] in Melbourne using a timetable database provided by the Victorian Public Transport Authority (PTA). This predated the widespread availability of GTFS data. A question, therefore, is how to calculate the SI using GTFS data so that $SI_{area, time}$ scores can be calculated and compared for any area of interest where transit service information is available in that format.
 
-## Transport Needs Index(es)
-
-@currie2007identifying also developed a Transport Needs Index based around population, transport and employment data. This was combined with the ABS' Index for Relative Socio-Economic Advantage/Disadvantage (IRSAD) to produce a combined index addressing social and transport needs. This was then used to assess the gap between transit needs and supply. 
-
-Later in this document a similar needs-gap analysis is presented for Victorian SA1s. However, in the needs-gap analysis here only the IRSAD scores and population data are reported. Calculating the combined Transport Needs index as per @currie2007identifying may be a direction for future research.
-
-
 
 # Methodology
 
@@ -91,7 +84,7 @@ This document has been prepared using Rmarkdown, which allows the intermingling 
 
 Various analysis tools are available that make use of GTFS data, including the tidytransit package [@R-tidytransit] for the R statistical programming language [@R-base]. @tidytransit_departure_timetable provides code to calculate a departure timetable from a GTFS feed, and this was adapted to calculate arrivals at a stop and the SL~Bn~ term in the @currie2007identifying SI equation.
 
-```{r arrival_timetable_as_a_function, echo=FALSE, cache=TRUE}
+```{r arrival_timetable_as_a_function, echo=FALSE, warnings=FALSE, messages=FALSE, cache=TRUE}
 
 #This was code was developed for another project (https://github.com/James-Reynolds/DEAKIN-housing-and-transit-accessibility),  based on the tidytransit vignette on producing a departure timetable (@tidytransit_departure_timetable.  There is back history availlble at at that github repository  for further details, but basically I wrote a departure_timetable_function and fixed up a bit where it wasn't accounting for through-running services.  This was then directly adjusted to create an arrival_timetable function (below) --- However, I did not adjust all the variable names in the function to reflect that it is about arrivals, not departures. 
 #---also, something broke in the first few lines where it adds the trip_origins to the gtfs$trips data.  Not quite sure what broke, but the first 15 lines of the below function fixes it. 
@@ -288,7 +281,7 @@ split_gtfs_into_modes_and_put_in_list <- function(gtfs){
 Where transit stops are located close to boundaries their catchment areas may fall into multiple areas of interest. The sp package [@R-sf] provides tools for manipulating geographic data and shape files in R. This was used to calculate the proportion of each stop's catchment area that falls into each geographical area of interest^[GTFS files define stop locations based on latitude and longitude [@GTFS], whereas the Area~Bn~ calculation needs to be provided in the same units as the Area~area~ variable, necessitating the use of a geographic transform as part of the code.].
 
 
-The SI~area~ term in the SI equation was calculated on a mode-by-mode and stop-by-stop basis, by first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for the stop in question. This is then combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals (SL~Bn~) to calculate the contribution to the SI scores made by just that single stop for every area of interest. These are then added to a cumulative total field for each area of interest, and the calculations are repeated until all stops and modes in the GTFS file have been included.
+The proportional area term in the SI equation was calculated on a mode-by-mode and stop-by-stop basis, by first determining the amount of the catchment area (Area~Bn~) that falls into each geographical area of interest for the stop in question. This is then combined with the area for each geographical area of interest (Area~area~) and the number of stop arrivals (SL~Bn~) to calculate the contribution to the SI scores made by just that single stop for every area of interest. These are then added to a cumulative total field for each area of interest, and the calculations are repeated until all stops and modes in the GTFS file have been included.
 
 ```{r SICCD_calc_as_functions, echo=FALSE, warning=FALSE, message=FALSE}
 
@@ -623,7 +616,12 @@ Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstats
 
 The developed code has been separately tested using SA1- and LGA-level areas of interest, including hand verification of some example SA1 areas^[This testing is reported in the main branch of the project on GitHub. This document is instead specific to the calculation of the SI scores for the 2016 SA1 boundaries.]. Here the results are examined in detail for:  
  
-- SA1 zone 20403106915, which covers Running Creek and Morgans Bridge, two localities in the Victorian Alps^[The aforementioned hand verification of example SA1 areas reported in the main branch of the project on GitHub also examined SA1 zone 20403106915. This is repeated here for consistency.]. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. The location of the SA1 20403106915 is shown in Figure 1.  
+- SA1 zone 20403106915, which covers Running Creek and Morgans Bridge, two localities in the Victorian Alps^[The aforementioned hand verification of example SA1 areas reported in the main branch of the project on GitHub also examined SA1 zone 20403106915. This is repeated here for consistency.]. Within this SA1 area there are only two V/Line bus stops: 
+
+  - Stop ID: 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and
+  - Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  
+
+This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. The location of the SA1 20403106915 is shown in Figure 1.  
 
 ![SA1 20403106915, with approximate location of Stop:ID 45125 highlighted, sources ABS and Google Maps](images/Running_creek_bus_stop.png)
 
@@ -635,152 +633,10 @@ The developed code has been separately tested using SA1- and LGA-level areas of 
 
 ![Melbourne City SA3 zone. Source: ABS.](images/Melbourne_city.png)
 
-### Transit needs: ISRAD scores
-
-The ABS provides IRSAD datasets for SA1 in excel format. Data for 2016 and 2021 was included in this study^[The IRSAD scores for 2021 appear to only be available for the SA12021 boundaries. A correspondance file was used to match the SA12021 to SA12016 boundaries, but it was not possible to factor the scores.]. 
-
-ISRAD Scores for 2021 are shown in Figure \ref{fig:Victoria_IRSAD_load_2021} for the Melbourne City and Clayton case study areas. 
-
-```{r Victoria_IRSAD_load_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2016 IRSAD for SA1s within the Clayton SA2 boundary: score (left) and percentile within Victoria (right)", fig.show="hold", out.width="50%"}
-
-
-IRSAD_2016_sa12016 <- read_excel("data/Melbourne/2016/2033055001 - sa1 indexes.xls", 
-    sheet = "Table 3", skip = 4)
-
-#Rename variables, remove rows that do not have data, change variable type to match
-names(IRSAD_2016_sa12016) <- c("sa1_code_2016", "sa1_code_2016_11_digit", "usual_resident_population", "IRSAD_score","blank", "Australian_rank", "Australian_decile", "Australian_percentile", "blank2", "state_for_rank", "state_rank", "state_decile", "state_percentile")
-IRSAD_2016_sa12016 <- tibble(IRSAD_2016_sa12016)
-IRSAD_2016_sa12016 <- IRSAD_2016_sa12016[-1,]
-IRSAD_2016_sa12016 <- head(IRSAD_2016_sa12016, -2)
-
-IRSAD_2016_sa12016$sa1_code_2016 <- as.character(IRSAD_2016_sa12016$sa1_code_2016)
-IRSAD_2016_sa12016$sa1_code_2016_11_digit <- as.character(IRSAD_2016_sa12016$sa1_code_2016_11_digit)
-IRSAD_2016_sa12016$IRSAD_score <- as.numeric(IRSAD_2016_sa12016$IRSAD_score)
-IRSAD_2016_sa12016$usual_resident_population <- as.numeric(IRSAD_2016_sa12016$usual_resident_population)
-IRSAD_2016_sa12016$Australian_rank <- as.numeric(IRSAD_2016_sa12016$Australian_rank)
-IRSAD_2016_sa12016$Australian_decile <- as.numeric(IRSAD_2016_sa12016$Australian_decile)
-IRSAD_2016_sa12016$Australian_percentile <- as.numeric(IRSAD_2016_sa12016$Australian_percentile)
-IRSAD_2016_sa12016$state_rank <- as.numeric(IRSAD_2016_sa12016$state_rank)
-IRSAD_2016_sa12016$state_decile <- as.numeric(IRSAD_2016_sa12016$state_decile)
-IRSAD_2016_sa12016$state_percentile <- as.numeric(IRSAD_2016_sa12016$state_percentile)
-
-IRSAD_2016_sa12016_map <- left_join(IRSAD_2016_sa12016, sa1_map_data, join_by("sa1_code_2016" == "sa1_7dig_2016"))
-
-
-map <- IRSAD_2016_sa12016_map %>%
-  filter(sa2_name_2016 == "Clayton") %>%   
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = IRSAD_score),     # fill by IRSAD_score
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf()
-
-#map
-
-
-map <- IRSAD_2016_sa12016_map %>%
-  filter(sa2_name_2016 == "Clayton") %>%   
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = state_percentile),     # fill by IRSAD_score
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf()
-
-#map
-
-
-```
-
-```{r Victoria_IRSAD_load_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "2021 IRSAD score for SA1s: within the Clayton SA2 zone (left) and within the Melbourne City SA3 zone (right)", fig.show="hold", out.width="50%"}
-
-
-IRSAD_2021_sa12021 <- read_excel("data/Melbourne/2021/Statistical Area Level 1, Indexes, SEIFA 2021.xlsx", 
-    sheet = "Table 3", skip = 4)
-
-#Rename variables, remove rows that do not have data, change variable type to match
-names(IRSAD_2021_sa12021) <- c("sa1_code_2021_11_digit", "usual_resident_population", "IRSAD_score","blank", "Australian_rank", "Australian_decile", "Australian_percentile", "blank2", "state_for_rank", "state_rank", "state_decile", "state_percentile")
-IRSAD_2021_sa12021 <- tibble(IRSAD_2021_sa12021)
-IRSAD_2021_sa12021 <- IRSAD_2021_sa12021[-1,]
-IRSAD_2021_sa12021 <- head(IRSAD_2021_sa12021, -3)
-
-IRSAD_2021_sa12021$sa1_code_2021_11_digit <- as.character(IRSAD_2021_sa12021$sa1_code_2021_11_digit)
-IRSAD_2021_sa12021$IRSAD_score <- as.numeric(IRSAD_2021_sa12021$IRSAD_score)
-IRSAD_2021_sa12021$usual_resident_population <- as.numeric(IRSAD_2021_sa12021$usual_resident_population)
-IRSAD_2021_sa12021$Australian_rank <- as.numeric(IRSAD_2021_sa12021$Australian_rank)
-IRSAD_2021_sa12021$Australian_decile <- as.numeric(IRSAD_2021_sa12021$Australian_decile)
-IRSAD_2021_sa12021$Australian_percentile <- as.numeric(IRSAD_2021_sa12021$Australian_percentile)
-IRSAD_2021_sa12021$state_rank <- as.numeric(IRSAD_2021_sa12021$state_rank)
-IRSAD_2021_sa12021$state_decile <- as.numeric(IRSAD_2021_sa12021$state_decile)
-IRSAD_2021_sa12021$state_percentile <- as.numeric(IRSAD_2021_sa12021$state_percentile)
-
-#Use correspondence file to convert from SA12021 to SA12016
-CG_SA1_2016_SA1_2021 <- read_csv("data/Melbourne/2021/CG_SA1_2016_SA1_2021.csv")
-CG_SA1_2016_SA1_2021$SA1_MAINCODE_2016 <- as.character(CG_SA1_2016_SA1_2021$SA1_MAINCODE_2016)
-CG_SA1_2016_SA1_2021$SA1_CODE_2021 <- as.character(CG_SA1_2016_SA1_2021$SA1_CODE_2021)
-IRSAD_2021_sa12016 <- IRSAD_2021_sa12021
-IRSAD_2021_sa12021 <- left_join(IRSAD_2021_sa12021, CG_SA1_2016_SA1_2021, join_by("sa1_code_2021_11_digit" == "SA1_CODE_2021"), multiple = "first")
-
-### Something not working with the calculation to convert IRSAD score by the correspondence file Ratios. Likely because the rations are to do with actual number of people etc. Hence, just uses the SA12021 ISRAD scores directly onto the corresponding SA12016 zones
-IRSAD_2021_sa12016$IRSAD_score <- IRSAD_2021_sa12021$IRSAD_score 
-IRSAD_2021_sa12016$sa1_code_2016 <- IRSAD_2021_sa12021$SA1_MAINCODE_2016
-names(IRSAD_2021_sa12016) <- c("sa1_code_2021_11_digit", "usual_resident_population", "IRSAD_score","blank", "Australian_rank", "Australian_decile", "Australian_percentile", "blank2", "state_for_rank", "state_rank", "state_decile", "state_percentile", "sa1_code_2016_11_digit")
-
-
-IRSAD_2021_sa12016_map <- left_join(IRSAD_2021_sa12016, sa1_map_data, join_by("sa1_code_2016_11_digit" == "sa1_code_2016"))
-names(IRSAD_2021_sa12016_map)[names(IRSAD_2021_sa12016_map) == 'sa1_7dig_2016'] <- 'sa1_code_2016'
-
-map <- IRSAD_2021_sa12016_map %>%
-  filter(sa2_name_2016 == "Clayton") %>%   
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = IRSAD_score),     # fill by IRSAD_score
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf()
-
-map
-
-
-map <- IRSAD_2021_sa12016_map %>%
-  filter(sa3_name_2016 == "Melbourne City") %>%   
-  ggplot() +
-  geom_sf(aes(geometry = geometry,  # use the geometry variable
-             fill = IRSAD_score),     # fill by IRSAD_score
-          lwd = 0,                  # remove borders
-         show.legend = TRUE) +   # fill colours on log scale
-# geom_point(aes(cent_long,
-    #           cent_lat),        # use the centroid long (x) and lats (y)
-   #          colour = "white") +    # make the points white
-  # theme_void() +                    # clears other plot elements
- coord_sf()
-
-map
-
-
-```
-
-The ISRAD scores appear to meet expectations.  In Clayton there is no score reported for the Monash University campus, Likely due to its low resident population. Higher scores are reported for SA1s to the north-east of Clayton, in the Notting Hill area. 
-
-For the Melbourne City SA3 zone, there are no ISRAD scores reported for the various parks^[Royal Park to the north, Fitzroy Gardens and the sporting district to the east and south east, and the SA1 with the Docklands stadium in it.]. Areas with lower IRSAD scores are located in parts of North Melbourne and in the north-east ^[Lygon Street and Nicholson Street areas.], which meets expectations. 
-
 
 # Results
 
-The following subsections discuss the results of running the code for all of Victoria for 2016 and 2021, and the looks in detail at the two selected cases (Clayton and Melbourne City) as a validation of the results. 
+The following subsections discuss the results of running the code for all of Victoria for 2016 and 2021. It then looks in detail at the three selected sub-cases (the Running Creek SA1 zone, Clayton and Melbourne City) as a validation of the results. 
 
 ## Supply Index results for all of Victoria
 
@@ -790,7 +646,7 @@ Four files are output by this document^[Located in the 'results' subdirectory of
 
 victoria_2016_SI_total <- victoria_2016_SI_df_by_mode %>% adorn_totals(where = "col")
 ##write total to csv
-#write_csv2(victoria_2016_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2016_SI_SA12016_160809.csv")
+write_csv2(victoria_2016_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2016_SI_SA12016_160809.csv")
 
 #join to map data (not included in the CSV)
 victoria_2016_SI_total_map <- left_join(victoria_2016_SI_total, sa1_map_data)
@@ -799,7 +655,7 @@ victoria_2016_SI_total_map <- left_join(victoria_2016_SI_total, sa1_map_data)
 #create total column
 victoria_2021_SI_total <- victoria_2021_SI_df_by_mode %>% adorn_totals(where = "col")
 ##write total to csv
-#write_csv2(victoria_2021_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2021_SI_SA12016_210810.csv")
+write_csv2(victoria_2021_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2021_SI_SA12016_210810.csv")
 
 #join to map data (not included in the CSV)
 victoria_2021_SI_total_map <- left_join(victoria_2021_SI_total, sa1_map_data)
@@ -810,7 +666,7 @@ victoria_2021_SI_total_map <- left_join(victoria_2021_SI_total, sa1_map_data)
 
 
 ## Verifing the code output: Running Creek and Mongans Bridge, Kiewa Valley Hwy
-Code output results were verified by comparison to by-hand calculations for the SA1 area 20403106915. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. Relevant geographic statistics are shown in the following.  
+Code output results were verified by comparison to by-hand calculations for the SA1 area 20403106915. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. Relevant geographic statistics are shown in Table \ref{tab:Running_Creek_SA1_2016}.  
 
 ```{r Running_Creek_SA1_2016, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
 kable(t(st_drop_geometry(sa1_map_data %>% filter(sa1_code_2016 == "20403106915"))), caption = "SA1 zone 20403106915 geographic data")
@@ -909,29 +765,31 @@ departures_210810 <- read_delim("results/departures_210810.csv",
 departures_210810 %>%
   arrange(departure_time, stop_id, route_short_name) %>% 
   select(departure_time, stop_id, route_short_name, trip_headsign) %>% 
-  knitr::kable()
+  knitr::kable(caption = "Departure times from Running Creek Rd/Kiewa Valley Hwy (Running Creek) stop (Stop ID 45125) for 10/8/21")
 
 
 ```
 
-The GTFS feed shows six departures for the stop, with three services running towards Albury and three towards Mt Beauty. This suggests a  total of 6 arrivals to each of the two bus stops in a single day week ^[The SL~Bn~ term.] Therefore the total $SI_{SA1,2016,20403106915, 10/8/21}$ score is equal to $(2*(6* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(6* pi * 400 * 400 / 284598000))`.  
+The GTFS feed shows six departures for the stop, as shown in Table \ref{tab:Running_Creek_time_table}. Three services running towards Albury and three towards Mt Beauty. This suggests a  total of 6 arrivals to each of the two bus stops in a single day week ^[The SL~Bn~ term.] Therefore the total $SI_{SA1,2016,20403106915, 10/8/21}$ score is equal to $(2*(6* pi * 400 * 400 / 284598000))$ which is equal to `r (2*(6* pi * 400 * 400 / 284598000))`.  
 
-The $SI_{SA1,2016,20403106915, 10/8/21}$ score calculated by the developed code is `r (victoria_2021_SI_total %>% filter(sa1_code_2016 == "20403106915"))$Total`. The hand-calculated $SI_{SA1,2016,20403106915, 10/8/21}$ matches that produced by the developed code, suggesting that the developed code is providing the expected output.  
+The $SI_{SA1,2016,20403106915, 10/8/21}$ score calculated by the developed code is `r (victoria_2021_SI_total %>% filter(sa1_code_2016 == "20403106915"))$Total`. 
+
+The hand-calculated $SI_{SA1,2016,20403106915, 10/8/21}$ matches that produced by the developed code^[Despite a minor rounding error or difference], suggesting that the developed code is providing the expected output.  
 
 ## Clayton SA2: SI scores for SA1 zones
-This section briefly reviews the SI scores for SA1 zones within the Clayton SA2 area. SI scores for the day of the 2016 and 2021 censuses are compared, together with review of the ratio of the ISRAD to SI scores
+This section briefly reviews the SI scores for SA1 zones within the Clayton SA2 area. SI scores for the day of the 2016 and 2021 censuses are compared in Figure \ref{fig:Clayton_SI_2021}.
 
 
 ```{r Clayton_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI scores for SA1 zones within the Clayton SA2 area, 2016 census day (left) and 2021 census day (right)", fig.show="hold", out.width="50%"}
 
 map <- victoria_2016_SI_total_map %>%
-  filter(sa2_code_2016 == "Clayton") %>%   
+  filter(sa2_name_2016 == "Clayton") %>%   
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # keep legend
-  scale_fill_gradient2(breaks = c(0.01, 1, 50), trans = "log") +    # fill colours on log scale
+  scale_fill_gradient2() +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
@@ -943,13 +801,13 @@ map
 
 
 map <- victoria_2021_SI_total_map %>%
-  filter(sa2_code_2016 == "Clayton") %>%   
+  filter(sa2_name_2016 == "Clayton") %>%   
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
              fill = Total),     # fill by TOtal SI
           lwd = 0,                  # remove borders
          show.legend = TRUE) +   # keep legend
-  scale_fill_gradient2(breaks = c(0.01, 1, 50), trans = "log") +    # fill colours on log scale
+  scale_fill_gradient2() +    # fill colours on log scale
 # geom_point(aes(cent_long,
     #           cent_lat),        # use the centroid long (x) and lats (y)
    #          colour = "white") +    # make the points white
@@ -961,14 +819,189 @@ map
 
 ```
 
+The SI scores for SA1 zones within the Clayton SA2 area appear to meet expectations.  Higher scores are reported for SA1 zones that are close to the Monash University bus loop (centre of the Clayton SA2 area) and near the Clayton railway station (south-west of Clayton SA2 area).  In general there appear to have been little changes in SI between 2016 and 2021.  
+
+
+```{r Compare_2016_2021_Clayton_scatterstats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "2016 and 2021 SI scores for SA1 zones in the Clayton SA2 area: scatterplot generated using ggstatsplot package"}
+
+victoria_2016_2021 <- victoria_2016_SI_total
+names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "SI_2016")
+
+victoria_2016_2021 <- left_join(victoria_2016_2021, victoria_2021_SI_total)
+names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "SI_2016",
+                              "LRT_2021", "subway_2021", "rail_2021", "bus_2021", "ferry_2021", "cable_tram_2021", "aerial_lift_2021", "funicular_2021", "trolleybus_2021", "monorail_2021", "SI_2021")
+
+victoria_2016_2021_map <- left_join(victoria_2016_2021, sa1_map_data)
+
+ggscatterstats(
+  data = victoria_2016_2021_map %>% filter(sa2_name_2016 == "Clayton"), ## data frame from which variables are taken
+  x = "SI_2016", ## predictor/independent variable
+  y = "SI_2021", ## dependent variable
+  xlab = "2016 SI on census day", ## label for the x-axis
+  ylab = "2021 SI on census day", ## label for the y-axis
+ label.var = "sa1_code_2016", ## variable to use for labeling data points
+point.label.args = list(alpha = 0.7, size = 1, color = "grey50"),
+  xfill = "#CC79A7", ## fill for marginals on the x-axis
+  yfill = "#009E73", ## fill for marginals on the y-axis
+  caption = "Analysis using ggstatsplot package"
+)
+
+```
+
+The scatter plot (Figure \ref{fig:Compare_2016_2021_Clayton_scatterstats}) indicates a significant association between the 2016 and 2021 SI scores. 
+
+```{r Compare_2016_2021_Clayton_within_stats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "2016 and 2021 SI scores for SA1 zones in the Clayton SA2 area: violin and box plot generated using ggstatsplot package"}
+
+#Change total column names to census year
+
+names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "2016",
+                              "LRT_2021", "subway_2021", "rail_2021", "bus_2021", "ferry_2021", "cable_tram_2021", "aerial_lift_2021", "funicular_2021", "trolleybus_2021", "monorail_2021", "2021")
+
+victoria_2016_2021_longer <- pivot_longer(victoria_2016_2021, cols = c("2016", "2021"), names_to = "Census", values_to = "Total SI")
+victoria_2016_2021_longer_map <- left_join(victoria_2016_2021_longer, sa1_map_data)
+
+#Change total column names to back
+names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "SI_2016",
+                              "LRT_2021", "subway_2021", "rail_2021", "bus_2021", "ferry_2021", "cable_tram_2021", "aerial_lift_2021", "funicular_2021", "trolleybus_2021", "monorail_2021", "SI_2021")
+
+
+ggwithinstats(
+  data = victoria_2016_2021_longer_map  %>% filter(sa2_name_2016 == "Clayton"), ## data frame from which variables are taken
+  x = "Census", ## predictor/independent variable
+  y = "Total SI", ## dependent variable
+  pairwise.comparisons = TRUE,
+  xlab = "Census", ## label for the x-axis
+  ylab = "SI on census day", ## label for the y-axis
+  caption = "Analysis using ggstatsplot package"
+)
+
+
+```
+
+However, the box and violin plot (Figure \ref{fig:Compare_2016_2021_Clayton_within_stats})indicates a small, but significant, difference between the 2016 and 2021 scores. The average score is higher in 2021 than in 2016, reflecting an increase in service levels.  
+
+
 
 
 ## Melbourne City SA3 zone
 
+This section briefly reviews the SI scores for SA1 zones within the Melbourne City SA3 area. SI scores for the day of the 2016 and 2021 censuses are compared in Figure \ref{fig:Melbourne_City_SI}.
+
+
+```{r Melbourne_City_SI, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI scores for SA1 zones within the Melbourne City SA3 area, 2016 census day (left) and 2021 census day (right)", fig.show="hold", out.width="50%"}
+
+map <- victoria_2016_SI_total_map %>%
+  filter(sa3_name_2016 == "Melbourne City") %>%   
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = Total),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  scale_fill_gradient2() +    # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
 
 
 
-## Examining SA1s across all of Greater Melbourne and all of Victoria
+map <- victoria_2021_SI_total_map %>%
+  filter(sa3_name_2016 == "Melbourne City") %>%   
+  ggplot() +
+  geom_sf(aes(geometry = geometry,  # use the geometry variable
+             fill = Total),     # fill by TOtal SI
+          lwd = 0,                  # remove borders
+         show.legend = TRUE) +   # keep legend
+  scale_fill_gradient2() +    # fill colours on log scale
+# geom_point(aes(cent_long,
+    #           cent_lat),        # use the centroid long (x) and lats (y)
+   #          colour = "white") +    # make the points white
+  # theme_void() +                    # clears other plot elements
+ coord_sf()
+
+map
+
+
+```
+
+The SI scores for SA1 zones within the Melbourne City SA3 area appear to meet expectations.  Higher scores are reported for SA1 zones in the Melbourne CBD. In general there appear to have been little changes in SI between 2016 and 2021.  
+
+
+```{r Compare_2016_2021_Melbourne_scatterstats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "2016 and 2021 SI scores for SA1 zones in the Melbourne City SA3 area: scatterplot generated using ggstatsplot package"}
+
+ggscatterstats(
+  data = victoria_2016_2021_map %>% filter(sa3_name_2016 == "Melbourne City"), ## data frame from which variables are taken
+  x = "SI_2016", ## predictor/independent variable
+  y = "SI_2021", ## dependent variable
+  xlab = "2016 SI on census day", ## label for the x-axis
+  ylab = "2021 SI on census day", ## label for the y-axis
+ label.var = "sa1_code_2016", ## variable to use for labeling data points
+point.label.args = list(alpha = 0.7, size = 1, color = "grey50"),
+  xfill = "#CC79A7", ## fill for marginals on the x-axis
+  yfill = "#009E73", ## fill for marginals on the y-axis
+  caption = "Analysis using ggstatsplot package"
+)
+
+```
+
+The scatter plot (Figure \ref{fig:Compare_2016_2021_Melbourne_scatterstats} indicates a significant association between the 2016 and 2021 SI scores. 
+
+```{r Compare_2016_2021_Melbourne_City_within_stats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "2016 and 2021 SI scores for SA1 zones in the Melbourne City SA3 area: violin and box plot generated using ggstatsplot package"}
+
+ggwithinstats(
+  data = victoria_2016_2021_longer_map  %>% filter(sa3_name_2016 == "Melbourne City"), ## data frame from which variables are taken
+  x = "Census", ## predictor/independent variable
+  y = "Total SI", ## dependent variable
+  pairwise.comparisons = TRUE,
+  xlab = "Census", ## label for the x-axis
+  ylab = "SI on census day", ## label for the y-axis
+  caption = "Analysis using ggstatsplot package"
+)
+
+
+```
+
+However, the box and violin plot (Figure \ref{fig:Compare_2016_2021_Melbourne_City_within_stats}) indicates no significant difference between the 2016 and 2021 scores (p = 0.06), even though the average score is slightly lower in 2021.  
+
+
+
+## Examining SA1s across all of Victoria
+
+Mapping SA1 scores across all of Victoria appears likely to result in overwhelming detail, and so is not reported here. Similarly, a scatter plot for all of the Victorian SA1s will provide a lot of detail and take a very long time to run.  Hence, only the violin and box plot is generated for all of Victoria. 
+
+```{r Compare_2016_2021_Victoria_within_stats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "2016 and 2021 SI scores for SA1 zones across Victoria: violin and box plot generated using ggstatsplot package"}
+
+ggwithinstats(
+  data = victoria_2016_2021_longer_map  %>% filter(state_name_2016 == "Victoria"), ## data frame from which variables are taken
+  x = "Census", ## predictor/independent variable
+  y = "Total SI", ## dependent variable
+  pairwise.comparisons = TRUE,
+  xlab = "Census", ## label for the x-axis
+  ylab = "SI on census day", ## label for the y-axis
+  caption = "Analysis using ggstatsplot package"
+)
+
+
+```
+
+The box and violin plot (Figure \ref{fig:Compare_2016_2021_Victoria_within_stats} indicates a significant difference between the 2016 and 2021 scores for SA1 zones across all of Victoria. The average score is higher in 2021 than it was in 2016.  
+
+
+
+# Discussion and Conclusions
+
+This document is part of a project related to calculating transit Supply Index (SI) scores directly from GTFS data. It is a branch^[The SA12016_analysis branch, available at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS/tree/SA12016_analysis/results] of the main project, wherein the SI scores are calculated for all SA1 zones in Victoria for the days of the 2016 and 2021 censuses. Here the 2016 SA1 boundaries are used.  
+
+A case research approach has been adopted to check the output scores presented here.  Firstly the output score for the SA1 zone 20403106915 in the Victorian Alps has been directly compared to a hand-calculated SI score. This SA1 zone was selected as it only has two bus stops and six services per day, making it relatively easy to calculate the SA1 score by hand.  The calculated score using the code matched that calculated by hand, suggesting that the code is working as expected and providing accurate results.  
+
+Results from two other cases were examined in detail as a check on output accuracy and quality. Results appeared to match expectations for SA1 zones within the Clayton SA2 area, with SA1 zones close to the Monash University bus loop and Clayton station having higher SI scores.  There was a small, but significant, increase in service levels between 2016 and 2021. For SA1 zones within the Melbourne City SA3 area the results similarly matched expectations. SI scores were higher for SA1 zones in the Melbourne CBD. There was no signficant change in SI scores between 2016 and 2021.  
+
+For SA1 zones across all of Victoria, the results indicate that there has been a significant change in SI scores between 2016 and 2021, with the average score being approximately 5 percent higher in 2021 than in 2016. 
+
+Further research may involve calculating the SA1 2016 scores for a full week around the 2016 and 2021 censuses.  However, the code is currently not very efficient and takes multiple days to run.  Efforts are underway^[In other Github branches] to improve the code, but for the moment work on this branch appears to be complete. 
 
 
 # References {#references}
