@@ -906,7 +906,7 @@ The $SI_{20403106915, 8/8/23}$ score calculated by the developed code is shown i
 ```{r Running_Creek_SI_calc_SA1_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
 
 
-kbl(victoria_2023_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915") %>% adorn_totals(where = "col"), caption = "Developed code output for SA1 20403106915, August 8, 2023")
+kbl(victoria_2023_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, August 8, 2023")
 
 ```
 
@@ -917,24 +917,24 @@ The hand-calculated^[See hand calculations in Methodology:Verifying the results 
 
 
 
-kbl(victoria_2018_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915") %>% adorn_totals(where = "col"), caption = "Developed code output for SA1 20403106915, August 14, 2018")
+kbl(victoria_2018_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, August 14, 2018")
 
 
-kbl(victoria_2019_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915") %>% adorn_totals(where = "col"), caption = "Developed code output for SA1 20403106915, August 13, 2019")
+kbl(victoria_2019_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, August 13, 2019")
 
 
-kbl(victoria_2020_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915") %>% adorn_totals(where = "col"), caption = "Developed code output for SA1 20403106915, August 11, 2020")
+kbl(victoria_2020_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, August 11, 2020")
 
-kbl(victoria_2021_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915") %>% adorn_totals(where = "col"), caption = "Developed code output for SA1 20403106915, August 10, 2021")
+kbl(victoria_2021_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, August 10, 2021")
 
-kbl(victoria_2022_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915") %>% adorn_totals(where = "col"), caption = "Developed code output for SA1 20403106915, August 14, 2022")
+kbl(victoria_2022_SI_df_by_mode %>% filter(sa1_code_2021 == "20403106915"), caption = "Developed code output for SA1 20403106915, August 14, 2022")
 
 
 ```
 
 
 It appears that no services ran on the day examined in 2022. Unfortunately, it is not possible to check this directly using the PTV website, but the GTFS for 2022 can be loaded and queried to explore this issue and identify whether it is correct or not.  
-
+<!----
 ```{r Running_Creek_SI_calc_SA1_2022, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "$SI_{LGA2021, 10/8/21}$", fig.show="hold", out.width="50%"}
 
 #manual check 2022
@@ -1022,11 +1022,11 @@ departures_220815 %>%
 
 
 ```
-
+---->
 Querying the 2022 GTFS file for departures from 'Running Creek Rd/Kiewa Valley Hwy (Running Creek)' on 2022-08-14 returns no results, whereas querying for 2022-08-15 returns four services. This indicates that, for whatever reason, the services did not run in 2022 on the day in question^[Maybe it was a local school holiday, or similar.] used to calculated the SI scores, but they did run on the following day.  This explains why the $SI_{20403106915, 14/8/22}$ score is equal to zero, while SI scores for other years are not. 
 
 ## Clayton (North) - Notting Hill SA2: Supply Index results for SA1s
-This section briefly reviews the SI scores for SA1 zones within the Clayton SA2 area. SI scores for the day of the 2016 and 2021 censuses are compared in Figure \ref{fig:Clayton_SI_2021}.
+This section briefly reviews the SI scores for SA1 zones within the Clayton SA2 area. SI scores for the day of analysis in 2018 and 2023 are compared in Figure \ref{fig:Clayton_SI_2021}.
 
 
 ```{r Clayton_SI_2021, echo=FALSE, warning=FALSE, message=FALSE, fig.fullwidth = TRUE, fig.cap= "SI scores for SA1 zones within the Clayton SA2 area, 2016 census day (left) and 2021 census day (right)", fig.show="hold", out.width="50%"}
@@ -1048,9 +1048,8 @@ map <- victoria_2018_SI_df_by_mode_sf %>%
 map
 
 
-
-map <- victoria_2021_SI_total_map %>%
-  filter(sa2_name_2016 == "Clayton") %>%   
+map <- victoria_2023_SI_df_by_mode_sf %>%
+  filter(sa2_name_2021 == "Clayton (North) - Notting Hill") %>%
   ggplot() +
   geom_sf(aes(geometry = geometry,  # use the geometry variable
              fill = Total),     # fill by TOtal SI
@@ -1066,61 +1065,43 @@ map <- victoria_2021_SI_total_map %>%
 map
 
 
-```
-
-The SI scores for SA1 zones within the Clayton SA2 area appear to meet expectations.  Higher scores are reported for SA1 zones that are close to the Monash University bus loop (centre of the Clayton SA2 area) and near the Clayton railway station (south-west of Clayton SA2 area).  In general there appear to have been little changes in SI between 2016 and 2021.  
 
 
-```{r Compare_2016_2021_Clayton_scatterstats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "2016 and 2021 SI scores for SA1 zones in the Clayton SA2 area: scatterplot generated using ggstatsplot package"}
 
-victoria_2016_2021 <- victoria_2016_SI_total
-names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "SI_2016")
-
-victoria_2016_2021 <- left_join(victoria_2016_2021, victoria_2021_SI_total)
-names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "SI_2016",
-                              "LRT_2021", "subway_2021", "rail_2021", "bus_2021", "ferry_2021", "cable_tram_2021", "aerial_lift_2021", "funicular_2021", "trolleybus_2021", "monorail_2021", "SI_2021")
-
-victoria_2016_2021_map <- left_join(victoria_2016_2021, sa1_map_data)
-
-ggscatterstats(
-  data = victoria_2016_2021_map %>% filter(sa2_name_2016 == "Clayton"), ## data frame from which variables are taken
-  x = "SI_2016", ## predictor/independent variable
-  y = "SI_2021", ## dependent variable
-  xlab = "2016 SI on census day", ## label for the x-axis
-  ylab = "2021 SI on census day", ## label for the y-axis
- label.var = "sa1_code_2016", ## variable to use for labeling data points
-point.label.args = list(alpha = 0.7, size = 1, color = "grey50"),
-  xfill = "#CC79A7", ## fill for marginals on the x-axis
-  yfill = "#009E73", ## fill for marginals on the y-axis
-  caption = "Analysis using ggstatsplot package"
-)
 
 ```
 
-The scatter plot (Figure \ref{fig:Compare_2016_2021_Clayton_scatterstats}) indicates a significant association between the 2016 and 2021 SI scores. 
+The SI scores for SA1 zones within the Clayton SA2 area appear to meet expectations.  Higher scores are reported for SA1 zones that are close to the Monash University bus loop (centre of the Clayton SA2 area) and near the Clayton railway station (south-west of Clayton SA2 area).  In general there appear to have been little changes in SI between 2018 and 2023.  
 
-```{r Compare_2016_2021_Clayton_within_stats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "2016 and 2021 SI scores for SA1 zones in the Clayton SA2 area: violin and box plot generated using ggstatsplot package"}
 
-#Change total column names to census year
+```{r Compare_2018_to_2023_Clayton_within_stats, echo=FALSE, warning=FALSE, message=FALSE, fig.height = 3.5, fig.fullwidth = FALSE, fig.cap= "SI scores for SA1 zones in the Clayton SA2 area, 2018 to 2023: violin and box plot generated using ggstatsplot package"}
 
-names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "2016",
-                              "LRT_2021", "subway_2021", "rail_2021", "bus_2021", "ferry_2021", "cable_tram_2021", "aerial_lift_2021", "funicular_2021", "trolleybus_2021", "monorail_2021", "2021")
+#create summary table of all years' totals
+victoria_total_SI_by_year <- tibble(sa1_code_2021 = victoria_2018_SI_df_by_mode$sa1_code_2021, "2018" = victoria_2018_SI_df_by_mode$Total)
+victoria_total_SI_by_year <- left_join(victoria_total_SI_by_year, (victoria_2019_SI_df_by_mode %>% dplyr::select(sa1_code_2021, Total)))
+names(victoria_total_SI_by_year) <- c("sa1_code_2021", "2018", "2019")
+victoria_total_SI_by_year <- left_join(victoria_total_SI_by_year, (victoria_2020_SI_df_by_mode %>% dplyr::select(sa1_code_2021, Total)))
+names(victoria_total_SI_by_year) <- c("sa1_code_2021", "2018", "2019", "2020")
+victoria_total_SI_by_year <- left_join(victoria_total_SI_by_year, (victoria_2021_SI_df_by_mode %>% dplyr::select(sa1_code_2021, Total)))
+names(victoria_total_SI_by_year) <- c("sa1_code_2021", "2018", "2019", "2020", "2021")
+victoria_total_SI_by_year <- left_join(victoria_total_SI_by_year, (victoria_2022_SI_df_by_mode %>% dplyr::select(sa1_code_2021, Total)))
+names(victoria_total_SI_by_year) <- c("sa1_code_2021", "2018", "2019", "2020", "2021", 
+                                      "2022")
+victoria_total_SI_by_year <- left_join(victoria_total_SI_by_year, (victoria_2023_SI_df_by_mode %>% dplyr::select(sa1_code_2021, Total)))
+names(victoria_total_SI_by_year) <- c("sa1_code_2021", "2018", "2019", "2020", "2021", "2022", "2023")
 
-victoria_2016_2021_longer <- pivot_longer(victoria_2016_2021, cols = c("2016", "2021"), names_to = "Census", values_to = "Total SI")
-victoria_2016_2021_longer_map <- left_join(victoria_2016_2021_longer, sa1_map_data)
+victoria_total_SI_by_year_longer <- pivot_longer(victoria_total_SI_by_year, cols = c(2:7), names_to = "year", values_to = "total_SI")
 
-#Change total column names to back
-names(victoria_2016_2021) <- c("sa1_code_2016", "LRT_2016", "subway_2016", "rail_2016", "bus_2016", "ferry_2016", "cable_tram_2016", "aerial_lift_2016", "funicular_2016", "trolleybus_2016", "monorail_2016", "SI_2016",
-                              "LRT_2021", "subway_2021", "rail_2021", "bus_2021", "ferry_2021", "cable_tram_2021", "aerial_lift_2021", "funicular_2021", "trolleybus_2021", "monorail_2021", "SI_2021")
+victoria_total_SI_by_year_longer <- left_join(victoria_total_SI_by_year_longer, (sa1_map_data %>% dplyr::select(sa1_code_2021, sa2_name_2021)))
 
 
 ggwithinstats(
-  data = victoria_2016_2021_longer_map  %>% filter(sa2_name_2016 == "Clayton"), ## data frame from which variables are taken
-  x = "Census", ## predictor/independent variable
-  y = "Total SI", ## dependent variable
+  data = victoria_total_SI_by_year_longer %>% filter(sa2_name_2021 == "Clayton (North) - Notting Hill"), ## data frame from which variables are taken
+  x = "year", ## predictor/independent variable
+  y = "total_SI", ## dependent variable
   pairwise.comparisons = TRUE,
-  xlab = "Census", ## label for the x-axis
-  ylab = "SI on census day", ## label for the y-axis
+  xlab = "Year", ## label for the x-axis
+  ylab = "Total SI on day of analysis", ## label for the y-axis
   caption = "Analysis using ggstatsplot package"
 )
 
@@ -1129,8 +1110,8 @@ ggwithinstats(
 
 However, the box and violin plot (Figure \ref{fig:Compare_2016_2021_Clayton_within_stats})indicates a small, but significant, difference between the 2016 and 2021 scores. The average score is higher in 2021 than in 2016, reflecting an increase in service levels.  
 
-
-
+<<<<<STOP HERE - ALL ON HOLD UNTIL 2022 is recalculated for (NOT A SUNDAY!)
+<!---
 
 ## Melbourne City SA3: Supply Index results for SA1s
 
@@ -1271,7 +1252,7 @@ There is clearly much more anlaysis that can be done to expand on this code. In 
 Additionally, the code will need to be forked so as to provide outputs for Deakin^{2023 and 2018 SI scores for 7 days, using SA1 areas from 2021.} and Monash^[2021 and 2016 SI scores for 1 and 7 days, using SA1 areas from 2016.]. At approximately one day of processing time per day of analysis, this would appear likely to take in the order of 4-5 weeks^{Although I'm going to try to get a few different computers going on this at the same time so that it takes less 'real' time.}. 
 
 
-
+---->
 
 # References {#references }
 
