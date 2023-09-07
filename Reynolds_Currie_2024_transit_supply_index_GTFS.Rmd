@@ -699,7 +699,7 @@ victoria_2021_SI_df_by_mode_sf <- left_join(victoria_2021_SI_df_by_mode, sa1_map
 
 ```
 
-
+---->
 ```{r victoria_2022, echo=FALSE, warning=FALSE, message=FALSE}
 victoria_2022 <- read_gtfs("data/Melbourne/2022/220804/gtfs.zip")
 
@@ -725,7 +725,7 @@ victoria_2022_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_202
 
 ##set inputs to SI_calc function
 victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
-start_date = "2022-08-14"
+start_date = "2022-08-09"
 period_in_days = 1
 EPSG_for_transform = 28355
 areas_of_interest_id_field = "sa1_code_2021"
@@ -750,7 +750,7 @@ write_csv2(victoria_2022_SI_df_by_mode, "results/Victoria_2022_SI_df_by_mode_SA1
 victoria_2022_SI_df_by_mode_sf <- left_join(victoria_2022_SI_df_by_mode, sa1_map_data)
 
 ```
-
+<!----
 ```{r victoria_2023, echo=FALSE, warning=FALSE, message=FALSE}
 victoria_2023 <- read_gtfs("data/Melbourne/2023/230804/gtfs.zip")
 
