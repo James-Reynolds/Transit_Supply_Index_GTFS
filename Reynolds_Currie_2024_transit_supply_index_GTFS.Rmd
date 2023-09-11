@@ -49,7 +49,10 @@ knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
 
 Previous research  [@currie2007identifying] developed a transit Supply Index (SI) based on calculating the number of transit arrivals at stops within an area of interest for an entire week, adjusted to account for the typical walk-access catchment for each stop. This document is part of a project to develop R code to calculate the SI directly from GTFS data. Researchers from Deakin University have requested that PTRG provide SI scores for all of Victoria^[Specifically, Deakin researchers are seeking SI values for all Statistical Area Level 1 (SA1) zones in Victoria, with the SI calculated using a week's worth of timetable data from each of the years 2018 to 2023 (inclusive).].
 
-The status of this project is that SI scores can currently be calculated directly from GTFS data using the developed R code, but the calculation takes approximately one day for every day of input timetable data on a standard personal computer.  PTRG are seeking to improve this performance^[Options being explored include improving the code's efficiency, and seeking ways to run the code on more powerful hardware.], but in the meantime this document reports preliminary outputs for researchers at Deakin University, reporting SI scores for one day of service in the years 2018 through 2023^[It specifically reports on the calculation of SI scores for Statistical Area Level 1 zones from the 2021 census (SA1_2021) for the years 2018, 2019, 2020, 2021, 2022 and 2023. However, the SI scores are for only one day of timetable data, rather than one week, as in the original formulation of the SI.]. This document, and the results, are included in a branch of the overall project on github^[The branch can be found at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS/tree/Deakin_1_day_2018_to_2023]. The SI values are calculated here for a Tuesday in the second week of August of each year^[So as to match the 2021 census date.]. 
+The status of this project is that SI scores can currently be calculated directly from GTFS data using the developed R code, but the calculation takes approximately one day for every day of input timetable data on a standard personal computer.  PTRG are seeking to improve this performance^[Options being explored include improving the code's efficiency, and seeking ways to run the code on more powerful hardware.]. PTRG has completed a run of the code calculations for a single day of service in the years 2018 through 2023^[It specifically reports on the calculation of SI scores for Statistical Area Level 1 zones from the 2021 census (SA1_2021) for the years 2018, 2019, 2020, 2021, 2022 and 2023. Those results are are included in a branch of the overall project on github at https://github.com/James-Reynolds/Transit_Supply_Index_GTFS/tree/Deakin_1_day_2018_to_2023]. 
+
+This document, however, is part of a branch seeking to calculate the 7-day scores, using the (inefficient) code that has been completed to date. It generates the SI scores for the remaining 6 days in each of the weeks in the years 2018 through 2023 inclusive, such that these results can be combined with the preliminary results.  
+
 
 This rest of this document is structured as follows: the next section briefly discusses the research context of transit metrics and the SI.  In the third section the methodology for the code development is outlined, including discussion of the cases used to test and verify the code output. In the fourth section results are presented,  starting with verification of the code output through hand-calculation of SI scores for a SA1 area in the Victorian Alps. SI scores across Clayton, Melbourne City and Burwood are also presented, comparing transit service levels through 2018 to 2023. The document then closes with a brief discussion and conclusion. 
 
@@ -483,41 +486,47 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 
 
 ```{r Victoria_2018, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
-####Results were pre-calculated and stored in csv files.  Hence, the code below that calculates the scores are commented out
 
-#victoria_2018 <- read_gtfs("data/Melbourne/2018/180813/gtfs.zip")
+victoria_2018 <- read_gtfs("data/Melbourne/2018/180813/gtfs.zip")
 
 ##deal with issue to do with missing route_color information
-#victoria_2018$routes$route_color <- "Blue"
+victoria_2018$routes$route_color <- "Blue"
 
 
 ##identify duplicate stops
-#victoria_2018_duplicated_stops <- tabyl(victoria_2018$stops$stop_id) %>% filter (n>1)
-#names(victoria_2018_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2018_duplicated_stops <- left_join(victoria_2018_duplicated_stops, victoria_2018$stops)
+victoria_2018_duplicated_stops <- tabyl(victoria_2018$stops$stop_id) %>% filter (n>1)
+names(victoria_2018_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2018_duplicated_stops <- left_join(victoria_2018_duplicated_stops, victoria_2018$stops)
 
 ##discard duplicates
-#victoria_2018$stops <- victoria_2018$stops[!duplicated(victoria_2018$stops$stop_id),]
+victoria_2018$stops <- victoria_2018$stops[!duplicated(victoria_2018$stops$stop_id),]
 
 ##split modes
-#victoria_2018_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2018)
+victoria_2018_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2018)
 
 ##set inputs to SI_calc function
-#victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
-#start_date = "2018-08-14"
-#period_in_days = 1
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "sa1_code_2021"
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2018-08-15"
+period_in_days = 6
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
 
 
 ##run SI_calc function
-#victoria_2018_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2018_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+victoria_2018_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2018_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
-#run aggregation function to create df by mode for all 7 days
-#victoria_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2018_SI_list_by_date_and_mode)
 
 ##write to csv
-#write_csv2(victoria_2018_SI_df_by_mode, "results/Victoria_2018_SI_df_by_mode_SA12021_180814.csv")
+write_csv2(victoria_2018_SI_list_by_date_and_mode, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180815_to_20.csv")
+
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2018_SI_list_by_date_and_mode)
+
+
+
+##write to csv
+write_csv2(victoria_2018_SI_df_by_mode, "results/Victoria_2018_SI_df_by_mode_SA12021_180815_to_20.csv")
 
 
 #load pre-calculated df by mode (for just one day)
@@ -531,85 +540,44 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 ```
 
 
-```{r victoria_2020, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
-#victoria_2020 <- read_gtfs("data/Melbourne/2020/200807/gtfs.zip")
-
-#deal with issue to do with missing route_color information
-#victoria_2020$routes$route_color <- "Blue"
-
-
-##identify duplicate stops
-#victoria_2020_duplicated_stops <- tabyl(victoria_2020$stops$stop_id) %>% filter (n>1)
-#names(victoria_2020_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2020_duplicated_stops <- left_join(victoria_2020_duplicated_stops, victoria_2020$stops)
-
-##discard duplicates
-#victoria_2020$stops <- victoria_2020$stops[!duplicated(victoria_2020$stops$stop_id),]
-
-##split modes
-#victoria_2020_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2020)
-
-
-##set inputs to SI_calc function
-#victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
-#start_date = "2020-08-11"
-#period_in_days = 1
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "sa1_code_2021"
-
-##run SI_calc function
-#victoria_2020_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2020_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
-
-##run aggregation function to create df by mode for all 7 days
-#victoria_2020_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2020_SI_list_by_date_and_mode)
-
-
-##write to csv
-#write_csv2(victoria_2020_SI_df_by_mode, "results/Victoria_2020_SI_df_by_mode_SA12021_200811.csv")
-
-#load pre-calculated df by mode (for just one day)
-#victoria_2020_SI_df_by_mode <- read.csv("results/Victoria_2020_SI_df_by_mode_SA12021_200811.csv")
-#victoria_2020_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2020_SI_df_by_mode$sa1_code_2021)
-
-##Join SI to SA1 map data
-#victoria_2020_SI_df_by_mode_sf <- left_join(victoria_2020_SI_df_by_mode, sa1_map_data)
-
-```
-
 
 ```{r Victoria_2019, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
-#victoria_2019 <- read_gtfs("data/Melbourne/2019/190812/gtfs.zip")
+victoria_2019 <- read_gtfs("data/Melbourne/2019/190812/gtfs.zip")
 
-##deal with issue to do with missing route_color information
-#victoria_2019$routes$route_color <- "Blue"
+#deal with issue to do with missing route_color information
+victoria_2019$routes$route_color <- "Blue"
 
-##identify duplicate stops
-#victoria_2019_duplicated_stops <- tabyl(victoria_2019$stops$stop_id) %>% filter (n>1)
-#names(victoria_2019_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2019_duplicated_stops <- left_join(victoria_2019_duplicated_stops, victoria_2019$stops)
+#identify duplicate stops
+victoria_2019_duplicated_stops <- tabyl(victoria_2019$stops$stop_id) %>% filter (n>1)
+names(victoria_2019_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2019_duplicated_stops <- left_join(victoria_2019_duplicated_stops, victoria_2019$stops)
 
-##discard duplicates
-#victoria_2019$stops <- victoria_2019$stops[!duplicated(victoria_2019$stops$stop_id),]
+#discard duplicates
+victoria_2019$stops <- victoria_2019$stops[!duplicated(victoria_2019$stops$stop_id),]
 
-##split modes
-#victoria_2019_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2019)
+#split modes
+victoria_2019_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2019)
 
 
-##set inputs to SI_calc function
-#victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
-#start_date = "2019-08-13"
-#period_in_days = 1
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "sa1_code_2021"
+#set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2019-08-14"
+period_in_days = 6
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
 
 ##run SI_calc function
-#victoria_2019_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2019_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
-
-##run aggregation function to create df by mode for all 7 days
-#victoria_2019_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2019_SI_list_by_date_and_mode)
+victoria_2019_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2019_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
 ##write to csv
-#write_csv2(victoria_2019_SI_df_by_mode, "results/Victoria_2019_SI_df_by_mode_SA12021_190813.csv")
+write_csv2(victoria_2019_SI_list_by_date_and_mode, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190814_to_21.csv")
+
+
+##run aggregation function to create df by mode for all 7 days
+victoria_2019_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2019_SI_list_by_date_and_mode)
+
+##write to csv
+write_csv2(victoria_2019_SI_df_by_mode, "results/Victoria_2019_SI_df_by_mode_SA12021_190814_to_21.csv")
 
 ##load pre-calculated df by mode (for just one day)
 #victoria_2019_SI_df_by_mode <- read.csv("results/Victoria_2019_SI_df_by_mode_SA12021_190813.csv")
@@ -621,40 +589,96 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 
 ```
 
+```{r victoria_2020, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
+victoria_2020 <- read_gtfs("data/Melbourne/2020/200807/gtfs.zip")
 
-```{r victoria_2021, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
-#victoria_2021 <- read_gtfs("data/Melbourne/2021/210810/gtfs.zip")
+#deal with issue to do with missing route_color information
+victoria_2020$routes$route_color <- "Blue"
 
-##deal with issue to do with missing route_color information
-#victoria_2021$routes$route_color <- "Blue"
 
 ##identify duplicate stops
-#victoria_2021_duplicated_stops <- tabyl(victoria_2021$stops$stop_id) %>% filter (n>1)
-#names(victoria_2021_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2021_duplicated_stops <- left_join(victoria_2021_duplicated_stops, victoria_2021$stops)
+victoria_2020_duplicated_stops <- tabyl(victoria_2020$stops$stop_id) %>% filter (n>1)
+names(victoria_2020_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2020_duplicated_stops <- left_join(victoria_2020_duplicated_stops, victoria_2020$stops)
 
 ##discard duplicates
-#victoria_2021$stops <- victoria_2021$stops[!duplicated(victoria_2021$stops$stop_id),]
+victoria_2020$stops <- victoria_2020$stops[!duplicated(victoria_2020$stops$stop_id),]
 
 ##split modes
-#victoria_2021_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2021)
+victoria_2020_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2020)
+
 
 ##set inputs to SI_calc function
-#victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
-#start_date = "2021-08-10"
-#period_in_days = 1
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "sa1_code_2021"
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2020-08-12"
+period_in_days = 6
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
 
-##run SI_calc function
-#victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2021_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
-
-##run aggregation function to create df by mode for all 7 days
-#victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+#run SI_calc function
+victoria_2020_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2020_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
 
-##write to csv
-#write_csv2(victoria_2021_SI_df_by_mode, "results/Victoria_2021_SI_df_by_mode_SA12021_210810.csv")
+#write to csv
+write_csv2(victoria_2020_SI_list_by_date_and_mode, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200812_to_17.csv")
+
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2020_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2020_SI_list_by_date_and_mode)
+
+
+#write to csv
+write_csv2(victoria_2020_SI_df_by_mode, "results/Victoria_2020_SI_df_by_mode_SA12021_200812_to_17.csv")
+
+#load pre-calculated df by mode (for just one day)
+#victoria_2020_SI_df_by_mode <- read.csv("results/Victoria_2020_SI_df_by_mode_SA12021_200811.csv")
+#victoria_2020_SI_df_by_mode$sa1_code_2021 <- as.character(victoria_2020_SI_df_by_mode$sa1_code_2021)
+
+##Join SI to SA1 map data
+#victoria_2020_SI_df_by_mode_sf <- left_join(victoria_2020_SI_df_by_mode, sa1_map_data)
+
+```
+
+
+
+```{r victoria_2021, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
+victoria_2021 <- read_gtfs("data/Melbourne/2021/210810/gtfs.zip")
+
+#deal with issue to do with missing route_color information
+#victoria_2021$routes$route_color <- "Blue"
+
+#identify duplicate stops
+victoria_2021_duplicated_stops <- tabyl(victoria_2021$stops$stop_id) %>% filter (n>1)
+names(victoria_2021_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2021_duplicated_stops <- left_join(victoria_2021_duplicated_stops, victoria_2021$stops)
+
+#discard duplicates
+victoria_2021$stops <- victoria_2021$stops[!duplicated(victoria_2021$stops$stop_id),]
+
+#split modes
+victoria_2021_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2021)
+
+#set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2021-08-11"
+period_in_days = 6
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
+
+#run SI_calc function
+victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2021_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+
+#write to csv
+write_csv2(victoria_2021_SI_list_by_date_and_mode, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210811_to_16.csv")
+
+
+#run aggregation function to create df by mode for all 7 days
+victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+
+
+#write to csv
+write_csv2(victoria_2021_SI_df_by_mode, "results/Victoria_2021_SI_df_by_mode_SA12021_210811_to_16.csv")
 
 #load pre-calculated df by mode (for just one day)
 #victoria_2021_SI_df_by_mode <- read.csv("results/Victoria_2021_SI_df_by_mode_SA12021_210810.csv")
@@ -668,39 +692,43 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 
 
 ```{r victoria_2022, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
-#victoria_2022 <- read_gtfs("data/Melbourne/2022/220804/gtfs.zip")
+victoria_2022 <- read_gtfs("data/Melbourne/2022/220804/gtfs.zip")
 
 
-##deal with issue to do with missing route_color information
-#victoria_2022$routes$route_color <- "Blue"
+#deal with issue to do with missing route_color information
+victoria_2022$routes$route_color <- "Blue"
 
-##identify duplicate stops
-#victoria_2022_duplicated_stops <- tabyl(victoria_2022$stops$stop_id) %>% filter (n>1)
-#names(victoria_2022_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2022_duplicated_stops <- left_join(victoria_2022_duplicated_stops, victoria_2022$stops)
+#identify duplicate stops
+victoria_2022_duplicated_stops <- tabyl(victoria_2022$stops$stop_id) %>% filter (n>1)
+names(victoria_2022_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2022_duplicated_stops <- left_join(victoria_2022_duplicated_stops, victoria_2022$stops)
 
 ##discard duplicates
-#victoria_2022$stops <- victoria_2022$stops[!duplicated(victoria_2022$stops$stop_id),]
+victoria_2022$stops <- victoria_2022$stops[!duplicated(victoria_2022$stops$stop_id),]
 
 ##split modes
-#victoria_2022_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2022)
+victoria_2022_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2022)
 
 ###set inputs to SI_calc function
-#victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
-#start_date = "2022-08-09"
-#period_in_days = 1
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "sa1_code_2021"
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2022-08-010"
+period_in_days = 6
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
 
-##run SI_calc function
-#victoria_2022_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2022_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+#run SI_calc function
+victoria_2022_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2022_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
-##run aggregation function to create df by mode for all 7 days
-#victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
+#write to csv
+write_csv2(victoria_2022_SI_list_by_date_and_mode, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220810_to_15.csv")
 
 
-##write to csv
-#write_csv2(victoria_2022_SI_df_by_mode, "results/Victoria_2022_SI_df_by_mode_SA12021_220814.csv")
+#run aggregation function to create df by mode for all 7 days
+victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
+
+
+#write to csv
+write_csv2(victoria_2022_SI_df_by_mode, "results/Victoria_2022_SI_df_by_mode_SA12021_220810_to_15.csv")
 
 
 #load pre-calculated df by mode (for just one day)
@@ -712,39 +740,45 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 #victoria_2022_SI_df_by_mode_sf <- left_join(victoria_2022_SI_df_by_mode, sa1_map_data)
 
 ```
-```{r victoria_2023, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
-#victoria_2023 <- read_gtfs("data/Melbourne/2023/230804/gtfs.zip")
 
-##deal with issue to do with missing route_color information
+
+```{r victoria_2023, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
+victoria_2023 <- read_gtfs("data/Melbourne/2023/230804/gtfs.zip")
+
+#deal with issue to do with missing route_color information
 #victoria_2023$routes$route_color <- "Blue"
 
-###identify duplicate stops
-#victoria_2023_duplicated_stops <- tabyl(victoria_2023$stops$stop_id) %>% filter (n>1)
-#names(victoria_2023_duplicated_stops) <- c("stop_id", "n", "percent")
-#victoria_2023_duplicated_stops <- left_join(victoria_2023_duplicated_stops, victoria_2023$stops)
+##identify duplicate stops
+victoria_2023_duplicated_stops <- tabyl(victoria_2023$stops$stop_id) %>% filter (n>1)
+names(victoria_2023_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2023_duplicated_stops <- left_join(victoria_2023_duplicated_stops, victoria_2023$stops)
 
-##discard duplicates
-#victoria_2023$stops <- victoria_2023$stops[!duplicated(victoria_2023$stops$stop_id),]
+#discard duplicates
+victoria_2023$stops <- victoria_2023$stops[!duplicated(victoria_2023$stops$stop_id),]
 
-##split modes
-#victoria_2023_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2023)
+#split modes
+victoria_2023_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2023)
 
-##set inputs to SI_calc function
-#victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
-#start_date = "2023-08-08"
-#period_in_days = 1
-#EPSG_for_transform = 28355
-#areas_of_interest_id_field = "sa1_code_2021"
+#set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2021 == "Victoria")
+start_date = "2023-08-09"
+period_in_days = 6
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2021"
 
-##run SI_calc function
-#victoria_2023_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2023_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+#run SI_calc function
+victoria_2023_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2023_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
-##run aggregation function to create df by mode for all 7 days
-#victoria_2023_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2023_SI_list_by_date_and_mode)
+#write to csv
+write_csv2(victoria_2023_SI_list_by_date_and_mode, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230809_to_14.csv")
 
 
-##write to csv
-#write_csv2(victoria_2023_SI_df_by_mode, "results/Victoria_2023_SI_df_by_mode_SA12021_230808.csv")
+#run aggregation function to create df by mode for all 7 days
+victoria_2023_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2023_SI_list_by_date_and_mode)
+
+
+#write to csv
+write_csv2(victoria_2023_SI_df_by_mode, "results/Victoria_2023_SI_df_by_mode_SA12021_230809_to_14.csv")
 
 
 #load pre-calculated df by mode (for just one day)
@@ -756,6 +790,8 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 #victoria_2023_SI_df_by_mode_sf <- left_join(victoria_2023_SI_df_by_mode, sa1_map_data)
 
 ```
+
+<!----
 
 ```{r load_vic_pre_calc, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
 
@@ -1125,3 +1161,4 @@ knitr::write_bib(file = 'packages.bib')
 ```
 
 
+---->
