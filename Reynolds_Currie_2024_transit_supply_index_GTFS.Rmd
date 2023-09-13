@@ -757,6 +757,9 @@ The Australian census is undertaken in early August every 5 years. GTFS feeds we
 
 ```
 
+The results, as processed, have been stored in Comma Separated Variable (CSV) files. Unfortunately, however, these files were saved according to the European numeric approach, with decimal points represented by commas and variables separated by semicolons.  This file format is fine to use with R, but can lead to problems when opening in Excel or other programs. Therefore, the data is loaded from the (original) CSV files, but new CSV files have been also been created according to the typical Australian/US approach of using a full stop to separate the decimals in numeric records. 
+
+
 ```{r load_vic_pre_calc, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
 
 #load pre-calculated df by mode 
@@ -812,10 +815,21 @@ victoria_2023_SI_df_by_mode <- victoria_2023_SI_df_by_mode %>% adorn_totals(wher
 victoria_2023_SI_df_by_mode_sf <- left_join(victoria_2023_SI_df_by_mode, sa12021)
 
 
+```
 
+```{r save_as_csv_non_EU, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
 
+#write.csv(victoria_2018_SI_df_by_mode, "results_non_eu/Victoria_2018_SI_df_by_mode_SA12021_180814.csv")
 
+#write.csv(victoria_2019_SI_df_by_mode, "results_non_eu/Victoria_2019_SI_df_by_mode_SA12021_190813.csv")
 
+#write.csv(victoria_2020_SI_df_by_mode, "results_non_eu/Victoria_2020_SI_df_by_mode_SA12021_200811.csv")
+
+#write.csv(victoria_2021_SI_df_by_mode, "results_non_eu/Victoria_2021_SI_df_by_mode_SA12021_210810.csv")
+
+#write.csv(victoria_2022_SI_df_by_mode, "results_non_eu/Victoria_2022_SI_df_by_mode_SA12021_220809.csv")
+
+#write.csv(victoria_2023_SI_df_by_mode, "results_non_eu/Victoria_2023_SI_df_by_mode_SA12021_230808.csv")
 
 ```
 
