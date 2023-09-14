@@ -657,6 +657,8 @@ victoria_2021_SI_total <- victoria_2021_SI_df_by_mode %>% adorn_totals(where = "
 ##write total to csv
 write_csv2(victoria_2021_SI_total %>% select(sa1_code_2016, Total), "results/Victoria_2021_SI_SA12016_210810.csv")
 
+
+
 #join to map data (not included in the CSV)
 victoria_2021_SI_total_map <- left_join(victoria_2021_SI_total, sa1_map_data)
 
@@ -664,6 +666,18 @@ victoria_2021_SI_total_map <- left_join(victoria_2021_SI_total, sa1_map_data)
 
 ```
 
+The results, as processed, have been stored in Comma Separated Variable (CSV) files. Unfortunately, however, these files were saved according to the European numeric approach, with decimal points represented by commas and variables separated by semicolons.  This file format is fine to use with R, but can lead to problems when opening in Excel or other programs. Therefore, the data is loaded from the (original) CSV files, but new CSV files have been also been created (accessible in the results_non_eu folder) according to the typical Australian/US approach of using a full stop to separate the decimals in numeric records. 
+
+```{r save_as_csv_non_EU, echo=FALSE, warning=FALSE, message=FALSE, cache=TRUE}
+
+#write.csv(victoria_2016_SI_df_by_mode, "results_non_eu/Victoria_2016_SI_df_by_mode_SA12016_160809.csv")
+#write.csv(victoria_2016_SI_total, "results_non_eu/Victoria_2016_SI_SA12016_160809.csv")
+
+#write.csv(victoria_2021_SI_df_by_mode, "results_non_eu/Victoria_2021_SI_df_by_mode_SA12016_210810.csv")
+#write.csv(victoria_2021_SI_total, "results_non_eu/Victoria_2021_SI_SA12016_210810.csv")
+
+
+```
 
 ## Verifing the code output: Running Creek and Mongans Bridge, Kiewa Valley Hwy
 Code output results were verified by comparison to by-hand calculations for the SA1 area 20403106915. Within this SA1 area there are only two V/Line bus stops^[Stop:ID 45125, Running Creek Rd/Kiewa Valley Hwy (Running Creek) and Stop ID: 45124, Kiewa Valley Hwy (Mongans Bridge).].  This SA1 was selected for the purposes of verifying the code output as it is relatively easy to calculate the relevant SI values as a cross-check, because there is only one bus service and two stops to include. Relevant geographic statistics are shown in Table \ref{tab:Running_Creek_SA1_2016}.  
