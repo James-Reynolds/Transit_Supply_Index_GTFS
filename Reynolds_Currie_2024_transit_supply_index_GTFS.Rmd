@@ -30,7 +30,7 @@ library(ggmap)
 library(units)
 library(janitor)
 library(mapview)
-library(ggstatsplot)
+#library(ggstatsplot)
 library(gtsummary)
 library(moments)
 library(scales)
@@ -517,16 +517,23 @@ victoria_2018_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  
 
 
 ##write to csv
-write_csv2(victoria_2018_SI_list_by_date_and_mode, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180815_to_20.csv")
+write_csv(victoria_2018_SI_list_by_date_and_mode$`2018-08-15`, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180815.csv")
+write_csv(victoria_2018_SI_list_by_date_and_mode$`2018-08-16`, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180816.csv")
+write_csv(victoria_2018_SI_list_by_date_and_mode$`2018-08-17`, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180817.csv")
+write_csv(victoria_2018_SI_list_by_date_and_mode$`2018-08-18`, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180818.csv")
+write_csv(victoria_2018_SI_list_by_date_and_mode$`2018-08-19`, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180819.csv")
+write_csv(victoria_2018_SI_list_by_date_and_mode$`2018-08-20`, "results/victoria_2018_SI_list_by_date_and_mode_SA12021_180820.csv")
+
+
 
 
 #run aggregation function to create df by mode for all 7 days
-victoria_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2018_SI_list_by_date_and_mode)
+#victoria_2018_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2018_SI_list_by_date_and_mode)
 
 
 
 ##write to csv
-write_csv2(victoria_2018_SI_df_by_mode, "results/Victoria_2018_SI_df_by_mode_SA12021_180815_to_20.csv")
+#write_csv(victoria_2018_SI_df_by_mode, "results/Victoria_2018_SI_df_by_mode_SA12021_180815_to_20.csv")
 
 
 #load pre-calculated df by mode (for just one day)
@@ -570,14 +577,18 @@ areas_of_interest_id_field = "sa1_code_2021"
 victoria_2019_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2019_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
 ##write to csv
-write_csv2(victoria_2019_SI_list_by_date_and_mode, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190814_to_21.csv")
-
+write_csv(victoria_2019_SI_list_by_date_and_mode$`2019-08-14`, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190814.csv")
+write_csv(victoria_2019_SI_list_by_date_and_mode$`2019-08-15`, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190815.csv")
+write_csv(victoria_2019_SI_list_by_date_and_mode$`2019-08-16`, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190816.csv")
+write_csv(victoria_2019_SI_list_by_date_and_mode$`2019-08-17`, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190817.csv")
+write_csv(victoria_2019_SI_list_by_date_and_mode$`2019-08-18`, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190818.csv")
+write_csv(victoria_2019_SI_list_by_date_and_mode$`2019-08-19`, "results/victoria_2019_SI_list_by_date_and_mode_SA12021_190819.csv")
 
 ##run aggregation function to create df by mode for all 7 days
-victoria_2019_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2019_SI_list_by_date_and_mode)
+#victoria_2019_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2019_SI_list_by_date_and_mode)
 
 ##write to csv
-write_csv2(victoria_2019_SI_df_by_mode, "results/Victoria_2019_SI_df_by_mode_SA12021_190814_to_21.csv")
+#write_csv2(victoria_2019_SI_df_by_mode, "results/Victoria_2019_SI_df_by_mode_SA12021_190814_to_21.csv")
 
 ##load pre-calculated df by mode (for just one day)
 #victoria_2019_SI_df_by_mode <- read.csv("results/Victoria_2019_SI_df_by_mode_SA12021_190813.csv")
@@ -620,15 +631,19 @@ victoria_2020_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  
 
 
 #write to csv
-write_csv2(victoria_2020_SI_list_by_date_and_mode, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200812_to_17.csv")
-
+write_csv(victoria_2020_SI_list_by_date_and_mode$`2000-08-12`, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200812.csv")
+write_csv(victoria_2020_SI_list_by_date_and_mode$`2000-08-13`, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200813.csv")
+write_csv(victoria_2020_SI_list_by_date_and_mode$`2000-08-14`, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200814.csv")
+write_csv(victoria_2020_SI_list_by_date_and_mode$`2000-08-15`, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200815.csv")
+write_csv(victoria_2020_SI_list_by_date_and_mode$`2000-08-16`, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200816.csv")
+write_csv(victoria_2020_SI_list_by_date_and_mode$`2000-08-17`, "results/victoria_2020_SI_list_by_date_and_mode_SA12021_200817.csv")
 
 #run aggregation function to create df by mode for all 7 days
-victoria_2020_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2020_SI_list_by_date_and_mode)
+#victoria_2020_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2020_SI_list_by_date_and_mode)
 
 
 #write to csv
-write_csv2(victoria_2020_SI_df_by_mode, "results/Victoria_2020_SI_df_by_mode_SA12021_200812_to_17.csv")
+#write_csv2(victoria_2020_SI_df_by_mode, "results/Victoria_2020_SI_df_by_mode_SA12021_200812_to_17.csv")
 
 #load pre-calculated df by mode (for just one day)
 #victoria_2020_SI_df_by_mode <- read.csv("results/Victoria_2020_SI_df_by_mode_SA12021_200811.csv")
@@ -670,15 +685,19 @@ victoria_2021_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  
 
 
 #write to csv
-write_csv2(victoria_2021_SI_list_by_date_and_mode, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210811_to_16.csv")
-
+write_csv(victoria_2021_SI_list_by_date_and_mode$`2021-08-11`, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210811.csv")
+write_csv(victoria_2021_SI_list_by_date_and_mode$`2021-08-12`, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210812.csv")
+write_csv(victoria_2021_SI_list_by_date_and_mode$`2021-08-13`, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210813.csv")
+write_csv(victoria_2021_SI_list_by_date_and_mode$`2021-08-14`, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210814.csv")
+write_csv(victoria_2021_SI_list_by_date_and_mode$`2021-08-15`, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210815.csv")
+write_csv(victoria_2021_SI_list_by_date_and_mode$`2021-08-16`, "results/victoria_2021_SI_list_by_date_and_mode_SA12021_210816.csv")
 
 #run aggregation function to create df by mode for all 7 days
-victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
+#victoria_2021_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2021_SI_list_by_date_and_mode)
 
 
 #write to csv
-write_csv2(victoria_2021_SI_df_by_mode, "results/Victoria_2021_SI_df_by_mode_SA12021_210811_to_16.csv")
+#write_csv2(victoria_2021_SI_df_by_mode, "results/Victoria_2021_SI_df_by_mode_SA12021_210811_to_16.csv")
 
 #load pre-calculated df by mode (for just one day)
 #victoria_2021_SI_df_by_mode <- read.csv("results/Victoria_2021_SI_df_by_mode_SA12021_210810.csv")
@@ -720,15 +739,19 @@ areas_of_interest_id_field = "sa1_code_2021"
 victoria_2022_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2022_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
 #write to csv
-write_csv2(victoria_2022_SI_list_by_date_and_mode, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220810_to_15.csv")
-
+write_csv(victoria_2022_SI_list_by_date_and_mode$`2022-08-10`, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220810.csv")
+write_csv(victoria_2022_SI_list_by_date_and_mode$`2022-08-11`, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220811.csv")
+write_csv(victoria_2022_SI_list_by_date_and_mode$`2022-08-12`, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220812.csv")
+write_csv(victoria_2022_SI_list_by_date_and_mode$`2022-08-13`, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220813.csv")
+write_csv(victoria_2022_SI_list_by_date_and_mode$`2022-08-14`, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220814.csv")
+write_csv(victoria_2022_SI_list_by_date_and_mode$`2022-08-15`, "results/victoria_2022_SI_list_by_date_and_mode_SA12021_220815.csv")
 
 #run aggregation function to create df by mode for all 7 days
-victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
+#victoria_2022_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2022_SI_list_by_date_and_mode)
 
 
 #write to csv
-write_csv2(victoria_2022_SI_df_by_mode, "results/Victoria_2022_SI_df_by_mode_SA12021_220810_to_15.csv")
+#write_csv2(victoria_2022_SI_df_by_mode, "results/Victoria_2022_SI_df_by_mode_SA12021_220810_to_15.csv")
 
 
 #load pre-calculated df by mode (for just one day)
@@ -770,15 +793,19 @@ areas_of_interest_id_field = "sa1_code_2021"
 victoria_2023_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2023_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
 
 #write to csv
-write_csv2(victoria_2023_SI_list_by_date_and_mode, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230809_to_14.csv")
-
+write_csv(victoria_2023_SI_list_by_date_and_mode$`2023-08-09`, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230809.csv")
+write_csv(victoria_2023_SI_list_by_date_and_mode$`2023-08-10`, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230810.csv")
+write_csv(victoria_2023_SI_list_by_date_and_mode$`2023-08-11`, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230811.csv")
+write_csv(victoria_2023_SI_list_by_date_and_mode$`2023-08-12`, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230812.csv")
+write_csv(victoria_2023_SI_list_by_date_and_mode$`2023-08-13`, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230813.csv")
+write_csv(victoria_2023_SI_list_by_date_and_mode$`2023-08-14`, "results/victoria_2023_SI_list_by_date_and_mode_SA12021_230814.csv")
 
 #run aggregation function to create df by mode for all 7 days
-victoria_2023_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2023_SI_list_by_date_and_mode)
+#victoria_2023_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2023_SI_list_by_date_and_mode)
 
 
 #write to csv
-write_csv2(victoria_2023_SI_df_by_mode, "results/Victoria_2023_SI_df_by_mode_SA12021_230809_to_14.csv")
+#write_csv2(victoria_2023_SI_df_by_mode, "results/Victoria_2023_SI_df_by_mode_SA12021_230809_to_14.csv")
 
 
 #load pre-calculated df by mode (for just one day)
