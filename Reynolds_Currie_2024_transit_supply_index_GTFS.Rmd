@@ -608,6 +608,80 @@ victoria_2016_SI_df_by_mode_sf <- left_join(victoria_2016_SI_df_by_mode, sa12016
 ```
 
 
+
+
+```{r Melbourne_2019_october, echo=FALSE, warning=FALSE, message=FALSE}
+victoria_2019 <- gtfstools::read_gtfs("data/Melbourne/2019/191011/gtfs.zip")
+
+##resolve route colour problem in gtfs file
+victoria_2019$routes$route_color <- 0
+
+##identify duplicate stops
+victoria_2019_duplicated_stops <- tabyl(victoria_2019$stops$stop_id) %>% filter (n>1)
+names(victoria_2019_duplicated_stops) <- c("stop_id", "n", "percent")
+victoria_2019_duplicated_stops <- left_join(victoria_2019_duplicated_stops, victoria_2019$stops)
+
+##discard duplicates
+victoria_2019$stops <- victoria_2019$stops[!duplicated(victoria_2019$stops$stop_id),]
+
+
+
+#split modes
+victoria_2019_list_by_mode <- split_gtfs_into_modes_and_put_in_list(victoria_2019)
+
+
+###set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2016 == "Victoria")
+start_date = "2019-10-13"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2016"
+
+##run SI_calc function
+victoria_2019_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2019_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+##run aggregation function to create df by mode 
+victoria_2019_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2019_SI_list_by_date_and_mode)
+
+##write to csv
+write_csv(victoria_2019_SI_df_by_mode, "c:/Users/rjulian/Documents/Transit_Supply_Index_GTFS/results/Victoria_2019_SI_df_by_mode_SA12016_191013.csv")
+
+
+
+###set inputs to SI_calc function
+victoria_areas_of_interest <- sa1_map_data %>% filter(state_name_2016 == "Victoria")
+start_date = "2019-10-15"
+period_in_days = 1
+EPSG_for_transform = 28355
+areas_of_interest_id_field = "sa1_code_2016"
+
+##run SI_calc function
+victoria_2019_SI_list_by_date_and_mode <- SI_calc_function(areas_of_interest =  victoria_areas_of_interest, areas_of_interest_id_field = areas_of_interest_id_field, gtfs_list_by_mode = victoria_2019_list_by_mode, start_date = start_date, period_in_days = period_in_days, EPSG_for_transform = EPSG_for_transform)
+
+##run aggregation function to create df by mode 
+victoria_2019_SI_df_by_mode <-  convert_SI_list_by_date_and_mode_to_SI_df_by_mode.function(victoria_2019_SI_list_by_date_and_mode)
+
+##write to csv
+write_csv(victoria_2019_SI_df_by_mode, "c:/Users/rjulian/Documents/Transit_Supply_Index_GTFS/results/Victoria_2019_SI_df_by_mode_SA12016_191015.csv")
+
+
+
+#load pre-calculated df by mode (for just one day)
+#victoria_2016_SI_df_by_mode<- read_delim("results/Victoria_2016_SI_df_by_mode_SA12016_160809.csv", 
+#    delim = ";", locale = locale(decimal_mark = ","), escape_double = FALSE, col_types = cols(sa1_code_2016 = col_character(), 
+#        LRT = col_number(), subway = col_number(), 
+#        rail = col_number(), bus = col_number(), 
+#        ferry = col_number(), cable_tram = col_number(), 
+#        aerial_lift = col_number(), funicular = col_number(), 
+#        trolleybus = col_number(), monorail = col_number()), 
+#    trim_ws = TRUE)
+
+#Join map data
+#victoria_2016_SI_df_by_mode_sf <- left_join(victoria_2016_SI_df_by_mode, sa12016)
+
+```
+
+
 Results were processed using the ggmaps [@R-ggmap], ggplot [@R-ggplot2], ggstatsplot [@R-ggstatsplot] and kable [@R-kableExtra; @R-knitr] packages, with data processing leveraging the tidyverse approach [@R-tidyverse].
 
 
